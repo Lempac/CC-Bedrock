@@ -9,3 +9,11 @@ builds
 err/
 input.cos
 dist/
+astra
+.envrc
+devenv.*
+.devenv*
+devenv.local.nix
+.direnv
+.pre-commit-config.yaml
+pnpm-lock.yaml

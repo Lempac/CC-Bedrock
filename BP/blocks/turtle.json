@@ -1,56 +1,37 @@
 {
-	"format_version": "1.19.50",
+	"format_version": "1.21.70",
 	"minecraft:block": {
 		"description": {
 			"identifier": "coslang:turtle",
 			"properties": {
-				"coslang:rotation": [
-					0,
-					1,
-					2,
-					3
-				]
+				"coslang:rotation": [0, 1, 2, 3]
 			}
 		},
 		"permutations": [
 			{
-				"condition": "query.block_property('coslang:rotation') == 0",
+				"condition": "query.block_state('coslang:rotation') == 0",
 				"components": {
-					"minecraft:rotation": [
-						0,
-						270,
-						0
-					]
+					"minecraft:transformation": {
+						"rotation": [0, 270, 0]
+					}
 				}
 			},
 			{
-				"condition": "query.block_property('coslang:rotation') == 1",
+				"condition": "query.block_state('coslang:rotation') == 1",
 				"components": {
-					"minecraft:rotation": [
-						0,
-						360,
-						0
-					]
+					"minecraft:transformation": {"rotation": [0, 360, 0]}
 				}
 			},
 			{
-				"condition": "query.block_property('coslang:rotation') == 2",
+				"condition": "query.block_state('coslang:rotation') == 2",
 				"components": {
-					"minecraft:rotation": [
-						0,
-						90,
-						0
-					]
+					"minecraft:transformation": {"rotation": [0, 90, 0]}
 				}
 			},
 			{
-				"condition": "query.block_property('coslang:rotation') == 3",
+				"condition": "query.block_state('coslang:rotation') == 3",
 				"components": {
-					"minecraft:rotation": [
-						0,
-						180,
-						0
-					]
+					"minecraft:transformation": {"rotation": [0, 180, 0]}
 				}
 			}
 		],
@@ -63,28 +44,12 @@
 				}
 			},
 			"minecraft:collision_box": {
-				"origin": [
-					-6,
-					2,
-					-6
-				],
-				"size": [
-					12,
-					12,
-					12
-				]
+				"origin": [-6, 2, -6],
+				"size": [12, 12, 12]
 			},
 			"minecraft:selection_box": {
-				"origin": [
-					-6,
-					2,
-					-6
-				],
-				"size": [
-					12,
-					12,
-					12
-				]
+				"origin": [-6, 2, -6],
+				"size": [12, 12, 12]
 			}
 		}
 	}

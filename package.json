@@ -5,14 +5,14 @@
     "docs:preview": "vitepress preview docs"
   },
   "dependencies": {
-    "@minecraft/server": "^1.11.0-beta.1.20.80-stable",
-    "@minecraft/server-ui": "^1.2.0-beta.1.20.80-stable",
+    "@minecraft/server": "^1.18.0",
+    "@minecraft/server-ui": "^1.3.0",
     "get-pixels": "^3.3.3"
   },
   "devDependencies": {
-    "@types/node": "^18.14.1",
-    "fs": "^0.0.1-security",
-    "vitepress": "^1.0.0-alpha.48",
-    "vue": "^3.2.47"
+    "@types/node": "^22.14.1",
+    "fs": "0.0.1-security",
+    "vitepress": "^1.6.3",
+    "vue": "^3.5.13"
   }
 }
