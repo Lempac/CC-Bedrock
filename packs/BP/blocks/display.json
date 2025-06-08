@@ -1,0 +1,31 @@
+{
+	"format_version": "1.21.60",
+	"minecraft:block": {
+		"description": {
+			"identifier": "coslang:display",
+			"menu_category": {
+				"category": "items"
+			}
+		},
+		"components": {
+			"minecraft:geometry": "geometry.display",
+			"minecraft:material_instances": {
+				"*": {
+					"render_method": "alpha_test",
+					"texture": "coslang_display"
+				}
+			}
+		},
+		"permutations": [
+			{
+				"condition": "query.block_state('minecarft:direction') == 0",
+				"components": {
+					"minecraft:crafting_table": {
+						"crafting_tags": ["crafting_table", "custom_crafting_tag"],
+						"table_name": "My Crafting Table"
+					}
+				}
+			}
+		]
+	}
+}

@@ -17,3 +17,7 @@ devenv.local.nix
 .direnv
 .pre-commit-config.yaml
 pnpm-lock.yaml
+/build
+/.regolith
+.vitepress/dist
+.vitepress/cache
