@@ -1,8 +1,8 @@
 import { system } from "@minecraft/server";
-import { getNumberLiteral } from "../cosmic/src/Primitives/Number";
-import { NativeFunction } from "../cosmic/src/Struct/NativeFunction";
-import { NativeFunctionHelper } from "../cosmic/src/Struct/NativeFunctionHelper";
-import { StructType } from "../cosmic/src/Struct/StructType";
+import { getNumberLiteral } from "../cosmic/src/Primitives/Number.ts";
+import { NativeFunction } from "../cosmic/src/Struct/NativeFunction.ts";
+import { NativeFunctionHelper } from "../cosmic/src/Struct/NativeFunctionHelper.ts";
+import { StructType } from "../cosmic/src/Struct/StructType.ts";
 
 export const delayInTicks = (ticks: number): Promise<void> => {
     return new Promise(resolve => {

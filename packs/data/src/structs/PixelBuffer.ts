@@ -1,11 +1,11 @@
-import { Interpreter } from "../cosmic/src/Interpreter";
-import { getBooleanLiteral } from "../cosmic/src/Primitives/Boolean";
-import { getNumberLiteral } from "../cosmic/src/Primitives/Number";
-import { getStringLiteral } from "../cosmic/src/Primitives/String";
-import { NativeFunction } from "../cosmic/src/Struct/NativeFunction";
-import { NativeFunctionHelper } from "../cosmic/src/Struct/NativeFunctionHelper";
-import { StructInstance } from "../cosmic/src/Struct/StructInstance";
-import { StructType } from "../cosmic/src/Struct/StructType";
+import { Interpreter } from "../cosmic/src/Interpreter.ts";
+import { getBooleanLiteral } from "../cosmic/src/Primitives/Boolean.ts";
+import { getNumberLiteral } from "../cosmic/src/Primitives/Number.ts";
+import { getStringLiteral } from "../cosmic/src/Primitives/String.ts";
+import { NativeFunction } from "../cosmic/src/Struct/NativeFunction.ts";
+import { NativeFunctionHelper } from "../cosmic/src/Struct/NativeFunctionHelper.ts";
+import { StructInstance } from "../cosmic/src/Struct/StructInstance.ts";
+import { StructType } from "../cosmic/src/Struct/StructType.ts";
 console.log = console.warn
 
 const validatePointOnScreen = (x: number, y: number, width: number, height: number, interpreter: Interpreter, start: number, end: number) => {
@@ -93,9 +93,9 @@ export const PixelBuffer = new StructType("PixelBuffer", [], [
 
     new NativeFunction("DrawPixel", async (interpreter, ctx, start, end, args) => {
         const helper = new NativeFunctionHelper(interpreter, args, 3, start, end);
-        var selfRef = ctx.stack.pop().node as StructInstance;
-        var screenBuffer = selfRef.selfCtx.getProtected<number[]>("pixelBuffer");
-        var bufferWidth = selfRef.selfCtx.getProtected<number>("bufferWidth")
+        const selfRef = ctx.stack.pop().node as StructInstance;
+        const screenBuffer = selfRef.selfCtx.getProtected<number[]>("pixelBuffer");
+        const bufferWidth = selfRef.selfCtx.getProtected<number>("bufferWidth")
 
 
         const [x, y] = validatePointOnScreen(
@@ -114,18 +114,18 @@ export const PixelBuffer = new StructType("PixelBuffer", [], [
 
     new NativeFunction("DrawLine", async (interpreter, ctx, start, end, args) => {
         const helper = new NativeFunctionHelper(interpreter, args, 5, start, end);
-        var selfRef = ctx.stack.pop().node as StructInstance;
-        var screenBuffer = selfRef.selfCtx.getProtected<number[]>("pixelBuffer");
-        var width = selfRef.selfCtx.getProtected<number>("bufferWidth");
-        var height = selfRef.selfCtx.getProtected<number>("bufferHeight");
+        const selfRef = ctx.stack.pop().node as StructInstance;
+        const screenBuffer = selfRef.selfCtx.getProtected<number[]>("pixelBuffer");
+        const width = selfRef.selfCtx.getProtected<number>("bufferWidth");
+        const height = selfRef.selfCtx.getProtected<number>("bufferHeight");
 
-        var [x1, y1] = validatePointOnScreen(
+        const [x1, y1] = validatePointOnScreen(
             getNumberLiteral(helper.expectType(0, "Number")),
             getNumberLiteral(helper.expectType(1, "Number")),
             width, height, interpreter, start, end
         );
 
-        var [x2, y2] = validatePointOnScreen(
+        const [x2, y2] = validatePointOnScreen(
             getNumberLiteral(helper.expectType(2, "Number")),
             getNumberLiteral(helper.expectType(3, "Number")),
             width, height, interpreter, start, end
@@ -134,14 +134,14 @@ export const PixelBuffer = new StructType("PixelBuffer", [], [
         const color = getNumberLiteral(helper.expectType(4, "Number"));
 
         // Get gradient of the line
-        var [dx, dy] = [Math.abs(x2 - x1), Math.abs(y2 - y1)];
-        var [sx, sy] = [Math.sign(x2 - x1), Math.sign(y2 - y1)];
-        var [x, y] = [x1, y1];
-        var err = dx - dy;
+        const [dx, dy] = [Math.abs(x2 - x1), Math.abs(y2 - y1)];
+        const [sx, sy] = [Math.sign(x2 - x1), Math.sign(y2 - y1)];
+        let [x, y] = [x1, y1];
+        let err = dx - dy;
 
         while (x != x2 || y != y2) {
             screenBuffer[y * width + x] = color;
-            var e2 = 2 * err;
+            const e2 = 2 * err;
             if (e2 > -dy) {
                 err -= dy;
                 x += sx;
@@ -159,10 +159,10 @@ export const PixelBuffer = new StructType("PixelBuffer", [], [
 
     new NativeFunction("DrawCircle", async (interpreter, ctx, start, end, args) => {
         const helper = new NativeFunctionHelper(interpreter, args, 5, start, end);
-        var selfRef = ctx.stack.pop().node as StructInstance;
-        var screenBuffer = selfRef.selfCtx.getProtected<number[]>("pixelBuffer");
-        var bufferWidth = selfRef.selfCtx.getProtected<number>("bufferWidth");
-        var bufferHeight = selfRef.selfCtx.getProtected<number>("bufferHeight");
+        const selfRef = ctx.stack.pop().node as StructInstance;
+        const screenBuffer = selfRef.selfCtx.getProtected<number[]>("pixelBuffer");
+        const bufferWidth = selfRef.selfCtx.getProtected<number>("bufferWidth");
+        const bufferHeight = selfRef.selfCtx.getProtected<number>("bufferHeight");
 
         const centerX = getNumberLiteral(helper.expectType(0, "Number"))
         const centerY = getNumberLiteral(helper.expectType(1, "Number"))
@@ -170,10 +170,10 @@ export const PixelBuffer = new StructType("PixelBuffer", [], [
         const shouldFill = !getBooleanLiteral(helper.expectType(3, "Boolean"))
         const color = getNumberLiteral(helper.expectType(4, "Number"))
 
-        for (var xOff = -radius; xOff <= radius; xOff++) {
-            for (var yOff = -radius; yOff <= radius; yOff++) {
-                var x = centerX + xOff;
-                var y = centerY + yOff;
+        for (let xOff = -radius; xOff <= radius; xOff++) {
+            for (let yOff = -radius; yOff <= radius; yOff++) {
+                const x = centerX + xOff;
+                const y = centerY + yOff;
                 if (!isPointOnScreen(x, y, bufferWidth, bufferHeight)) continue;
                 const c = Math.sqrt(xOff * xOff + yOff * yOff)
                 if (c > radius || (c < radius - 1 && shouldFill)) continue;
@@ -187,24 +187,24 @@ export const PixelBuffer = new StructType("PixelBuffer", [], [
 
     new NativeFunction("DrawText", async (interpreter, ctx, start, end, args) => {
         const helper = new NativeFunctionHelper(interpreter, args, 1, start, end);
-        var selfRef = ctx.stack.pop().node as StructInstance;
-        var screenBuffer = selfRef.selfCtx.getProtected<number[]>("pixelBuffer");
-        var bufferWidth = selfRef.selfCtx.getProtected<number>("bufferWidth");
-        var bufferHeight = selfRef.selfCtx.getProtected<number>("bufferHeight");
+        const selfRef = ctx.stack.pop().node as StructInstance;
+        const screenBuffer = selfRef.selfCtx.getProtected<number[]>("pixelBuffer");
+        const bufferWidth = selfRef.selfCtx.getProtected<number>("bufferWidth");
+        const bufferHeight = selfRef.selfCtx.getProtected<number>("bufferHeight");
         const text = getStringLiteral(helper.expectType(0, "String"))
         const characters = text.split("");
 
-        var charHeight = 7;
-        var charWidth = 5;
-        var x = 0;
-        var y = bufferHeight - charHeight;
+        const charHeight = 7;
+        const charWidth = 5;
+        let x = 0;
+        let y = bufferHeight - charHeight;
 
-        for (var i = 0; i < characters.length; i++) {
-            var points = fontPoints[characters[i]] ?? fontPoints.none;
+        for (let i = 0; i < characters.length; i++) {
+            const points = fontPoints[characters[i]] ?? fontPoints.none;
 
             points.forEach(point => {
-                var pointX = x + point[0];
-                var pointY = y + point[1];
+                const pointX = x + point[0];
+                const pointY = y + point[1];
                 screenBuffer[pointY * bufferWidth + pointX] = 0;
             })
 

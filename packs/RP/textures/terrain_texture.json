@@ -9,6 +9,9 @@
 		},
 		"coslang_display": {
 			"textures": "textures/blocks/display"
+		},
+		"coslang_debug": {
+			"textures": "textures/blocks/debug"
 		}
 	}
 }

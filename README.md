@@ -24,3 +24,5 @@ The computers in the add-on are running `Cosmic OS` which is the shell interface
 ## Credits
 
 Cosmic Logo - The logo which is being used for cosmic was designed by [OuterCloudStudio](https://github.com/outercloudstudio)
+
+COM_MOJANG=/mnt/c/Users/bruni/AppData/Local/Packages/Microsoft.MinecraftUWP_8wekyb3d8bbwe/LocalState/games/com.mojang regolith watch

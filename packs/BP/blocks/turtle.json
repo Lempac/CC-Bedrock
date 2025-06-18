@@ -6,37 +6,13 @@
 			"menu_category": {
 				"category": "items"
 			},
-			"states": {
-				"coslang:rotation": [0, 1, 2, 3]
+			"traits": {
+				"minecraft:placement_direction": {
+					"enabled_states": ["minecraft:cardinal_direction"]
+				}
 			}
 		},
 		"permutations": [
-			{
-				"condition": "query.block_state('coslang:rotation') == 0",
-				"components": {
-					"minecraft:transformation": {
-						"rotation": [0, 270, 0]
-					}
-				}
-			},
-			{
-				"condition": "query.block_state('coslang:rotation') == 1",
-				"components": {
-					"minecraft:transformation": { "rotation": [0, 360, 0] }
-				}
-			},
-			{
-				"condition": "query.block_state('coslang:rotation') == 2",
-				"components": {
-					"minecraft:transformation": { "rotation": [0, 90, 0] }
-				}
-			},
-			{
-				"condition": "query.block_state('coslang:rotation') == 3",
-				"components": {
-					"minecraft:transformation": { "rotation": [0, 180, 0] }
-				}
-			}
 		],
 		"components": {
 			"minecraft:geometry": "geometry.turtle",

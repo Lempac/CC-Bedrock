@@ -1,10 +1,15 @@
 {
-	"format_version": "1.21.60",
+	"format_version": "1.21.70",
 	"minecraft:block": {
 		"description": {
 			"identifier": "coslang:display",
 			"menu_category": {
 				"category": "items"
+			},
+			"traits": {
+				"minecraft:placement_direction": {
+					"enabled_states": ["minecraft:cardinal_direction"]
+				}
 			}
 		},
 		"components": {
@@ -17,15 +22,6 @@
 			}
 		},
 		"permutations": [
-			{
-				"condition": "query.block_state('minecarft:direction') == 0",
-				"components": {
-					"minecraft:crafting_table": {
-						"crafting_tags": ["crafting_table", "custom_crafting_tag"],
-						"table_name": "My Crafting Table"
-					}
-				}
-			}
 		]
 	}
 }

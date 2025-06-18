@@ -1,13 +1,13 @@
 // import { TurtleInterpreter } from "./run";
 import { world, Entity, EntityInventoryComponent } from "@minecraft/server";
-import { OnTurtleBreak, OnTurtleInteract, OnTurtlePlace } from "./Turtles";
-import { Directory, File, FileError, FileSystem } from "./FileSystem";
+import { OnTurtleBreak, OnTurtleInteract, OnTurtlePlace } from "./Turtles.ts";
+import { Directory, File, FileError, FileSystem } from "./FileSystem.ts";
 import {
 	connectedTurtleProp,
 	turtleFilesProp,
 	turtleIdProp,
-} from "./Properties";
-import { TurtleInterpreter } from "./run";
+} from "./Properties.ts";
+import { TurtleInterpreter } from "./run.ts";
 world.afterEvents.playerPlaceBlock.subscribe(OnTurtlePlace);
 world.afterEvents.playerBreakBlock.subscribe(OnTurtleBreak);
 world.afterEvents.itemUseOn.subscribe(OnTurtleInteract);

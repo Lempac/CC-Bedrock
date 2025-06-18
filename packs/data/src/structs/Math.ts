@@ -1,7 +1,7 @@
-import { getNumberLiteral } from "../cosmic/src/Primitives/Number";
-import { NativeFunction } from "../cosmic/src/Struct/NativeFunction";
-import { NativeFunctionHelper } from "../cosmic/src/Struct/NativeFunctionHelper";
-import { StructType } from "../cosmic/src/Struct/StructType";
+import { getNumberLiteral } from "../cosmic/src/Primitives/Number.ts";
+import { NativeFunction } from "../cosmic/src/Struct/NativeFunction.ts";
+import { NativeFunctionHelper } from "../cosmic/src/Struct/NativeFunctionHelper.ts";
+import { StructType } from "../cosmic/src/Struct/StructType.ts";
 
 export const MathStruct = new StructType("Math", [], [
     new NativeFunction("Sin", async (interpreter, ctx, start, end, args) => {

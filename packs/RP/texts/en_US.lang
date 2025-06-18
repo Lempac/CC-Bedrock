@@ -9,3 +9,5 @@ item.spawn_egg.entity.coslang:pixel.name=Spawn Pixel
 entity.coslang:pixel.name=Pixel
 
 turtle.connect=Connected with %s
+
+tile.coslang:debug.name=Debug
