@@ -1,5 +1,5 @@
 import { ItemStartUseOnAfterEvent, PlayerBreakBlockAfterEvent, PlayerPlaceBlockAfterEvent, world } from "@minecraft/server";
-import { nextTurtleIdProp, turtleIdProp, connectedTurtleProp, turtleFilesProp } from "./Properties";
+import { nextTurtleIdProp, turtleIdProp, connectedTurtleProp, turtleFilesProp } from "./Properties.ts";
 
 export const OnTurtlePlace = (e: PlayerPlaceBlockAfterEvent) => {
     if (e.block.typeId !== "coslang:turtle") return;

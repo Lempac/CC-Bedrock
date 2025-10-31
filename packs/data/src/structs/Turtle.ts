@@ -1,6 +1,6 @@
 import { BlockType, system, world, MinecraftBlockTypes, BlockPermutation, Block, Entity, Vector, EntityItemComponent, EntityInventoryComponent, ItemStack, MinecraftItemTypes, ItemType, ItemTypes } from "@minecraft/server"
-import { NativeFunction } from "../cosmic/src/Struct/NativeFunction";
-import { StructType } from "../cosmic/src/Struct/StructType";
+import { NativeFunction } from "../cosmic/src/Struct/NativeFunction.ts";
+import { StructType } from "../cosmic/src/Struct/StructType.ts";
 
 const movementDelayInTicks = 10;
 console.log = console.warn

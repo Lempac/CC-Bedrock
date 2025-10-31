@@ -1,15 +1,15 @@
-import { Parser } from "./cosmic/src/Parser";
-import { Tokenize } from "./cosmic/src/Lexer";
+import { Parser } from "./cosmic/src/Parser.ts";
+import { Tokenize } from "./cosmic/src/Lexer.ts";
 import { Entity, world } from "@minecraft/server"
-import { Context } from "./cosmic/src/Context";
-import { NativeFunction } from "./cosmic/src/Struct/NativeFunction";
-import { StructInstance } from "./cosmic/src/Struct/StructInstance";
-import { Interpreter } from "./cosmic/src/Interpreter";
-import { Display } from "./structs/Display";
-import { PixelBuffer } from "./structs/PixelBuffer";
-import { Thread } from "./structs/Thread";
-import { MathStruct } from "./structs/Math";
-import { Color } from "./enums/Color";
+import { Context } from "./cosmic/src/Context.ts";
+import { NativeFunction } from "./cosmic/src/Struct/NativeFunction.ts";
+import { StructInstance } from "./cosmic/src/Struct/StructInstance.ts";
+import { Interpreter } from "./cosmic/src/Interpreter.ts";
+import { Display } from "./structs/Display.ts";
+import { PixelBuffer } from "./structs/PixelBuffer.ts";
+import { Thread } from "./structs/Thread.ts";
+import { MathStruct } from "./structs/Math.ts";
+import { Color } from "./enums/Color.ts";
 
 const logError = (code: string, message: string, startIdx: number, endIdx: number) => {
     const lineStart = code.lastIndexOf("\n", startIdx) + 1;
