@@ -1,9 +1,9 @@
 {
-	"format_version":"1.20.40",
-	"coslang:turtle": {
-		"sound": "stone"
-	},
-	"coslang:display": {
-		"sound": "stone"
-	}
+  "format_version": "1.20.40",
+  "coslang:turtle": {
+    "sound": "stone"
+  },
+  "coslang:display": {
+    "sound": "stone"
+  }
 }

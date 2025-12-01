@@ -10,7 +10,6 @@ err/
 input.cos
 dist/
 astra
-.envrc
 pnpm-lock.yaml
 /build
 /.regolith

@@ -1,9 +1,24 @@
-import { BlockType, system, world, MinecraftBlockTypes, BlockPermutation, Block, Entity, Vector, EntityItemComponent, EntityInventoryComponent, ItemStack, MinecraftItemTypes, ItemType, ItemTypes } from "@minecraft/server"
+import {
+  Block,
+  BlockPermutation,
+  BlockType,
+  Entity,
+  EntityInventoryComponent,
+  EntityItemComponent,
+  ItemStack,
+  ItemType,
+  ItemTypes,
+  MinecraftBlockTypes,
+  MinecraftItemTypes,
+  system,
+  Vector,
+  world,
+} from "@minecraft/server";
 import { NativeFunction } from "../cosmic/src/Struct/NativeFunction.ts";
 import { StructType } from "../cosmic/src/Struct/StructType.ts";
 
 const movementDelayInTicks = 10;
-console.log = console.warn
+console.log = console.warn;
 
 // export function drawTurtle(oldPosition, position, rotation, ctx) {
 //     // Move the entity controller
@@ -23,7 +38,7 @@ console.log = console.warn
 //     const permutation = block.permutation;
 //     // @ts-ignore Missing Field on type IBlockProperty
 //     permutation.getProperty("coslang:rotation").value = rotation;
-//     block.setPermutation(permutation);    
+//     block.setPermutation(permutation);
 // }
 
 // const overworld = world.getDimension("overworld")
@@ -40,7 +55,7 @@ console.log = console.warn
 //             }
 //             else {
 //                 var remainingItems = itemComponent.itemStack.amount;
-                
+
 //                 for (var i = 0; i < 16; i++) {
 //                     const slot = inventory.container.getItem(i);
 //                     if (slot.typeId != itemComponent.itemStack.typeId) continue;
@@ -53,14 +68,14 @@ console.log = console.warn
 //                     if (itemsAdded > 0) inventory.container.setItem(i, newItemStack);
 //                     remainingItems -= itemsAdded;
 
-//                     if (remainingItems == 0) break; 
+//                     if (remainingItems == 0) break;
 //                 }
-                
+
 //                 if (remainingItems > 0) {
 //                     const type = ItemTypes.get(itemComponent.itemStack.typeId)
 //                     const blockLoc = new BlockLocation(
-//                         Math.floor(entity.location.x), 
-//                         Math.floor(entity.location.y), 
+//                         Math.floor(entity.location.x),
+//                         Math.floor(entity.location.y),
 //                         Math.floor(entity.location.z)
 //                     )
 //                     overworld.spawnItem(new ItemStack(type, remainingItems, itemComponent.itemStack.data), blockLoc)
@@ -72,121 +87,120 @@ console.log = console.warn
 // }
 
 export const Turtle = new StructType("Turtle", [], [
-    // new NativeFunction("Forward", async (interpreter, ctx, args) => {
-    //     await delay()
-    //     const oldPosition: [number, number, number] = ctx.getProtectedData("position");
-    //     const rotation = ctx.getProtectedData("rotation");
-    //     const position = [...oldPosition]
-    //     if (rotation % 4 == 0) position[0] += 1;
-    //     else if (rotation % 4 == 1) position[2] -= 1;
-    //     else if (rotation % 4 == 2) position[0] -= 1;
-    //     else if (rotation % 4 == 3) position[2] += 1;
-    //     const blockPos = new BlockLocation(position[0], position[1], position[2])
+  // new NativeFunction("Forward", async (interpreter, ctx, args) => {
+  //     await delay()
+  //     const oldPosition: [number, number, number] = ctx.getProtectedData("position");
+  //     const rotation = ctx.getProtectedData("rotation");
+  //     const position = [...oldPosition]
+  //     if (rotation % 4 == 0) position[0] += 1;
+  //     else if (rotation % 4 == 1) position[2] -= 1;
+  //     else if (rotation % 4 == 2) position[0] -= 1;
+  //     else if (rotation % 4 == 3) position[2] += 1;
+  //     const blockPos = new BlockLocation(position[0], position[1], position[2])
 
-    //     if (!overworld.getBlock(blockPos).canPlace(MinecraftBlockTypes.stone)) return [null, ctx]
+  //     if (!overworld.getBlock(blockPos).canPlace(MinecraftBlockTypes.stone)) return [null, ctx]
 
-    //     drawTurtle(oldPosition, position, rotation % 4, ctx);
-    //     ctx.setProtectedData("position", position);
-        
-    //     return [null, ctx];
-    // }),
+  //     drawTurtle(oldPosition, position, rotation % 4, ctx);
+  //     ctx.setProtectedData("position", position);
 
-    // new NativeFunction("TurnRight", async (interpreter, ctx, args) => {
-    //     await delay()
-    //     const position: [number, number, number] = ctx.getProtectedData("position");
-    //     var rotation: number = ctx.getProtectedData("rotation") - 1;
-    //     if (rotation > 3) rotation = 0;
-    //     if (rotation < 0) rotation = 3;
+  //     return [null, ctx];
+  // }),
 
-    //     drawTurtle(position, position, rotation % 4, ctx);
-    //     ctx.setProtectedData("rotation", rotation);
+  // new NativeFunction("TurnRight", async (interpreter, ctx, args) => {
+  //     await delay()
+  //     const position: [number, number, number] = ctx.getProtectedData("position");
+  //     var rotation: number = ctx.getProtectedData("rotation") - 1;
+  //     if (rotation > 3) rotation = 0;
+  //     if (rotation < 0) rotation = 3;
 
-        
-    //     return [null, ctx];
-    // }),
+  //     drawTurtle(position, position, rotation % 4, ctx);
+  //     ctx.setProtectedData("rotation", rotation);
 
-    // new NativeFunction("TurnLeft", async (interpreter, ctx, args) => {
-    //     await delay()
-    //     const position: [number, number, number] = ctx.getProtectedData("position");
-    //     var rotation: number = ctx.getProtectedData("rotation") + 1;
-    //     if (rotation > 3) rotation = 0;
-    //     if (rotation < 0) rotation = 3;
+  //     return [null, ctx];
+  // }),
 
-    //     drawTurtle(position, position, rotation % 4, ctx);
-    //     ctx.setProtectedData("rotation", rotation);
-        
-    //     return [null, ctx];
-    // }),
+  // new NativeFunction("TurnLeft", async (interpreter, ctx, args) => {
+  //     await delay()
+  //     const position: [number, number, number] = ctx.getProtectedData("position");
+  //     var rotation: number = ctx.getProtectedData("rotation") + 1;
+  //     if (rotation > 3) rotation = 0;
+  //     if (rotation < 0) rotation = 3;
 
-    // new NativeFunction("Inspect", async (interpreter, ctx, args) => {
-    //     const [...position] = ctx.getProtectedData("position");
-    //     const rotation = ctx.getProtectedData("rotation");
+  //     drawTurtle(position, position, rotation % 4, ctx);
+  //     ctx.setProtectedData("rotation", rotation);
 
-    //     if (rotation % 4 == 0) position[0] += 1;
-    //     else if (rotation % 4 == 1) position[2] -= 1;
-    //     else if (rotation % 4 == 2) position[0] -= 1;
-    //     else if (rotation % 4 == 3) position[2] += 1;
-    //     const blockPos = new BlockLocation(position[0], position[1], position[2])
+  //     return [null, ctx];
+  // }),
 
-    //     const blockId = overworld.getBlock(blockPos).typeId;
-    //     return interpreter.primitiveString({ value: `${blockId}` }, ctx)
-    // }),
+  // new NativeFunction("Inspect", async (interpreter, ctx, args) => {
+  //     const [...position] = ctx.getProtectedData("position");
+  //     const rotation = ctx.getProtectedData("rotation");
 
-    // new NativeFunction("InspectDown", async (interpreter, ctx, args) => {
-    //     const position: [number, number, number] = ctx.getProtectedData("position");
-    //     const blockLocation = new BlockLocation(position[0], position[1] - 1, position[2]);
+  //     if (rotation % 4 == 0) position[0] += 1;
+  //     else if (rotation % 4 == 1) position[2] -= 1;
+  //     else if (rotation % 4 == 2) position[0] -= 1;
+  //     else if (rotation % 4 == 3) position[2] += 1;
+  //     const blockPos = new BlockLocation(position[0], position[1], position[2])
 
-    //     const blockId = overworld.getBlock(blockLocation).typeId;
-    //     return interpreter.primitiveString({ value: `${blockId}` }, ctx)
-    // }),
+  //     const blockId = overworld.getBlock(blockPos).typeId;
+  //     return interpreter.primitiveString({ value: `${blockId}` }, ctx)
+  // }),
 
-    // new NativeFunction("InspectUp", async (interpreter, ctx, args) => {
-    //     const position: [number, number, number] = ctx.getProtectedData("position");
-    //     const blockLocation = new BlockLocation(position[0], position[1] + 1, position[2]);
+  // new NativeFunction("InspectDown", async (interpreter, ctx, args) => {
+  //     const position: [number, number, number] = ctx.getProtectedData("position");
+  //     const blockLocation = new BlockLocation(position[0], position[1] - 1, position[2]);
 
-    //     const blockId = overworld.getBlock(blockLocation).typeId;
-    //     return interpreter.primitiveString({ value: `${blockId}` }, ctx)
-    // }),
+  //     const blockId = overworld.getBlock(blockLocation).typeId;
+  //     return interpreter.primitiveString({ value: `${blockId}` }, ctx)
+  // }),
 
-    // new NativeFunction("Dig", async (interpreter, ctx, args) => {
-    //     const [...position] = ctx.getProtectedData("position");
-    //     const rotation = ctx.getProtectedData("rotation");
+  // new NativeFunction("InspectUp", async (interpreter, ctx, args) => {
+  //     const position: [number, number, number] = ctx.getProtectedData("position");
+  //     const blockLocation = new BlockLocation(position[0], position[1] + 1, position[2]);
 
-    //     if (rotation % 4 == 0) position[0] += 1;
-    //     else if (rotation % 4 == 1) position[2] -= 1;
-    //     else if (rotation % 4 == 2) position[0] -= 1;
-    //     else if (rotation % 4 == 3) position[2] += 1;
-    //     const blockPos = new BlockLocation(position[0], position[1], position[2])
+  //     const blockId = overworld.getBlock(blockLocation).typeId;
+  //     return interpreter.primitiveString({ value: `${blockId}` }, ctx)
+  // }),
 
-    //     await delay()
-    //     await overworld.runCommandAsync(`setblock ${position[0]} ${position[1]} ${position[2]} air 0 destroy`)
-    //     const inventory = (ctx.getProtectedData("entity") as Entity).getComponent("minecraft:inventory") as EntityInventoryComponent;
-    //     pickUpBlock(blockPos, inventory)
+  // new NativeFunction("Dig", async (interpreter, ctx, args) => {
+  //     const [...position] = ctx.getProtectedData("position");
+  //     const rotation = ctx.getProtectedData("rotation");
 
-    //     return [null, ctx]
-    // }),
+  //     if (rotation % 4 == 0) position[0] += 1;
+  //     else if (rotation % 4 == 1) position[2] -= 1;
+  //     else if (rotation % 4 == 2) position[0] -= 1;
+  //     else if (rotation % 4 == 3) position[2] += 1;
+  //     const blockPos = new BlockLocation(position[0], position[1], position[2])
 
-    // new NativeFunction("DigUp", async (interpreter, ctx, args) => {
-    //     const [...position] = ctx.getProtectedData("position");
-    //     const blockPos = new BlockLocation(position[0], position[1] + 1, position[2])
+  //     await delay()
+  //     await overworld.runCommandAsync(`setblock ${position[0]} ${position[1]} ${position[2]} air 0 destroy`)
+  //     const inventory = (ctx.getProtectedData("entity") as Entity).getComponent("minecraft:inventory") as EntityInventoryComponent;
+  //     pickUpBlock(blockPos, inventory)
 
-    //     await delay()
-    //     await overworld.runCommandAsync(`setblock ${position[0]} ${position[1] + 1} ${position[2]} air 0 destroy`)
-    //     const inventory = (ctx.getProtectedData("entity") as Entity).getComponent("minecraft:inventory") as EntityInventoryComponent;
-    //     pickUpBlock(blockPos, inventory)
+  //     return [null, ctx]
+  // }),
 
-    //     return [null, ctx]
-    // }),
+  // new NativeFunction("DigUp", async (interpreter, ctx, args) => {
+  //     const [...position] = ctx.getProtectedData("position");
+  //     const blockPos = new BlockLocation(position[0], position[1] + 1, position[2])
 
-    // new NativeFunction("DigDown", async (interpreter, ctx, args) => {
-    //     const [...position] = ctx.getProtectedData("position");
-    //     const blockPos = new BlockLocation(position[0], position[1] - 1, position[2])
+  //     await delay()
+  //     await overworld.runCommandAsync(`setblock ${position[0]} ${position[1] + 1} ${position[2]} air 0 destroy`)
+  //     const inventory = (ctx.getProtectedData("entity") as Entity).getComponent("minecraft:inventory") as EntityInventoryComponent;
+  //     pickUpBlock(blockPos, inventory)
 
-    //     await delay()
-    //     await overworld.runCommandAsync(`setblock ${position[0]} ${position[1] - 1} ${position[2]} air 0 destroy`)
-    //     const inventory = (ctx.getProtectedData("entity") as Entity).getComponent("minecraft:inventory") as EntityInventoryComponent;
-    //     pickUpBlock(blockPos, inventory)
+  //     return [null, ctx]
+  // }),
 
-    //     return [null, ctx]
-    // }),
-])
+  // new NativeFunction("DigDown", async (interpreter, ctx, args) => {
+  //     const [...position] = ctx.getProtectedData("position");
+  //     const blockPos = new BlockLocation(position[0], position[1] - 1, position[2])
+
+  //     await delay()
+  //     await overworld.runCommandAsync(`setblock ${position[0]} ${position[1] - 1} ${position[2]} air 0 destroy`)
+  //     const inventory = (ctx.getProtectedData("entity") as Entity).getComponent("minecraft:inventory") as EntityInventoryComponent;
+  //     pickUpBlock(blockPos, inventory)
+
+  //     return [null, ctx]
+  // }),
+]);

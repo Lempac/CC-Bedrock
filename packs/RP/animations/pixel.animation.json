@@ -1,17 +1,25 @@
 {
-	"format_version": "1.8.0",
-	"animations": {
-		"animation.pixel.position": {
-			"loop": true,
-			"animation_length": 2.58333,
-			"bones": {
-				"pos_bone": {
-					"position": ["query.property('coslang:x')", "query.property('coslang:y')", 0]
-				},
-				"size_bone": {
-					"scale": ["query.property('coslang:x_size')", "query.property('coslang:y_size')", 1]
-				}
-			}
-		}
-	}
+  "format_version": "1.8.0",
+  "animations": {
+    "animation.pixel.position": {
+      "loop": true,
+      "animation_length": 2.58333,
+      "bones": {
+        "pos_bone": {
+          "position": [
+            "query.property('coslang:x')",
+            "query.property('coslang:y')",
+            0
+          ]
+        },
+        "size_bone": {
+          "scale": [
+            "query.property('coslang:x_size')",
+            "query.property('coslang:y_size')",
+            1
+          ]
+        }
+      }
+    }
+  }
 }

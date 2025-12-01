@@ -1,4 +1,4 @@
 [submodule "packs/data/src/cosmic"]
 	path = packs/data/src/cosmic
-	url = https://github.com/FrederoxDev/Cosmic.git
+	url = git@lempac:Lempac/Cosmic.git
 	branch = master

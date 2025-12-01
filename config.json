@@ -1,32 +1,32 @@
 {
-	"$schema": "https://raw.githubusercontent.com/Bedrock-OSS/regolith-schemas/main/config/v1.4.json",
-	"author": "FrederoxDev",
-	"name": "CC-Bedrock",
-	"packs": {
-		"behaviorPack": "./packs/BP",
-		"resourcePack": "./packs/RP"
-	},
-	"regolith": {
-		"dataPath": "./packs/data",
-		"filterDefinitions": {
-			"build_ts": {
-				"script": "./packs/data/esbuild.ts",
-				"runWith": "deno"
-			}
-		},
-		"formatVersion": "1.4.0",
-		"profiles": {
-			"default": {
-				"export": {
-					"build": "standard",
-					"readOnly": false,
-					"target": "development"
-				},
+  "$schema": "https://raw.githubusercontent.com/Bedrock-OSS/regolith-schemas/main/config/v1.4.json",
+  "author": "FrederoxDev",
+  "name": "CC-Bedrock",
+  "packs": {
+    "behaviorPack": "./packs/BP",
+    "resourcePack": "./packs/RP"
+  },
+  "regolith": {
+    "dataPath": "./packs/data",
+    "filterDefinitions": {
+      "build_ts": {
+        "script": "./packs/data/esbuild.ts",
+        "runWith": "deno"
+      }
+    },
+    "formatVersion": "1.4.0",
+    "profiles": {
+      "default": {
+        "export": {
+          "build": "standard",
+          "readOnly": false,
+          "target": "development"
+        },
 
-				"filters": [{
-					"filter": "build_ts"
-				}]
-			}
-		}
-	}
+        "filters": [{
+          "filter": "build_ts"
+        }]
+      }
+    }
+  }
 }

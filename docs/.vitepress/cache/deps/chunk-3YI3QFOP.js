@@ -1,10 +1,9 @@
 import {
-  Fragment,
-  TransitionGroup,
   computed,
   customRef,
   defineComponent,
   effectScope,
+  Fragment,
   getCurrentInstance,
   getCurrentScope,
   h,
@@ -32,10 +31,11 @@ import {
   toRef,
   toRefs,
   toValue,
+  TransitionGroup,
   unref,
   watch,
-  watchEffect
-} from "./chunk-BJU2P6EG.js";
+  watchEffect,
+} from "./chunk-TYP2FUWK.js";
 
 // node_modules/.deno/@vueuse+shared@12.8.2/node_modules/@vueuse/shared/index.mjs
 function computedEager(fn, options) {
@@ -45,7 +45,9 @@ function computedEager(fn, options) {
     result.value = fn();
   }, {
     ...options,
-    flush: (_a = options == null ? void 0 : options.flush) != null ? _a : "sync"
+    flush: (_a = options == null ? void 0 : options.flush) != null
+      ? _a
+      : "sync",
   });
   return readonly(result);
 }
@@ -75,11 +77,12 @@ function computedWithControl(source, fn) {
       },
       set(v2) {
         set2 == null ? void 0 : set2(v2);
-      }
+      },
     };
   });
-  if (Object.isExtensible(result))
+  if (Object.isExtensible(result)) {
     result.trigger = update;
+  }
   return result;
 }
 function tryOnScopeDispose(fn) {
@@ -102,7 +105,7 @@ function createEventHook() {
     const offFn = () => off(fn);
     tryOnScopeDispose(offFn);
     return {
-      off: offFn
+      off: offFn,
     };
   };
   const trigger = (...args) => {
@@ -112,7 +115,7 @@ function createEventHook() {
     on,
     off,
     trigger,
-    clear
+    clear,
   };
 }
 function createGlobalState(stateFactory) {
@@ -132,25 +135,33 @@ var injectLocal = (...args) => {
   var _a;
   const key = args[0];
   const instance = (_a = getCurrentInstance()) == null ? void 0 : _a.proxy;
-  if (instance == null && !hasInjectionContext())
+  if (instance == null && !hasInjectionContext()) {
     throw new Error("injectLocal must be called in setup");
-  if (instance && localProvidedStateMap.has(instance) && key in localProvidedStateMap.get(instance))
+  }
+  if (
+    instance && localProvidedStateMap.has(instance) &&
+    key in localProvidedStateMap.get(instance)
+  ) {
     return localProvidedStateMap.get(instance)[key];
+  }
   return inject(...args);
 };
 var provideLocal = (key, value) => {
   var _a;
   const instance = (_a = getCurrentInstance()) == null ? void 0 : _a.proxy;
-  if (instance == null)
+  if (instance == null) {
     throw new Error("provideLocal must be called in setup");
-  if (!localProvidedStateMap.has(instance))
+  }
+  if (!localProvidedStateMap.has(instance)) {
     localProvidedStateMap.set(instance, /* @__PURE__ */ Object.create(null));
+  }
   const localProvidedState = localProvidedStateMap.get(instance);
   localProvidedState[key] = value;
   provide(key, value);
 };
 function createInjectionState(composable, options) {
-  const key = (options == null ? void 0 : options.injectionKey) || Symbol(composable.name || "InjectionState");
+  const key = (options == null ? void 0 : options.injectionKey) ||
+    Symbol(composable.name || "InjectionState");
   const defaultValue = options == null ? void 0 : options.defaultValue;
   const useProvidingState = (...args) => {
     const state = composable(...args);
@@ -191,8 +202,9 @@ function createSharedComposable(composable) {
 }
 function extendRef(ref2, extend, { enumerable = false, unwrap = true } = {}) {
   for (const [key, value] of Object.entries(extend)) {
-    if (key === "value")
+    if (key === "value") {
       continue;
+    }
     if (isRef(value) && unwrap) {
       Object.defineProperty(ref2, key, {
         get() {
@@ -201,7 +213,7 @@ function extendRef(ref2, extend, { enumerable = false, unwrap = true } = {}) {
         set(v) {
           value.value = v;
         },
-        enumerable
+        enumerable,
       });
     } else {
       Object.defineProperty(ref2, key, { value, enumerable });
@@ -210,8 +222,9 @@ function extendRef(ref2, extend, { enumerable = false, unwrap = true } = {}) {
   return ref2;
 }
 function get(obj, key) {
-  if (key == null)
+  if (key == null) {
     return unref(obj);
+  }
   return unref(obj)[key];
 }
 function isDefined(v) {
@@ -227,10 +240,10 @@ function makeDestructurable(obj, arr) {
         return {
           next: () => ({
             value: arr[index++],
-            done: index > arr.length
-          })
+            done: index > arr.length,
+          }),
         };
-      }
+      },
     });
     return clone;
   } else {
@@ -238,8 +251,10 @@ function makeDestructurable(obj, arr) {
   }
 }
 function reactify(fn, options) {
-  const unrefFn = (options == null ? void 0 : options.computedGetter) === false ? unref : toValue;
-  return function(...args) {
+  const unrefFn = (options == null ? void 0 : options.computedGetter) === false
+    ? unref
+    : toValue;
+  return function (...args) {
     return computed(() => fn.apply(this, args.map((i) => unrefFn(i))));
   };
 }
@@ -252,31 +267,36 @@ function reactifyObject(obj, optionsOrKeys = {}) {
     options = optionsOrKeys;
     const { includeOwnProperties = true } = optionsOrKeys;
     keys2.push(...Object.keys(obj));
-    if (includeOwnProperties)
+    if (includeOwnProperties) {
       keys2.push(...Object.getOwnPropertyNames(obj));
+    }
   }
   return Object.fromEntries(
     keys2.map((key) => {
       const value = obj[key];
       return [
         key,
-        typeof value === "function" ? reactify(value.bind(obj), options) : value
+        typeof value === "function"
+          ? reactify(value.bind(obj), options)
+          : value,
       ];
-    })
+    }),
   );
 }
 function toReactive(objectRef) {
-  if (!isRef(objectRef))
+  if (!isRef(objectRef)) {
     return reactive(objectRef);
+  }
   const proxy = new Proxy({}, {
     get(_, p, receiver) {
       return unref(Reflect.get(objectRef.value, p, receiver));
     },
     set(_, p, value) {
-      if (isRef(objectRef.value[p]) && !isRef(value))
+      if (isRef(objectRef.value[p]) && !isRef(value)) {
         objectRef.value[p].value = value;
-      else
+      } else {
         objectRef.value[p] = value;
+      }
       return true;
     },
     deleteProperty(_, p) {
@@ -291,9 +311,9 @@ function toReactive(objectRef) {
     getOwnPropertyDescriptor() {
       return {
         enumerable: true,
-        configurable: true
+        configurable: true,
       };
-    }
+    },
   });
   return reactive(proxy);
 }
@@ -303,15 +323,27 @@ function reactiveComputed(fn) {
 function reactiveOmit(obj, ...keys2) {
   const flatKeys = keys2.flat();
   const predicate = flatKeys[0];
-  return reactiveComputed(() => typeof predicate === "function" ? Object.fromEntries(Object.entries(toRefs(obj)).filter(([k, v]) => !predicate(toValue(v), k))) : Object.fromEntries(Object.entries(toRefs(obj)).filter((e) => !flatKeys.includes(e[0]))));
+  return reactiveComputed(() =>
+    typeof predicate === "function"
+      ? Object.fromEntries(
+        Object.entries(toRefs(obj)).filter(([k, v]) =>
+          !predicate(toValue(v), k)
+        ),
+      )
+      : Object.fromEntries(
+        Object.entries(toRefs(obj)).filter((e) => !flatKeys.includes(e[0])),
+      )
+  );
 }
 var isClient = typeof window !== "undefined" && typeof document !== "undefined";
-var isWorker = typeof WorkerGlobalScope !== "undefined" && globalThis instanceof WorkerGlobalScope;
+var isWorker = typeof WorkerGlobalScope !== "undefined" &&
+  globalThis instanceof WorkerGlobalScope;
 var isDef = (val) => typeof val !== "undefined";
 var notNullish = (val) => val != null;
 var assert = (condition, ...infos) => {
-  if (!condition)
+  if (!condition) {
     console.warn(...infos);
+  }
 };
 var toString = Object.prototype.toString;
 var isObject = (val) => toString.call(val) === "[object Object]";
@@ -329,12 +361,24 @@ var hasOwn = (val, key) => Object.prototype.hasOwnProperty.call(val, key);
 var isIOS = getIsIOS();
 function getIsIOS() {
   var _a, _b;
-  return isClient && ((_a = window == null ? void 0 : window.navigator) == null ? void 0 : _a.userAgent) && (/iP(?:ad|hone|od)/.test(window.navigator.userAgent) || ((_b = window == null ? void 0 : window.navigator) == null ? void 0 : _b.maxTouchPoints) > 2 && /iPad|Macintosh/.test(window == null ? void 0 : window.navigator.userAgent));
+  return isClient &&
+    ((_a = window == null ? void 0 : window.navigator) == null
+      ? void 0
+      : _a.userAgent) &&
+    (/iP(?:ad|hone|od)/.test(window.navigator.userAgent) ||
+      ((_b = window == null ? void 0 : window.navigator) == null
+              ? void 0
+              : _b.maxTouchPoints) > 2 &&
+        /iPad|Macintosh/.test(
+          window == null ? void 0 : window.navigator.userAgent,
+        ));
 }
 function createFilterWrapper(filter, fn) {
   function wrapper(...args) {
     return new Promise((resolve, reject) => {
-      Promise.resolve(filter(() => fn.apply(this, args), { fn, thisArg: this, args })).then(resolve).catch(reject);
+      Promise.resolve(
+        filter(() => fn.apply(this, args), { fn, thisArg: this, args }),
+      ).then(resolve).catch(reject);
     });
   }
   return wrapper;
@@ -355,8 +399,9 @@ function debounceFilter(ms, options = {}) {
   const filter = (invoke2) => {
     const duration = toValue(ms);
     const maxDuration = toValue(options.maxWait);
-    if (timer)
+    if (timer) {
       _clearTimeout(timer);
+    }
     if (duration <= 0 || maxDuration !== void 0 && maxDuration <= 0) {
       if (maxTimer) {
         _clearTimeout(maxTimer);
@@ -369,15 +414,17 @@ function debounceFilter(ms, options = {}) {
       lastInvoker = invoke2;
       if (maxDuration && !maxTimer) {
         maxTimer = setTimeout(() => {
-          if (timer)
+          if (timer) {
             _clearTimeout(timer);
+          }
           maxTimer = null;
           resolve(lastInvoker());
         }, maxDuration);
       }
       timer = setTimeout(() => {
-        if (maxTimer)
+        if (maxTimer) {
           _clearTimeout(maxTimer);
+        }
         maxTimer = null;
         resolve(invoke2());
       }, duration);
@@ -395,10 +442,12 @@ function throttleFilter(...args) {
   let trailing;
   let leading;
   let rejectOnCancel;
-  if (!isRef(args[0]) && typeof args[0] === "object")
-    ({ delay: ms, trailing = true, leading = true, rejectOnCancel = false } = args[0]);
-  else
+  if (!isRef(args[0]) && typeof args[0] === "object") {
+    ({ delay: ms, trailing = true, leading = true, rejectOnCancel = false } =
+      args[0]);
+  } else {
     [ms, trailing = true, leading = true, rejectOnCancel = false] = args;
+  }
   const clear = () => {
     if (timer) {
       clearTimeout(timer);
@@ -432,8 +481,9 @@ function throttleFilter(...args) {
         }, Math.max(0, duration - elapsed));
       });
     }
-    if (!leading && !timer)
+    if (!leading && !timer) {
       timer = setTimeout(() => isLeading = true, duration);
+    }
     isLeading = false;
     return lastValue;
   };
@@ -441,7 +491,7 @@ function throttleFilter(...args) {
 }
 function pausableFilter(extendFilter = bypassFilter, options = {}) {
   const {
-    initialState = "active"
+    initialState = "active",
   } = options;
   const isActive = toRef2(initialState === "active");
   function pause() {
@@ -451,8 +501,9 @@ function pausableFilter(extendFilter = bypassFilter, options = {}) {
     isActive.value = true;
   }
   const eventFilter = (...args) => {
-    if (isActive.value)
+    if (isActive.value) {
       extendFilter(...args);
+    }
   };
   return { isActive: readonly(isActive), pause, resume, eventFilter };
 }
@@ -464,17 +515,20 @@ function cacheStringFunction(fn) {
   };
 }
 var hyphenateRE = /\B([A-Z])/g;
-var hyphenate = cacheStringFunction((str) => str.replace(hyphenateRE, "-$1").toLowerCase());
+var hyphenate = cacheStringFunction((str) =>
+  str.replace(hyphenateRE, "-$1").toLowerCase()
+);
 var camelizeRE = /-(\w)/g;
 var camelize = cacheStringFunction((str) => {
   return str.replace(camelizeRE, (_, c) => c ? c.toUpperCase() : "");
 });
 function promiseTimeout(ms, throwOnTimeout = false, reason = "Timeout") {
   return new Promise((resolve, reject) => {
-    if (throwOnTimeout)
+    if (throwOnTimeout) {
       setTimeout(() => reject(reason), ms);
-    else
+    } else {
       setTimeout(resolve, ms);
+    }
   });
 }
 function identity(arg) {
@@ -483,15 +537,17 @@ function identity(arg) {
 function createSingletonPromise(fn) {
   let _promise;
   function wrapper() {
-    if (!_promise)
+    if (!_promise) {
       _promise = fn();
+    }
     return _promise;
   }
   wrapper.reset = async () => {
     const _prev = _promise;
     _promise = void 0;
-    if (_prev)
+    if (_prev) {
       await _prev;
+    }
   };
   return wrapper;
 }
@@ -503,31 +559,39 @@ function containsProp(obj, ...props) {
 }
 function increaseWithUnit(target, delta) {
   var _a;
-  if (typeof target === "number")
+  if (typeof target === "number") {
     return target + delta;
-  const value = ((_a = target.match(/^-?\d+\.?\d*/)) == null ? void 0 : _a[0]) || "";
+  }
+  const value =
+    ((_a = target.match(/^-?\d+\.?\d*/)) == null ? void 0 : _a[0]) || "";
   const unit = target.slice(value.length);
   const result = Number.parseFloat(value) + delta;
-  if (Number.isNaN(result))
+  if (Number.isNaN(result)) {
     return target;
+  }
   return result + unit;
 }
 function pxValue(px) {
-  return px.endsWith("rem") ? Number.parseFloat(px) * 16 : Number.parseFloat(px);
+  return px.endsWith("rem")
+    ? Number.parseFloat(px) * 16
+    : Number.parseFloat(px);
 }
 function objectPick(obj, keys2, omitUndefined = false) {
   return keys2.reduce((n, k) => {
     if (k in obj) {
-      if (!omitUndefined || obj[k] !== void 0)
+      if (!omitUndefined || obj[k] !== void 0) {
         n[k] = obj[k];
+      }
     }
     return n;
   }, {});
 }
 function objectOmit(obj, keys2, omitUndefined = false) {
-  return Object.fromEntries(Object.entries(obj).filter(([key, value]) => {
-    return (!omitUndefined || value !== void 0) && !keys2.includes(key);
-  }));
+  return Object.fromEntries(
+    Object.entries(obj).filter(([key, value]) => {
+      return (!omitUndefined || value !== void 0) && !keys2.includes(key);
+    }),
+  );
 }
 function objectEntries(obj) {
   return Object.entries(obj);
@@ -539,25 +603,37 @@ function toArray(value) {
   return Array.isArray(value) ? value : [value];
 }
 function toRef2(...args) {
-  if (args.length !== 1)
+  if (args.length !== 1) {
     return toRef(...args);
+  }
   const r = args[0];
-  return typeof r === "function" ? readonly(customRef(() => ({ get: r, set: noop }))) : ref(r);
+  return typeof r === "function"
+    ? readonly(customRef(() => ({ get: r, set: noop })))
+    : ref(r);
 }
 var resolveRef = toRef2;
 function reactivePick(obj, ...keys2) {
   const flatKeys = keys2.flat();
   const predicate = flatKeys[0];
-  return reactiveComputed(() => typeof predicate === "function" ? Object.fromEntries(Object.entries(toRefs(obj)).filter(([k, v]) => predicate(toValue(v), k))) : Object.fromEntries(flatKeys.map((k) => [k, toRef2(obj, k)])));
+  return reactiveComputed(() =>
+    typeof predicate === "function"
+      ? Object.fromEntries(
+        Object.entries(toRefs(obj)).filter(([k, v]) =>
+          predicate(toValue(v), k)
+        ),
+      )
+      : Object.fromEntries(flatKeys.map((k) => [k, toRef2(obj, k)]))
+  );
 }
 function refAutoReset(defaultValue, afterMs = 1e4) {
   return customRef((track, trigger) => {
     let value = toValue(defaultValue);
     let timer;
-    const resetAfter = () => setTimeout(() => {
-      value = toValue(defaultValue);
-      trigger();
-    }, toValue(afterMs));
+    const resetAfter = () =>
+      setTimeout(() => {
+        value = toValue(defaultValue);
+        trigger();
+      }, toValue(afterMs));
     tryOnScopeDispose(() => {
       clearTimeout(timer);
     });
@@ -571,21 +647,25 @@ function refAutoReset(defaultValue, afterMs = 1e4) {
         trigger();
         clearTimeout(timer);
         timer = resetAfter();
-      }
+      },
     };
   });
 }
 function useDebounceFn(fn, ms = 200, options = {}) {
   return createFilterWrapper(
     debounceFilter(ms, options),
-    fn
+    fn,
   );
 }
 function refDebounced(value, ms = 200, options = {}) {
   const debounced = ref(value.value);
-  const updater = useDebounceFn(() => {
-    debounced.value = value.value;
-  }, ms, options);
+  const updater = useDebounceFn(
+    () => {
+      debounced.value = value.value;
+    },
+    ms,
+    options,
+  );
   watch(value, () => updater());
   return debounced;
 }
@@ -597,22 +677,34 @@ function refDefault(source, defaultValue) {
     },
     set(value) {
       source.value = value;
-    }
+    },
   });
 }
-function useThrottleFn(fn, ms = 200, trailing = false, leading = true, rejectOnCancel = false) {
+function useThrottleFn(
+  fn,
+  ms = 200,
+  trailing = false,
+  leading = true,
+  rejectOnCancel = false,
+) {
   return createFilterWrapper(
     throttleFilter(ms, trailing, leading, rejectOnCancel),
-    fn
+    fn,
   );
 }
 function refThrottled(value, delay = 200, trailing = true, leading = true) {
-  if (delay <= 0)
+  if (delay <= 0) {
     return value;
+  }
   const throttled = ref(value.value);
-  const updater = useThrottleFn(() => {
-    throttled.value = value.value;
-  }, delay, trailing, leading);
+  const updater = useThrottleFn(
+    () => {
+      throttled.value = value.value;
+    },
+    delay,
+    trailing,
+    leading,
+  );
   watch(value, () => updater());
   return throttled;
 }
@@ -629,25 +721,33 @@ function refWithControl(initial, options = {}) {
       },
       set(v) {
         set2(v);
-      }
+      },
     };
   });
   function get2(tracking = true) {
-    if (tracking)
+    if (tracking) {
       track();
+    }
     return source;
   }
   function set2(value, triggering = true) {
     var _a, _b;
-    if (value === source)
+    if (value === source) {
       return;
+    }
     const old = source;
-    if (((_a = options.onBeforeChange) == null ? void 0 : _a.call(options, value, old)) === false)
+    if (
+      ((_a = options.onBeforeChange) == null
+        ? void 0
+        : _a.call(options, value, old)) === false
+    ) {
       return;
+    }
     source = value;
     (_b = options.onChanged) == null ? void 0 : _b.call(options, value, old);
-    if (triggering)
+    if (triggering) {
       trigger();
+    }
   }
   const untrackedGet = () => get2(false);
   const silentSet = (v) => set2(v, false);
@@ -661,9 +761,9 @@ function refWithControl(initial, options = {}) {
       untrackedGet,
       silentSet,
       peek,
-      lay
+      lay,
     },
-    { enumerable: true }
+    { enumerable: true },
   );
 }
 var controlledRef = refWithControl;
@@ -686,9 +786,9 @@ function watchWithFilter(source, cb, options = {}) {
     source,
     createFilterWrapper(
       eventFilter,
-      cb
+      cb,
     ),
-    watchOptions
+    watchOptions,
   );
 }
 function watchPausable(source, cb, options = {}) {
@@ -697,14 +797,16 @@ function watchPausable(source, cb, options = {}) {
     initialState = "active",
     ...watchOptions
   } = options;
-  const { eventFilter, pause, resume, isActive } = pausableFilter(filter, { initialState });
+  const { eventFilter, pause, resume, isActive } = pausableFilter(filter, {
+    initialState,
+  });
   const stop = watchWithFilter(
     source,
     cb,
     {
       ...watchOptions,
-      eventFilter
-    }
+      eventFilter,
+    },
   );
   return { stop, pause, resume, isActive };
 }
@@ -714,7 +816,7 @@ function syncRef(left, right, ...[options]) {
     deep = false,
     immediate = true,
     direction = "both",
-    transform = {}
+    transform = {},
   } = options || {};
   const watchers = [];
   const transformLTR = "ltr" in transform && transform.ltr || ((v) => v);
@@ -727,7 +829,7 @@ function syncRef(left, right, ...[options]) {
         right.value = transformLTR(newValue);
         watchers.forEach((w) => w.resume());
       },
-      { flush, deep, immediate }
+      { flush, deep, immediate },
     ));
   }
   if (direction === "both" || direction === "rtl") {
@@ -738,7 +840,7 @@ function syncRef(left, right, ...[options]) {
         left.value = transformRTL(newValue);
         watchers.forEach((w) => w.resume());
       },
-      { flush, deep, immediate }
+      { flush, deep, immediate },
     ));
   }
   const stop = () => {
@@ -750,19 +852,22 @@ function syncRefs(source, targets, options = {}) {
   const {
     flush = "sync",
     deep = false,
-    immediate = true
+    immediate = true,
   } = options;
   const targetsArray = toArray(targets);
   return watch(
     source,
     (newValue) => targetsArray.forEach((target) => target.value = newValue),
-    { flush, deep, immediate }
+    { flush, deep, immediate },
   );
 }
 function toRefs2(objectRef, options = {}) {
-  if (!isRef(objectRef))
+  if (!isRef(objectRef)) {
     return toRefs(objectRef);
-  const result = Array.isArray(objectRef.value) ? Array.from({ length: objectRef.value.length }) : {};
+  }
+  const result = Array.isArray(objectRef.value)
+    ? Array.from({ length: objectRef.value.length })
+    : {};
   for (const key in objectRef.value) {
     result[key] = customRef(() => ({
       get() {
@@ -770,7 +875,9 @@ function toRefs2(objectRef, options = {}) {
       },
       set(v) {
         var _a;
-        const replaceRef = (_a = toValue(options.replaceRef)) != null ? _a : true;
+        const replaceRef = (_a = toValue(options.replaceRef)) != null
+          ? _a
+          : true;
         if (replaceRef) {
           if (Array.isArray(objectRef.value)) {
             const copy = [...objectRef.value];
@@ -778,13 +885,16 @@ function toRefs2(objectRef, options = {}) {
             objectRef.value = copy;
           } else {
             const newObject = { ...objectRef.value, [key]: v };
-            Object.setPrototypeOf(newObject, Object.getPrototypeOf(objectRef.value));
+            Object.setPrototypeOf(
+              newObject,
+              Object.getPrototypeOf(objectRef.value),
+            );
             objectRef.value = newObject;
           }
         } else {
           objectRef.value[key] = v;
         }
-      }
+      },
     }));
   }
   return result;
@@ -793,93 +903,108 @@ var toValue2 = toValue;
 var resolveUnref = toValue;
 function tryOnBeforeMount(fn, sync = true, target) {
   const instance = getLifeCycleTarget(target);
-  if (instance)
+  if (instance) {
     onBeforeMount(fn, target);
-  else if (sync)
+  } else if (sync) {
     fn();
-  else
+  } else {
     nextTick(fn);
+  }
 }
 function tryOnBeforeUnmount(fn, target) {
   const instance = getLifeCycleTarget(target);
-  if (instance)
+  if (instance) {
     onBeforeUnmount(fn, target);
+  }
 }
 function tryOnMounted(fn, sync = true, target) {
   const instance = getLifeCycleTarget();
-  if (instance)
+  if (instance) {
     onMounted(fn, target);
-  else if (sync)
+  } else if (sync) {
     fn();
-  else
+  } else {
     nextTick(fn);
+  }
 }
 function tryOnUnmounted(fn, target) {
   const instance = getLifeCycleTarget(target);
-  if (instance)
+  if (instance) {
     onUnmounted(fn, target);
+  }
 }
 function createUntil(r, isNot = false) {
-  function toMatch(condition, { flush = "sync", deep = false, timeout, throwOnTimeout } = {}) {
+  function toMatch(
+    condition,
+    { flush = "sync", deep = false, timeout, throwOnTimeout } = {},
+  ) {
     let stop = null;
     const watcher = new Promise((resolve) => {
       stop = watch(
         r,
         (v) => {
           if (condition(v) !== isNot) {
-            if (stop)
+            if (stop) {
               stop();
-            else
+            } else {
               nextTick(() => stop == null ? void 0 : stop());
+            }
             resolve(v);
           }
         },
         {
           flush,
           deep,
-          immediate: true
-        }
+          immediate: true,
+        },
       );
     });
     const promises = [watcher];
     if (timeout != null) {
       promises.push(
-        promiseTimeout(timeout, throwOnTimeout).then(() => toValue(r)).finally(() => stop == null ? void 0 : stop())
+        promiseTimeout(timeout, throwOnTimeout).then(() => toValue(r)).finally(
+          () => stop == null ? void 0 : stop(),
+        ),
       );
     }
     return Promise.race(promises);
   }
   function toBe(value, options) {
-    if (!isRef(value))
+    if (!isRef(value)) {
       return toMatch((v) => v === value, options);
-    const { flush = "sync", deep = false, timeout, throwOnTimeout } = options != null ? options : {};
+    }
+    const { flush = "sync", deep = false, timeout, throwOnTimeout } =
+      options != null ? options : {};
     let stop = null;
     const watcher = new Promise((resolve) => {
       stop = watch(
         [r, value],
         ([v1, v2]) => {
           if (isNot !== (v1 === v2)) {
-            if (stop)
+            if (stop) {
               stop();
-            else
+            } else {
               nextTick(() => stop == null ? void 0 : stop());
+            }
             resolve(v1);
           }
         },
         {
           flush,
           deep,
-          immediate: true
-        }
+          immediate: true,
+        },
       );
     });
     const promises = [watcher];
     if (timeout != null) {
       promises.push(
-        promiseTimeout(timeout, throwOnTimeout).then(() => toValue(r)).finally(() => {
-          stop == null ? void 0 : stop();
-          return toValue(r);
-        })
+        promiseTimeout(timeout, throwOnTimeout).then(() => toValue(r)).finally(
+          () => {
+            stop == null ? void 0 : stop();
+            return toValue(r);
+          },
+        ),
       );
     }
     return Promise.race(promises);
@@ -920,7 +1045,7 @@ function createUntil(r, isNot = false) {
       changedTimes,
       get not() {
         return createUntil(r, !isNot);
-      }
+      },
     };
     return instance;
   } else {
@@ -935,7 +1060,7 @@ function createUntil(r, isNot = false) {
       changedTimes,
       get not() {
         return createUntil(r, !isNot);
-      }
+      },
     };
     return instance;
   }
@@ -952,46 +1077,76 @@ function useArrayDifference(...args) {
   const values = args[1];
   let compareFn = (_a = args[2]) != null ? _a : defaultComparator;
   const {
-    symmetric = false
+    symmetric = false,
   } = (_b = args[3]) != null ? _b : {};
   if (typeof compareFn === "string") {
     const key = compareFn;
     compareFn = (value, othVal) => value[key] === othVal[key];
   }
-  const diff1 = computed(() => toValue(list).filter((x) => toValue(values).findIndex((y) => compareFn(x, y)) === -1));
+  const diff1 = computed(() =>
+    toValue(list).filter((x) =>
+      toValue(values).findIndex((y) => compareFn(x, y)) === -1
+    )
+  );
   if (symmetric) {
-    const diff2 = computed(() => toValue(values).filter((x) => toValue(list).findIndex((y) => compareFn(x, y)) === -1));
-    return computed(() => symmetric ? [...toValue(diff1), ...toValue(diff2)] : toValue(diff1));
+    const diff2 = computed(() =>
+      toValue(values).filter((x) =>
+        toValue(list).findIndex((y) => compareFn(x, y)) === -1
+      )
+    );
+    return computed(() =>
+      symmetric ? [...toValue(diff1), ...toValue(diff2)] : toValue(diff1)
+    );
   } else {
     return diff1;
   }
 }
 function useArrayEvery(list, fn) {
-  return computed(() => toValue(list).every((element, index, array) => fn(toValue(element), index, array)));
+  return computed(() =>
+    toValue(list).every((element, index, array) =>
+      fn(toValue(element), index, array)
+    )
+  );
 }
 function useArrayFilter(list, fn) {
   return computed(() => toValue(list).map((i) => toValue(i)).filter(fn));
 }
 function useArrayFind(list, fn) {
-  return computed(() => toValue(
-    toValue(list).find((element, index, array) => fn(toValue(element), index, array))
-  ));
+  return computed(() =>
+    toValue(
+      toValue(list).find((element, index, array) =>
+        fn(toValue(element), index, array)
+      ),
+    )
+  );
 }
 function useArrayFindIndex(list, fn) {
-  return computed(() => toValue(list).findIndex((element, index, array) => fn(toValue(element), index, array)));
+  return computed(() =>
+    toValue(list).findIndex((element, index, array) =>
+      fn(toValue(element), index, array)
+    )
+  );
 }
 function findLast(arr, cb) {
   let index = arr.length;
   while (index-- > 0) {
-    if (cb(arr[index], index, arr))
+    if (cb(arr[index], index, arr)) {
       return arr[index];
+    }
   }
   return void 0;
 }
 function useArrayFindLast(list, fn) {
-  return computed(() => toValue(
-    !Array.prototype.findLast ? findLast(toValue(list), (element, index, array) => fn(toValue(element), index, array)) : toValue(list).findLast((element, index, array) => fn(toValue(element), index, array))
-  ));
+  return computed(() =>
+    toValue(
+      !Array.prototype.findLast
+        ? findLast(toValue(list), (element, index, array) =>
+          fn(toValue(element), index, array))
+        : toValue(list).findLast((element, index, array) =>
+          fn(toValue(element), index, array)
+        ),
+    )
+  );
 }
 function isArrayIncludesOptions(obj) {
   return isObject(obj) && containsProp(obj, "formIndex", "comparator");
@@ -1010,44 +1165,65 @@ function useArrayIncludes(...args) {
     const key = comparator;
     comparator = (element, value2) => element[key] === toValue(value2);
   }
-  comparator = comparator != null ? comparator : (element, value2) => element === toValue(value2);
-  return computed(() => toValue(list).slice(formIndex).some((element, index, array) => comparator(
-    toValue(element),
-    toValue(value),
-    index,
-    toValue(array)
-  )));
+  comparator = comparator != null
+    ? comparator
+    : (element, value2) => element === toValue(value2);
+  return computed(() =>
+    toValue(list).slice(formIndex).some((element, index, array) =>
+      comparator(
+        toValue(element),
+        toValue(value),
+        index,
+        toValue(array),
+      )
+    )
+  );
 }
 function useArrayJoin(list, separator) {
-  return computed(() => toValue(list).map((i) => toValue(i)).join(toValue(separator)));
+  return computed(() =>
+    toValue(list).map((i) => toValue(i)).join(toValue(separator))
+  );
 }
 function useArrayMap(list, fn) {
   return computed(() => toValue(list).map((i) => toValue(i)).map(fn));
 }
 function useArrayReduce(list, reducer, ...args) {
-  const reduceCallback = (sum, value, index) => reducer(toValue(sum), toValue(value), index);
+  const reduceCallback = (sum, value, index) =>
+    reducer(toValue(sum), toValue(value), index);
   return computed(() => {
     const resolved = toValue(list);
-    return args.length ? resolved.reduce(reduceCallback, typeof args[0] === "function" ? toValue(args[0]()) : toValue(args[0])) : resolved.reduce(reduceCallback);
+    return args.length
+      ? resolved.reduce(
+        reduceCallback,
+        typeof args[0] === "function" ? toValue(args[0]()) : toValue(args[0]),
+      )
+      : resolved.reduce(reduceCallback);
   });
 }
 function useArraySome(list, fn) {
-  return computed(() => toValue(list).some((element, index, array) => fn(toValue(element), index, array)));
+  return computed(() =>
+    toValue(list).some((element, index, array) =>
+      fn(toValue(element), index, array)
+    )
+  );
 }
 function uniq(array) {
   return Array.from(new Set(array));
 }
 function uniqueElementsBy(array, fn) {
   return array.reduce((acc, v) => {
-    if (!acc.some((x) => fn(v, x, array)))
+    if (!acc.some((x) => fn(v, x, array))) {
       acc.push(v);
+    }
     return acc;
   }, []);
 }
 function useArrayUnique(list, compareFn) {
   return computed(() => {
     const resolvedList = toValue(list).map((element) => toValue(element));
-    return compareFn ? uniqueElementsBy(resolvedList, compareFn) : uniq(resolvedList);
+    return compareFn
+      ? uniqueElementsBy(resolvedList, compareFn)
+      : uniq(resolvedList);
   });
 }
 function useCounter(initialValue = 0, options = {}) {
@@ -1055,10 +1231,12 @@ function useCounter(initialValue = 0, options = {}) {
   const count = shallowRef(initialValue);
   const {
     max = Number.POSITIVE_INFINITY,
-    min = Number.NEGATIVE_INFINITY
+    min = Number.NEGATIVE_INFINITY,
   } = options;
-  const inc = (delta = 1) => count.value = Math.max(Math.min(max, count.value + delta), min);
-  const dec = (delta = 1) => count.value = Math.min(Math.max(min, count.value - delta), max);
+  const inc = (delta = 1) =>
+    count.value = Math.max(Math.min(max, count.value + delta), min);
+  const dec = (delta = 1) =>
+    count.value = Math.min(Math.max(min, count.value - delta), max);
   const get2 = () => count.value;
   const set2 = (val) => count.value = Math.max(min, Math.min(max, val));
   const reset = (val = _initialValue) => {
@@ -1067,12 +1245,15 @@ function useCounter(initialValue = 0, options = {}) {
   };
   return { count, inc, dec, get: get2, set: set2, reset };
 }
-var REGEX_PARSE = /^(\d{4})[-/]?(\d{1,2})?[-/]?(\d{0,2})[T\s]*(\d{1,2})?:?(\d{1,2})?:?(\d{1,2})?[.:]?(\d+)?$/i;
-var REGEX_FORMAT = /[YMDHhms]o|\[([^\]]+)\]|Y{1,4}|M{1,4}|D{1,2}|d{1,4}|H{1,2}|h{1,2}|a{1,2}|A{1,2}|m{1,2}|s{1,2}|Z{1,2}|z{1,4}|SSS/g;
+var REGEX_PARSE =
+  /^(\d{4})[-/]?(\d{1,2})?[-/]?(\d{0,2})[T\s]*(\d{1,2})?:?(\d{1,2})?:?(\d{1,2})?[.:]?(\d+)?$/i;
+var REGEX_FORMAT =
+  /[YMDHhms]o|\[([^\]]+)\]|Y{1,4}|M{1,4}|D{1,2}|d{1,4}|H{1,2}|h{1,2}|a{1,2}|A{1,2}|m{1,2}|s{1,2}|Z{1,2}|z{1,4}|SSS/g;
 function defaultMeridiem(hours, minutes, isLowercase, hasPeriod) {
   let m = hours < 12 ? "AM" : "PM";
-  if (hasPeriod)
+  if (hasPeriod) {
     m = m.split("").reduce((acc, curr) => acc += `${curr}.`, "");
+  }
   return isLowercase ? m.toLowerCase() : m;
 }
 function formatOrdinal(num) {
@@ -1102,8 +1283,10 @@ function formatDate(date, formatStr, options = {}) {
     M: () => month + 1,
     Mo: () => formatOrdinal(month + 1),
     MM: () => `${month + 1}`.padStart(2, "0"),
-    MMM: () => date.toLocaleDateString(toValue(options.locales), { month: "short" }),
-    MMMM: () => date.toLocaleDateString(toValue(options.locales), { month: "long" }),
+    MMM: () =>
+      date.toLocaleDateString(toValue(options.locales), { month: "short" }),
+    MMMM: () =>
+      date.toLocaleDateString(toValue(options.locales), { month: "long" }),
     D: () => String(days),
     Do: () => formatOrdinal(days),
     DD: () => `${days}`.padStart(2, "0"),
@@ -1121,30 +1304,62 @@ function formatDate(date, formatStr, options = {}) {
     ss: () => `${seconds}`.padStart(2, "0"),
     SSS: () => `${milliseconds}`.padStart(3, "0"),
     d: () => day,
-    dd: () => date.toLocaleDateString(toValue(options.locales), { weekday: "narrow" }),
-    ddd: () => date.toLocaleDateString(toValue(options.locales), { weekday: "short" }),
-    dddd: () => date.toLocaleDateString(toValue(options.locales), { weekday: "long" }),
+    dd: () =>
+      date.toLocaleDateString(toValue(options.locales), { weekday: "narrow" }),
+    ddd: () =>
+      date.toLocaleDateString(toValue(options.locales), { weekday: "short" }),
+    dddd: () =>
+      date.toLocaleDateString(toValue(options.locales), { weekday: "long" }),
     A: () => meridiem(hours, minutes),
     AA: () => meridiem(hours, minutes, false, true),
     a: () => meridiem(hours, minutes, true),
     aa: () => meridiem(hours, minutes, true, true),
-    z: () => stripTimeZone(date.toLocaleDateString(toValue(options.locales), { timeZoneName: "shortOffset" })),
-    zz: () => stripTimeZone(date.toLocaleDateString(toValue(options.locales), { timeZoneName: "shortOffset" })),
-    zzz: () => stripTimeZone(date.toLocaleDateString(toValue(options.locales), { timeZoneName: "shortOffset" })),
-    zzzz: () => stripTimeZone(date.toLocaleDateString(toValue(options.locales), { timeZoneName: "longOffset" }))
+    z: () =>
+      stripTimeZone(
+        date.toLocaleDateString(toValue(options.locales), {
+          timeZoneName: "shortOffset",
+        }),
+      ),
+    zz: () =>
+      stripTimeZone(
+        date.toLocaleDateString(toValue(options.locales), {
+          timeZoneName: "shortOffset",
+        }),
+      ),
+    zzz: () =>
+      stripTimeZone(
+        date.toLocaleDateString(toValue(options.locales), {
+          timeZoneName: "shortOffset",
+        }),
+      ),
+    zzzz: () =>
+      stripTimeZone(
+        date.toLocaleDateString(toValue(options.locales), {
+          timeZoneName: "longOffset",
+        }),
+      ),
   };
   return formatStr.replace(REGEX_FORMAT, (match, $1) => {
     var _a2, _b;
-    return (_b = $1 != null ? $1 : (_a2 = matches[match]) == null ? void 0 : _a2.call(matches)) != null ? _b : match;
+    return (_b = $1 != null
+        ? $1
+        : (_a2 = matches[match]) == null
+        ? void 0
+        : _a2.call(matches)) != null
+      ? _b
+      : match;
   });
 }
 function normalizeDate(date) {
-  if (date === null)
+  if (date === null) {
     return new Date(Number.NaN);
-  if (date === void 0)
+  }
+  if (date === void 0) {
     return /* @__PURE__ */ new Date();
-  if (date instanceof Date)
+  }
+  if (date instanceof Date) {
     return new Date(date);
+  }
   if (typeof date === "string" && !/Z$/i.test(date)) {
     const d = date.match(REGEX_PARSE);
     if (d) {
@@ -1156,12 +1371,14 @@ function normalizeDate(date) {
   return new Date(date);
 }
 function useDateFormat(date, formatStr = "HH:mm:ss", options = {}) {
-  return computed(() => formatDate(normalizeDate(toValue(date)), toValue(formatStr), options));
+  return computed(() =>
+    formatDate(normalizeDate(toValue(date)), toValue(formatStr), options)
+  );
 }
 function useIntervalFn(cb, interval = 1e3, options = {}) {
   const {
     immediate = true,
-    immediateCallback = false
+    immediateCallback = false,
   } = options;
   let timer = null;
   const isActive = shallowRef(false);
@@ -1177,21 +1394,26 @@ function useIntervalFn(cb, interval = 1e3, options = {}) {
   }
   function resume() {
     const intervalValue = toValue(interval);
-    if (intervalValue <= 0)
+    if (intervalValue <= 0) {
       return;
+    }
     isActive.value = true;
-    if (immediateCallback)
+    if (immediateCallback) {
       cb();
+    }
     clean();
-    if (isActive.value)
+    if (isActive.value) {
       timer = setInterval(cb, intervalValue);
+    }
   }
-  if (immediate && isClient)
+  if (immediate && isClient) {
     resume();
+  }
   if (isRef(interval) || typeof interval === "function") {
     const stopWatch = watch(interval, () => {
-      if (isActive.value && isClient)
+      if (isActive.value && isClient) {
         resume();
+      }
     });
     tryOnScopeDispose(stopWatch);
   }
@@ -1199,14 +1421,14 @@ function useIntervalFn(cb, interval = 1e3, options = {}) {
   return {
     isActive,
     pause,
-    resume
+    resume,
   };
 }
 function useInterval(interval = 1e3, options = {}) {
   const {
     controls: exposeControls = false,
     immediate = true,
-    callback
+    callback,
   } = options;
   const counter = shallowRef(0);
   const update = () => counter.value += 1;
@@ -1214,18 +1436,20 @@ function useInterval(interval = 1e3, options = {}) {
     counter.value = 0;
   };
   const controls = useIntervalFn(
-    callback ? () => {
-      update();
-      callback(counter.value);
-    } : update,
+    callback
+      ? () => {
+        update();
+        callback(counter.value);
+      }
+      : update,
     interval,
-    { immediate }
+    { immediate },
   );
   if (exposeControls) {
     return {
       counter,
       reset,
-      ...controls
+      ...controls,
     };
   } else {
     return counter;
@@ -1237,14 +1461,14 @@ function useLastChanged(source, options = {}) {
   watch(
     source,
     () => ms.value = timestamp(),
-    options
+    options,
   );
   return ms;
 }
 function useTimeoutFn(cb, interval, options = {}) {
   const {
     immediate = true,
-    immediateCallback = false
+    immediateCallback = false,
   } = options;
   const isPending = shallowRef(false);
   let timer = null;
@@ -1259,8 +1483,9 @@ function useTimeoutFn(cb, interval, options = {}) {
     clear();
   }
   function start(...args) {
-    if (immediateCallback)
+    if (immediateCallback) {
       cb();
+    }
     clear();
     isPending.value = true;
     timer = setTimeout(() => {
@@ -1271,31 +1496,32 @@ function useTimeoutFn(cb, interval, options = {}) {
   }
   if (immediate) {
     isPending.value = true;
-    if (isClient)
+    if (isClient) {
       start();
+    }
   }
   tryOnScopeDispose(stop);
   return {
     isPending: readonly(isPending),
     start,
-    stop
+    stop,
   };
 }
 function useTimeout(interval = 1e3, options = {}) {
   const {
     controls: exposeControls = false,
-    callback
+    callback,
   } = options;
   const controls = useTimeoutFn(
     callback != null ? callback : noop,
     interval,
-    options
+    options,
   );
   const ready = computed(() => !controls.isPending.value);
   if (exposeControls) {
     return {
       ready,
-      ...controls
+      ...controls,
     };
   } else {
     return ready;
@@ -1305,16 +1531,18 @@ function useToNumber(value, options = {}) {
   const {
     method = "parseFloat",
     radix,
-    nanToZero
+    nanToZero,
   } = options;
   return computed(() => {
     let resolved = toValue(value);
-    if (typeof method === "function")
+    if (typeof method === "function") {
       resolved = method(resolved);
-    else if (typeof resolved === "string")
+    } else if (typeof resolved === "string") {
       resolved = Number[method](resolved, radix);
-    if (nanToZero && Number.isNaN(resolved))
+    }
+    if (nanToZero && Number.isNaN(resolved)) {
       resolved = 0;
+    }
     return resolved;
   });
 }
@@ -1324,7 +1552,7 @@ function useToString(value) {
 function useToggle(initialValue = false, options = {}) {
   const {
     truthyValue = true,
-    falsyValue = false
+    falsyValue = false,
   } = options;
   const valueIsRef = isRef(initialValue);
   const _value = shallowRef(initialValue);
@@ -1338,13 +1566,20 @@ function useToggle(initialValue = false, options = {}) {
       return _value.value;
     }
   }
-  if (valueIsRef)
+  if (valueIsRef) {
     return toggle;
-  else
+  } else {
     return [_value, toggle];
+  }
 }
 function watchArray(source, cb, options) {
-  let oldList = (options == null ? void 0 : options.immediate) ? [] : [...typeof source === "function" ? source() : Array.isArray(source) ? source : toValue(source)];
+  let oldList = (options == null ? void 0 : options.immediate) ? [] : [
+    ...typeof source === "function"
+      ? source()
+      : Array.isArray(source)
+      ? source
+      : toValue(source),
+  ];
   return watch(source, (newList, _, onCleanup) => {
     const oldListRemains = Array.from({ length: oldList.length });
     const added = [];
@@ -1357,8 +1592,9 @@ function watchArray(source, cb, options) {
           break;
         }
       }
-      if (!found)
+      if (!found) {
         added.push(obj);
+      }
     }
     const removed = oldList.filter((_2, i) => !oldListRemains[i]);
     cb(newList, oldList, added, removed, onCleanup);
@@ -1375,11 +1611,12 @@ function watchAtMost(source, cb, options) {
     source,
     (...args) => {
       current.value += 1;
-      if (current.value >= toValue(count))
+      if (current.value >= toValue(count)) {
         nextTick(() => stop());
+      }
       cb(...args);
     },
-    watchOptions
+    watchOptions,
   );
   return { count: current, stop };
 }
@@ -1394,8 +1631,8 @@ function watchDebounced(source, cb, options = {}) {
     cb,
     {
       ...watchOptions,
-      eventFilter: debounceFilter(debounce, { maxWait })
-    }
+      eventFilter: debounceFilter(debounce, { maxWait }),
+    },
   );
 }
 function watchDeep(source, cb, options) {
@@ -1404,8 +1641,8 @@ function watchDeep(source, cb, options) {
     cb,
     {
       ...options,
-      deep: true
-    }
+      deep: true,
+    },
   );
 }
 function watchIgnorable(source, cb, options = {}) {
@@ -1415,7 +1652,7 @@ function watchIgnorable(source, cb, options = {}) {
   } = options;
   const filteredCb = createFilterWrapper(
     eventFilter,
-    cb
+    cb,
   );
   let ignoreUpdates;
   let ignorePrevAsyncUpdates;
@@ -1432,10 +1669,11 @@ function watchIgnorable(source, cb, options = {}) {
     stop = watch(
       source,
       (...args) => {
-        if (!ignore.value)
+        if (!ignore.value) {
           filteredCb(...args);
+        }
       },
-      watchOptions
+      watchOptions,
     );
   } else {
     const disposables = [];
@@ -1450,8 +1688,8 @@ function watchIgnorable(source, cb, options = {}) {
         () => {
           syncCounter.value++;
         },
-        { ...watchOptions, flush: "sync" }
-      )
+        { ...watchOptions, flush: "sync" },
+      ),
     );
     ignoreUpdates = (updater) => {
       const syncCounterPrev = syncCounter.value;
@@ -1462,15 +1700,17 @@ function watchIgnorable(source, cb, options = {}) {
       watch(
         source,
         (...args) => {
-          const ignore = ignoreCounter.value > 0 && ignoreCounter.value === syncCounter.value;
+          const ignore = ignoreCounter.value > 0 &&
+            ignoreCounter.value === syncCounter.value;
           ignoreCounter.value = 0;
           syncCounter.value = 0;
-          if (ignore)
+          if (ignore) {
             return;
+          }
           filteredCb(...args);
         },
-        watchOptions
-      )
+        watchOptions,
+      ),
     );
     stop = () => {
       disposables.forEach((fn) => fn());
@@ -1484,8 +1724,8 @@ function watchImmediate(source, cb, options) {
     cb,
     {
       ...options,
-      immediate: true
-    }
+      immediate: true,
+    },
   );
 }
 function watchOnce(source, cb, options) {
@@ -1507,15 +1747,16 @@ function watchThrottled(source, cb, options = {}) {
     cb,
     {
       ...watchOptions,
-      eventFilter: throttleFilter(throttle, trailing, leading)
-    }
+      eventFilter: throttleFilter(throttle, trailing, leading),
+    },
   );
 }
 function watchTriggerable(source, cb, options = {}) {
   let cleanupFn;
   function onEffect() {
-    if (!cleanupFn)
+    if (!cleanupFn) {
       return;
+    }
     const fn = cleanupFn;
     cleanupFn = void 0;
     fn();
@@ -1538,14 +1779,16 @@ function watchTriggerable(source, cb, options = {}) {
   };
   return {
     ...res,
-    trigger
+    trigger,
   };
 }
 function getWatchSources(sources) {
-  if (isReactive(sources))
+  if (isReactive(sources)) {
     return sources;
-  if (Array.isArray(sources))
+  }
+  if (Array.isArray(sources)) {
     return sources.map((item) => toValue(item));
+  }
   return toValue(sources);
 }
 function getOldValue(source) {
@@ -1556,15 +1799,16 @@ function whenever(source, cb, options) {
     source,
     (v, ov, onInvalidate) => {
       if (v) {
-        if (options == null ? void 0 : options.once)
+        if (options == null ? void 0 : options.once) {
           nextTick(() => stop());
+        }
         cb(v, ov, onInvalidate);
       }
     },
     {
       ...options,
-      once: false
-    }
+      once: false,
+    },
   );
   return stop;
 }
@@ -1574,7 +1818,7 @@ function computedAsync(evaluationCallback, initialState, optionsOrRef) {
   let options;
   if (isRef(optionsOrRef)) {
     options = {
-      evaluating: optionsOrRef
+      evaluating: optionsOrRef,
     };
   } else {
     options = optionsOrRef || {};
@@ -1583,14 +1827,15 @@ function computedAsync(evaluationCallback, initialState, optionsOrRef) {
     lazy = false,
     evaluating = void 0,
     shallow = true,
-    onError = noop
+    onError = noop,
   } = options;
   const started = shallowRef(!lazy);
   const current = shallow ? shallowRef(initialState) : ref(initialState);
   let counter = 0;
   watchEffect(async (onInvalidate) => {
-    if (!started.value)
+    if (!started.value) {
       return;
+    }
     counter++;
     const counterAtBeginning = counter;
     let hasFinished = false;
@@ -1602,19 +1847,23 @@ function computedAsync(evaluationCallback, initialState, optionsOrRef) {
     try {
       const result = await evaluationCallback((cancelCallback) => {
         onInvalidate(() => {
-          if (evaluating)
+          if (evaluating) {
             evaluating.value = false;
-          if (!hasFinished)
+          }
+          if (!hasFinished) {
             cancelCallback();
+          }
         });
       });
-      if (counterAtBeginning === counter)
+      if (counterAtBeginning === counter) {
         current.value = result;
+      }
     } catch (e) {
       onError(e);
     } finally {
-      if (evaluating && counterAtBeginning === counter)
+      if (evaluating && counterAtBeginning === counter) {
         evaluating.value = false;
+      }
       hasFinished = true;
     }
   });
@@ -1629,22 +1878,24 @@ function computedAsync(evaluationCallback, initialState, optionsOrRef) {
 }
 function computedInject(key, options, defaultSource, treatDefaultAsFactory) {
   let source = inject(key);
-  if (defaultSource)
+  if (defaultSource) {
     source = inject(key, defaultSource);
-  if (treatDefaultAsFactory)
+  }
+  if (treatDefaultAsFactory) {
     source = inject(key, defaultSource, treatDefaultAsFactory);
+  }
   if (typeof options === "function") {
     return computed((ctx) => options(source, ctx));
   } else {
     return computed({
       get: (ctx) => options.get(source, ctx),
-      set: options.set
+      set: options.set,
     });
   }
 }
 function createReusableTemplate(options = {}) {
   const {
-    inheritAttrs = true
+    inheritAttrs = true,
   } = options;
   const render = shallowRef();
   const define = defineComponent({
@@ -1652,7 +1903,7 @@ function createReusableTemplate(options = {}) {
       return () => {
         render.value = slots.default;
       };
-    }
+    },
   });
   const reuse = defineComponent({
     inheritAttrs,
@@ -1660,25 +1911,31 @@ function createReusableTemplate(options = {}) {
     setup(props, { attrs, slots }) {
       return () => {
         var _a;
-        if (!render.value && true)
-          throw new Error("[VueUse] Failed to find the definition of reusable template");
+        if (!render.value && true) {
+          throw new Error(
+            "[VueUse] Failed to find the definition of reusable template",
+          );
+        }
         const vnode = (_a = render.value) == null ? void 0 : _a.call(render, {
           ...options.props == null ? keysToCamelKebabCase(attrs) : props,
-          $slots: slots
+          $slots: slots,
         });
-        return inheritAttrs && (vnode == null ? void 0 : vnode.length) === 1 ? vnode[0] : vnode;
+        return inheritAttrs && (vnode == null ? void 0 : vnode.length) === 1
+          ? vnode[0]
+          : vnode;
       };
-    }
+    },
   });
   return makeDestructurable(
     { define, reuse },
-    [define, reuse]
+    [define, reuse],
   );
 }
 function keysToCamelKebabCase(obj) {
   const newObj = {};
-  for (const key in obj)
+  for (const key in obj) {
     newObj[camelize(key)] = obj[key];
+  }
   return newObj;
 }
 function createTemplatePromise(options = {}) {
@@ -1694,7 +1951,7 @@ function createTemplatePromise(options = {}) {
       reject: () => {
       },
       isResolving: false,
-      options
+      options,
     });
     instances.value.push(props);
     props.promise = new Promise((_resolve, _reject) => {
@@ -1706,30 +1963,38 @@ function createTemplatePromise(options = {}) {
     }).finally(() => {
       props.promise = void 0;
       const index2 = instances.value.indexOf(props);
-      if (index2 !== -1)
+      if (index2 !== -1) {
         instances.value.splice(index2, 1);
+      }
     });
     return props.promise;
   }
   function start(...args) {
-    if (options.singleton && instances.value.length > 0)
+    if (options.singleton && instances.value.length > 0) {
       return instances.value[0].promise;
+    }
     return create(...args);
   }
   const component = defineComponent((_, { slots }) => {
-    const renderList = () => instances.value.map((props) => {
-      var _a;
-      return h(Fragment, { key: props.key }, (_a = slots.default) == null ? void 0 : _a.call(slots, props));
-    });
-    if (options.transition)
+    const renderList = () =>
+      instances.value.map((props) => {
+        var _a;
+        return h(
+          Fragment,
+          { key: props.key },
+          (_a = slots.default) == null ? void 0 : _a.call(slots, props),
+        );
+      });
+    if (options.transition) {
       return () => h(TransitionGroup, options.transition, renderList);
+    }
     return renderList;
   });
   component.start = start;
   return component;
 }
 function createUnrefFn(fn) {
-  return function(...args) {
+  return function (...args) {
     return fn.apply(this, args.map((i) => toValue(i)));
   };
 }
@@ -1760,27 +2025,42 @@ function useEventListener(...args) {
     () => {
       var _a, _b;
       return [
-        (_b = (_a = firstParamTargets.value) == null ? void 0 : _a.map((e) => unrefElement(e))) != null ? _b : [defaultWindow].filter((e) => e != null),
+        (_b = (_a = firstParamTargets.value) == null
+            ? void 0
+            : _a.map((e) => unrefElement(e))) != null
+          ? _b
+          : [defaultWindow].filter((e) => e != null),
         toArray(toValue(firstParamTargets.value ? args[1] : args[0])),
         toArray(unref(firstParamTargets.value ? args[2] : args[1])),
         // @ts-expect-error - TypeScript gets the correct types, but somehow still complains
-        toValue(firstParamTargets.value ? args[3] : args[2])
+        toValue(firstParamTargets.value ? args[3] : args[2]),
       ];
     },
     ([raw_targets, raw_events, raw_listeners, raw_options]) => {
       cleanup();
-      if (!(raw_targets == null ? void 0 : raw_targets.length) || !(raw_events == null ? void 0 : raw_events.length) || !(raw_listeners == null ? void 0 : raw_listeners.length))
+      if (
+        !(raw_targets == null ? void 0 : raw_targets.length) ||
+        !(raw_events == null ? void 0 : raw_events.length) ||
+        !(raw_listeners == null ? void 0 : raw_listeners.length)
+      ) {
         return;
-      const optionsClone = isObject(raw_options) ? { ...raw_options } : raw_options;
+      }
+      const optionsClone = isObject(raw_options)
+        ? { ...raw_options }
+        : raw_options;
       cleanups.push(
         ...raw_targets.flatMap(
-          (el) => raw_events.flatMap(
-            (event) => raw_listeners.map((listener) => register(el, event, listener, optionsClone))
-          )
-        )
+          (el) =>
+            raw_events.flatMap(
+              (event) =>
+                raw_listeners.map((listener) =>
+                  register(el, event, listener, optionsClone)
+                ),
+            ),
+        ),
       );
     },
-    { flush: "post" }
+    { flush: "post" },
   );
   const stop = () => {
     stopWatch();
@@ -1791,21 +2071,36 @@ function useEventListener(...args) {
 }
 var _iOSWorkaround = false;
 function onClickOutside(target, handler, options = {}) {
-  const { window: window2 = defaultWindow, ignore = [], capture = true, detectIframe = false, controls = false } = options;
+  const {
+    window: window2 = defaultWindow,
+    ignore = [],
+    capture = true,
+    detectIframe = false,
+    controls = false,
+  } = options;
   if (!window2) {
     return controls ? { stop: noop, cancel: noop, trigger: noop } : noop;
   }
   if (isIOS && !_iOSWorkaround) {
     _iOSWorkaround = true;
     const listenerOptions = { passive: true };
-    Array.from(window2.document.body.children).forEach((el) => useEventListener(el, "click", noop, listenerOptions));
-    useEventListener(window2.document.documentElement, "click", noop, listenerOptions);
+    Array.from(window2.document.body.children).forEach((el) =>
+      useEventListener(el, "click", noop, listenerOptions)
+    );
+    useEventListener(
+      window2.document.documentElement,
+      "click",
+      noop,
+      listenerOptions,
+    );
   }
   let shouldListen = true;
   const shouldIgnore = (event) => {
     return toValue(ignore).some((target2) => {
       if (typeof target2 === "string") {
-        return Array.from(window2.document.querySelectorAll(target2)).some((el) => el === event.target || event.composedPath().includes(el));
+        return Array.from(window2.document.querySelectorAll(target2)).some((
+          el,
+        ) => el === event.target || event.composedPath().includes(el));
       } else {
         const el = unrefElement(target2);
         return el && (event.target === el || event.composedPath().includes(el));
@@ -1819,20 +2114,30 @@ function onClickOutside(target, handler, options = {}) {
   function checkMultipleRoots(target2, event) {
     const vm = toValue(target2);
     const children = vm.$.subTree && vm.$.subTree.children;
-    if (children == null || !Array.isArray(children))
+    if (children == null || !Array.isArray(children)) {
       return false;
-    return children.some((child) => child.el === event.target || event.composedPath().includes(child.el));
+    }
+    return children.some((child) =>
+      child.el === event.target || event.composedPath().includes(child.el)
+    );
   }
   const listener = (event) => {
     const el = unrefElement(target);
-    if (event.target == null)
+    if (event.target == null) {
       return;
-    if (!(el instanceof Element) && hasMultipleRoots(target) && checkMultipleRoots(target, event))
+    }
+    if (
+      !(el instanceof Element) && hasMultipleRoots(target) &&
+      checkMultipleRoots(target, event)
+    ) {
       return;
-    if (!el || el === event.target || event.composedPath().includes(el))
+    }
+    if (!el || el === event.target || event.composedPath().includes(el)) {
       return;
-    if ("detail" in event && event.detail === 0)
+    }
+    if ("detail" in event && event.detail === 0) {
       shouldListen = !shouldIgnore(event);
+    }
     if (!shouldListen) {
       shouldListen = true;
       return;
@@ -1852,17 +2157,23 @@ function onClickOutside(target, handler, options = {}) {
     }, { passive: true, capture }),
     useEventListener(window2, "pointerdown", (e) => {
       const el = unrefElement(target);
-      shouldListen = !shouldIgnore(e) && !!(el && !e.composedPath().includes(el));
+      shouldListen = !shouldIgnore(e) &&
+        !!(el && !e.composedPath().includes(el));
     }, { passive: true }),
     detectIframe && useEventListener(window2, "blur", (event) => {
       setTimeout(() => {
         var _a;
         const el = unrefElement(target);
-        if (((_a = window2.document.activeElement) == null ? void 0 : _a.tagName) === "IFRAME" && !(el == null ? void 0 : el.contains(window2.document.activeElement))) {
+        if (
+          ((_a = window2.document.activeElement) == null
+              ? void 0
+              : _a.tagName) === "IFRAME" &&
+          !(el == null ? void 0 : el.contains(window2.document.activeElement))
+        ) {
           handler(event);
         }
       }, 0);
-    }, { passive: true })
+    }, { passive: true }),
   ].filter(Boolean);
   const stop = () => cleanup.forEach((fn) => fn());
   if (controls) {
@@ -1875,7 +2186,7 @@ function onClickOutside(target, handler, options = {}) {
         shouldListen = true;
         listener(event);
         shouldListen = false;
-      }
+      },
     };
   }
   return stop;
@@ -1900,7 +2211,9 @@ function useSupported(callback) {
 function useMutationObserver(target, callback, options = {}) {
   const { window: window2 = defaultWindow, ...mutationOptions } = options;
   let observer;
-  const isSupported = useSupported(() => window2 && "MutationObserver" in window2);
+  const isSupported = useSupported(() =>
+    window2 && "MutationObserver" in window2
+  );
   const cleanup = () => {
     if (observer) {
       observer.disconnect();
@@ -1921,7 +2234,7 @@ function useMutationObserver(target, callback, options = {}) {
         targets2.forEach((el) => observer.observe(el, mutationOptions));
       }
     },
-    { immediate: true, flush: "post" }
+    { immediate: true, flush: "post" },
   );
   const takeRecords = () => {
     return observer == null ? void 0 : observer.takeRecords();
@@ -1934,17 +2247,18 @@ function useMutationObserver(target, callback, options = {}) {
   return {
     isSupported,
     stop,
-    takeRecords
+    takeRecords,
   };
 }
 function onElementRemoval(target, callback, options = {}) {
   const {
     window: window2 = defaultWindow,
     document: document2 = window2 == null ? void 0 : window2.document,
-    flush = "sync"
+    flush = "sync",
   } = options;
-  if (!window2 || !document2)
+  if (!window2 || !document2) {
     return noop;
+  }
   let stopFn;
   const cleanupAndUpdate = (fn) => {
     stopFn == null ? void 0 : stopFn();
@@ -1956,7 +2270,11 @@ function onElementRemoval(target, callback, options = {}) {
       const { stop } = useMutationObserver(
         document2,
         (mutationsList) => {
-          const targetRemoved = mutationsList.map((mutation) => [...mutation.removedNodes]).flat().some((node) => node === el || node.contains(el));
+          const targetRemoved = mutationsList.map((
+            mutation,
+          ) => [...mutation.removedNodes]).flat().some((node) =>
+            node === el || node.contains(el)
+          );
           if (targetRemoved) {
             callback(mutationsList);
           }
@@ -1964,8 +2282,8 @@ function onElementRemoval(target, callback, options = {}) {
         {
           window: window2,
           childList: true,
-          subtree: true
-        }
+          subtree: true,
+        },
       );
       cleanupAndUpdate(stop);
     }
@@ -1978,12 +2296,13 @@ function onElementRemoval(target, callback, options = {}) {
   return stopHandle;
 }
 function createKeyPredicate(keyFilter) {
-  if (typeof keyFilter === "function")
+  if (typeof keyFilter === "function") {
     return keyFilter;
-  else if (typeof keyFilter === "string")
+  } else if (typeof keyFilter === "string") {
     return (event) => event.key === keyFilter;
-  else if (Array.isArray(keyFilter))
+  } else if (Array.isArray(keyFilter)) {
     return (event) => keyFilter.includes(event.key);
+  }
   return () => true;
 }
 function onKeyStroke(...args) {
@@ -2011,14 +2330,16 @@ function onKeyStroke(...args) {
     target = defaultWindow,
     eventName = "keydown",
     passive = false,
-    dedupe = false
+    dedupe = false,
   } = options;
   const predicate = createKeyPredicate(key);
   const listener = (e) => {
-    if (e.repeat && toValue(dedupe))
+    if (e.repeat && toValue(dedupe)) {
       return;
-    if (predicate(e))
+    }
+    if (predicate(e)) {
       handler(e);
+    }
   };
   return useEventListener(target, eventName, listener, passive);
 }
@@ -2051,33 +2372,75 @@ function onLongPress(target, handler, options) {
   }
   function onRelease(ev) {
     var _a2, _b2, _c;
-    const [_startTimestamp, _posStart, _hasLongPressed] = [startTimestamp, posStart, hasLongPressed];
+    const [_startTimestamp, _posStart, _hasLongPressed] = [
+      startTimestamp,
+      posStart,
+      hasLongPressed,
+    ];
     clear();
-    if (!(options == null ? void 0 : options.onMouseUp) || !_posStart || !_startTimestamp)
+    if (
+      !(options == null ? void 0 : options.onMouseUp) || !_posStart ||
+      !_startTimestamp
+    ) {
       return;
-    if (((_a2 = options == null ? void 0 : options.modifiers) == null ? void 0 : _a2.self) && ev.target !== elementRef.value)
+    }
+    if (
+      ((_a2 = options == null ? void 0 : options.modifiers) == null
+        ? void 0
+        : _a2.self) && ev.target !== elementRef.value
+    ) {
       return;
-    if ((_b2 = options == null ? void 0 : options.modifiers) == null ? void 0 : _b2.prevent)
+    }
+    if (
+      (_b2 = options == null ? void 0 : options.modifiers) == null
+        ? void 0
+        : _b2.prevent
+    ) {
       ev.preventDefault();
-    if ((_c = options == null ? void 0 : options.modifiers) == null ? void 0 : _c.stop)
+    }
+    if (
+      (_c = options == null ? void 0 : options.modifiers) == null
+        ? void 0
+        : _c.stop
+    ) {
       ev.stopPropagation();
+    }
     const dx = ev.x - _posStart.x;
     const dy = ev.y - _posStart.y;
     const distance = Math.sqrt(dx * dx + dy * dy);
-    options.onMouseUp(ev.timeStamp - _startTimestamp, distance, _hasLongPressed);
+    options.onMouseUp(
+      ev.timeStamp - _startTimestamp,
+      distance,
+      _hasLongPressed,
+    );
   }
   function onDown(ev) {
     var _a2, _b2, _c, _d;
-    if (((_a2 = options == null ? void 0 : options.modifiers) == null ? void 0 : _a2.self) && ev.target !== elementRef.value)
+    if (
+      ((_a2 = options == null ? void 0 : options.modifiers) == null
+        ? void 0
+        : _a2.self) && ev.target !== elementRef.value
+    ) {
       return;
+    }
     clear();
-    if ((_b2 = options == null ? void 0 : options.modifiers) == null ? void 0 : _b2.prevent)
+    if (
+      (_b2 = options == null ? void 0 : options.modifiers) == null
+        ? void 0
+        : _b2.prevent
+    ) {
       ev.preventDefault();
-    if ((_c = options == null ? void 0 : options.modifiers) == null ? void 0 : _c.stop)
+    }
+    if (
+      (_c = options == null ? void 0 : options.modifiers) == null
+        ? void 0
+        : _c.stop
+    ) {
       ev.stopPropagation();
+    }
     posStart = {
       x: ev.x,
-      y: ev.y
+      y: ev.y,
     };
     startTimestamp = ev.timeStamp;
     timeout = setTimeout(
@@ -2085,43 +2448,81 @@ function onLongPress(target, handler, options) {
         hasLongPressed = true;
         handler(ev);
       },
-      (_d = options == null ? void 0 : options.delay) != null ? _d : DEFAULT_DELAY
+      (_d = options == null ? void 0 : options.delay) != null
+        ? _d
+        : DEFAULT_DELAY,
     );
   }
   function onMove(ev) {
     var _a2, _b2, _c, _d;
-    if (((_a2 = options == null ? void 0 : options.modifiers) == null ? void 0 : _a2.self) && ev.target !== elementRef.value)
+    if (
+      ((_a2 = options == null ? void 0 : options.modifiers) == null
+        ? void 0
+        : _a2.self) && ev.target !== elementRef.value
+    ) {
       return;
-    if (!posStart || (options == null ? void 0 : options.distanceThreshold) === false)
+    }
+    if (
+      !posStart ||
+      (options == null ? void 0 : options.distanceThreshold) === false
+    ) {
       return;
-    if ((_b2 = options == null ? void 0 : options.modifiers) == null ? void 0 : _b2.prevent)
+    }
+    if (
+      (_b2 = options == null ? void 0 : options.modifiers) == null
+        ? void 0
+        : _b2.prevent
+    ) {
       ev.preventDefault();
-    if ((_c = options == null ? void 0 : options.modifiers) == null ? void 0 : _c.stop)
+    }
+    if (
+      (_c = options == null ? void 0 : options.modifiers) == null
+        ? void 0
+        : _c.stop
+    ) {
       ev.stopPropagation();
+    }
     const dx = ev.x - posStart.x;
     const dy = ev.y - posStart.y;
     const distance = Math.sqrt(dx * dx + dy * dy);
-    if (distance >= ((_d = options == null ? void 0 : options.distanceThreshold) != null ? _d : DEFAULT_THRESHOLD))
+    if (
+      distance >=
+        ((_d = options == null ? void 0 : options.distanceThreshold) != null
+          ? _d
+          : DEFAULT_THRESHOLD)
+    ) {
       clear();
+    }
   }
   const listenerOptions = {
-    capture: (_a = options == null ? void 0 : options.modifiers) == null ? void 0 : _a.capture,
-    once: (_b = options == null ? void 0 : options.modifiers) == null ? void 0 : _b.once
+    capture: (_a = options == null ? void 0 : options.modifiers) == null
+      ? void 0
+      : _a.capture,
+    once: (_b = options == null ? void 0 : options.modifiers) == null
+      ? void 0
+      : _b.once,
   };
   const cleanup = [
     useEventListener(elementRef, "pointerdown", onDown, listenerOptions),
     useEventListener(elementRef, "pointermove", onMove, listenerOptions),
-    useEventListener(elementRef, ["pointerup", "pointerleave"], onRelease, listenerOptions)
+    useEventListener(
+      elementRef,
+      ["pointerup", "pointerleave"],
+      onRelease,
+      listenerOptions,
+    ),
   ];
   const stop = () => cleanup.forEach((fn) => fn());
   return stop;
 }
 function isFocusedElementEditable() {
   const { activeElement, body } = document;
-  if (!activeElement)
+  if (!activeElement) {
     return false;
-  if (activeElement === body)
+  }
+  if (activeElement === body) {
     return false;
+  }
   switch (activeElement.tagName) {
     case "INPUT":
     case "TEXTAREA":
@@ -2133,14 +2534,17 @@ function isTypedCharValid({
   keyCode,
   metaKey,
   ctrlKey,
-  altKey
+  altKey,
 }) {
-  if (metaKey || ctrlKey || altKey)
+  if (metaKey || ctrlKey || altKey) {
     return false;
-  if (keyCode >= 48 && keyCode <= 57 || keyCode >= 96 && keyCode <= 105)
+  }
+  if (keyCode >= 48 && keyCode <= 57 || keyCode >= 96 && keyCode <= 105) {
     return true;
-  if (keyCode >= 65 && keyCode <= 90)
+  }
+  if (keyCode >= 65 && keyCode <= 90) {
     return true;
+  }
   return false;
 }
 function onStartTyping(callback, options = {}) {
@@ -2150,8 +2554,9 @@ function onStartTyping(callback, options = {}) {
       callback(event);
     }
   };
-  if (document2)
+  if (document2) {
     useEventListener(document2, "keydown", keydown, { passive: true });
+  }
 }
 function templateRef(key, initialValue = null) {
   const instance = getCurrentInstance();
@@ -2163,10 +2568,14 @@ function templateRef(key, initialValue = null) {
       get() {
         var _a, _b;
         track();
-        return (_b = (_a = instance == null ? void 0 : instance.proxy) == null ? void 0 : _a.$refs[key]) != null ? _b : initialValue;
+        return (_b = (_a = instance == null ? void 0 : instance.proxy) == null
+            ? void 0
+            : _a.$refs[key]) != null
+          ? _b
+          : initialValue;
       },
       set() {
-      }
+      },
     };
   });
   tryOnMounted(_trigger);
@@ -2178,15 +2587,22 @@ function useActiveElement(options = {}) {
   const {
     window: window2 = defaultWindow,
     deep = true,
-    triggerOnRemoval = false
+    triggerOnRemoval = false,
   } = options;
-  const document2 = (_a = options.document) != null ? _a : window2 == null ? void 0 : window2.document;
+  const document2 = (_a = options.document) != null
+    ? _a
+    : window2 == null
+    ? void 0
+    : window2.document;
   const getDeepActiveElement = () => {
     var _a2;
     let element = document2 == null ? void 0 : document2.activeElement;
     if (deep) {
-      while (element == null ? void 0 : element.shadowRoot)
-        element = (_a2 = element == null ? void 0 : element.shadowRoot) == null ? void 0 : _a2.activeElement;
+      while (element == null ? void 0 : element.shadowRoot) {
+        element = (_a2 = element == null ? void 0 : element.shadowRoot) == null
+          ? void 0
+          : _a2.activeElement;
+      }
     }
     return element;
   };
@@ -2197,23 +2613,24 @@ function useActiveElement(options = {}) {
   if (window2) {
     const listenerOptions = {
       capture: true,
-      passive: true
+      passive: true,
     };
     useEventListener(
       window2,
       "blur",
       (event) => {
-        if (event.relatedTarget !== null)
+        if (event.relatedTarget !== null) {
           return;
+        }
         trigger();
       },
-      listenerOptions
+      listenerOptions,
     );
     useEventListener(
       window2,
       "focus",
       trigger,
-      listenerOptions
+      listenerOptions,
     );
   }
   if (triggerOnRemoval) {
@@ -2227,7 +2644,7 @@ function useRafFn(fn, options = {}) {
     immediate = true,
     fpsLimit = void 0,
     window: window2 = defaultWindow,
-    once = false
+    once = false,
   } = options;
   const isActive = shallowRef(false);
   const intervalLimit = computed(() => {
@@ -2236,10 +2653,12 @@ function useRafFn(fn, options = {}) {
   let previousFrameTimestamp = 0;
   let rafId = null;
   function loop(timestamp2) {
-    if (!isActive.value || !window2)
+    if (!isActive.value || !window2) {
       return;
-    if (!previousFrameTimestamp)
+    }
+    if (!previousFrameTimestamp) {
       previousFrameTimestamp = timestamp2;
+    }
     const delta = timestamp2 - previousFrameTimestamp;
     if (intervalLimit.value && delta < intervalLimit.value) {
       rafId = window2.requestAnimationFrame(loop);
@@ -2268,13 +2687,14 @@ function useRafFn(fn, options = {}) {
       rafId = null;
     }
   }
-  if (immediate)
+  if (immediate) {
     resume();
+  }
   tryOnScopeDispose(pause);
   return {
     isActive: readonly(isActive),
     pause,
-    resume
+    resume,
   };
 }
 function useAnimate(target, keyframes, options) {
@@ -2282,7 +2702,14 @@ function useAnimate(target, keyframes, options) {
   let animateOptions;
   if (isObject(options)) {
     config = options;
-    animateOptions = objectOmit(options, ["window", "immediate", "commitStyles", "persist", "onReady", "onError"]);
+    animateOptions = objectOmit(options, [
+      "window",
+      "immediate",
+      "commitStyles",
+      "persist",
+      "onReady",
+      "onError",
+    ]);
   } else {
     config = { duration: options };
     animateOptions = options;
@@ -2296,9 +2723,11 @@ function useAnimate(target, keyframes, options) {
     onReady,
     onError = (e) => {
       console.error(e);
-    }
+    },
   } = config;
-  const isSupported = useSupported(() => window2 && HTMLElement && "animate" in HTMLElement.prototype);
+  const isSupported = useSupported(() =>
+    window2 && HTMLElement && "animate" in HTMLElement.prototype
+  );
   const animate = shallowRef(void 0);
   const store = shallowReactive({
     startTime: null,
@@ -2307,7 +2736,7 @@ function useAnimate(target, keyframes, options) {
     playbackRate: _playbackRate,
     pending: false,
     playState: immediate ? "idle" : "paused",
-    replaceState: "active"
+    replaceState: "active",
   });
   const pending = computed(() => store.pending);
   const playState = computed(() => store.playState);
@@ -2318,9 +2747,10 @@ function useAnimate(target, keyframes, options) {
     },
     set(value) {
       store.startTime = value;
-      if (animate.value)
+      if (animate.value) {
         animate.value.startTime = value;
-    }
+      }
+    },
   });
   const currentTime = computed({
     get() {
@@ -2332,7 +2762,7 @@ function useAnimate(target, keyframes, options) {
         animate.value.currentTime = value;
         syncResume();
       }
-    }
+    },
   });
   const timeline = computed({
     get() {
@@ -2340,9 +2770,10 @@ function useAnimate(target, keyframes, options) {
     },
     set(value) {
       store.timeline = value;
-      if (animate.value)
+      if (animate.value) {
         animate.value.timeline = value;
-    }
+      }
+    },
   });
   const playbackRate = computed({
     get() {
@@ -2350,9 +2781,10 @@ function useAnimate(target, keyframes, options) {
     },
     set(value) {
       store.playbackRate = value;
-      if (animate.value)
+      if (animate.value) {
         animate.value.playbackRate = value;
-    }
+      }
+    },
   });
   const play = () => {
     if (animate.value) {
@@ -2378,8 +2810,9 @@ function useAnimate(target, keyframes, options) {
   };
   const reverse = () => {
     var _a;
-    if (!animate.value)
+    if (!animate.value) {
       update();
+    }
     try {
       (_a = animate.value) == null ? void 0 : _a.reverse();
       syncResume();
@@ -2421,7 +2854,7 @@ function useAnimate(target, keyframes, options) {
         animate.value.effect = new KeyframeEffect(
           targetEl,
           toValue(value),
-          animateOptions
+          animateOptions,
         );
       }
     }
@@ -2430,30 +2863,42 @@ function useAnimate(target, keyframes, options) {
   tryOnScopeDispose(cancel);
   function update(init) {
     const el = unrefElement(target);
-    if (!isSupported.value || !el)
+    if (!isSupported.value || !el) {
       return;
-    if (!animate.value)
+    }
+    if (!animate.value) {
       animate.value = el.animate(toValue(keyframes), animateOptions);
-    if (persist)
+    }
+    if (persist) {
       animate.value.persist();
-    if (_playbackRate !== 1)
+    }
+    if (_playbackRate !== 1) {
       animate.value.playbackRate = _playbackRate;
-    if (init && !immediate)
+    }
+    if (init && !immediate) {
       animate.value.pause();
-    else
+    } else {
       syncResume();
+    }
     onReady == null ? void 0 : onReady(animate.value);
   }
   const listenerOptions = { passive: true };
-  useEventListener(animate, ["cancel", "finish", "remove"], syncPause, listenerOptions);
+  useEventListener(
+    animate,
+    ["cancel", "finish", "remove"],
+    syncPause,
+    listenerOptions,
+  );
   useEventListener(animate, "finish", () => {
     var _a;
-    if (commitStyles)
+    if (commitStyles) {
       (_a = animate.value) == null ? void 0 : _a.commitStyles();
+    }
   }, listenerOptions);
   const { resume: resumeRef, pause: pauseRef } = useRafFn(() => {
-    if (!animate.value)
+    if (!animate.value) {
       return;
+    }
     store.pending = animate.value.pending;
     store.playState = animate.value.playState;
     store.replaceState = animate.value.replaceState;
@@ -2463,12 +2908,14 @@ function useAnimate(target, keyframes, options) {
     store.playbackRate = animate.value.playbackRate;
   }, { immediate: false });
   function syncResume() {
-    if (isSupported.value)
+    if (isSupported.value) {
       resumeRef();
+    }
   }
   function syncPause() {
-    if (isSupported.value && window2)
+    if (isSupported.value && window2) {
       window2.requestAnimationFrame(pauseRef);
+    }
   }
   return {
     isSupported,
@@ -2486,7 +2933,7 @@ function useAnimate(target, keyframes, options) {
     startTime,
     currentTime,
     timeline,
-    playbackRate
+    playbackRate,
   };
 }
 function useAsyncQueue(tasks, options) {
@@ -2494,22 +2941,25 @@ function useAsyncQueue(tasks, options) {
     interrupt = true,
     onError = noop,
     onFinished = noop,
-    signal
+    signal,
   } = options || {};
   const promiseState = {
     aborted: "aborted",
     fulfilled: "fulfilled",
     pending: "pending",
-    rejected: "rejected"
+    rejected: "rejected",
   };
-  const initialResult = Array.from(Array.from({ length: tasks.length }), () => ({ state: promiseState.pending, data: null }));
+  const initialResult = Array.from(
+    Array.from({ length: tasks.length }),
+    () => ({ state: promiseState.pending, data: null }),
+  );
   const result = reactive(initialResult);
   const activeIndex = shallowRef(-1);
   if (!tasks || tasks.length === 0) {
     onFinished();
     return {
       activeIndex,
-      result
+      result,
     };
   }
   function updateResult(state, res) {
@@ -2524,18 +2974,23 @@ function useAsyncQueue(tasks, options) {
         updateResult(promiseState.aborted, new Error("aborted"));
         return;
       }
-      if (((_a = result[activeIndex.value]) == null ? void 0 : _a.state) === promiseState.rejected && interrupt) {
+      if (
+        ((_a = result[activeIndex.value]) == null ? void 0 : _a.state) ===
+          promiseState.rejected && interrupt
+      ) {
         onFinished();
         return;
       }
       const done = curr(prevRes).then((currentRes) => {
         updateResult(promiseState.fulfilled, currentRes);
-        if (activeIndex.value === tasks.length - 1)
+        if (activeIndex.value === tasks.length - 1) {
           onFinished();
+        }
         return currentRes;
       });
-      if (!signal)
+      if (!signal) {
         return done;
+      }
       return Promise.race([done, whenAborted(signal)]);
     }).catch((e) => {
       if (signal == null ? void 0 : signal.aborted) {
@@ -2549,16 +3004,17 @@ function useAsyncQueue(tasks, options) {
   }, Promise.resolve());
   return {
     activeIndex,
-    result
+    result,
   };
 }
 function whenAborted(signal) {
   return new Promise((resolve, reject) => {
     const error = new Error("aborted");
-    if (signal.aborted)
+    if (signal.aborted) {
       reject(error);
-    else
+    } else {
       signal.addEventListener("abort", () => reject(error), { once: true });
+    }
   });
 }
 function useAsyncState(promise, initialState, options) {
@@ -2569,20 +3025,22 @@ function useAsyncState(promise, initialState, options) {
     onSuccess = noop,
     resetOnExecute = true,
     shallow = true,
-    throwError
+    throwError,
   } = options != null ? options : {};
   const state = shallow ? shallowRef(initialState) : ref(initialState);
   const isReady = shallowRef(false);
   const isLoading = shallowRef(false);
   const error = shallowRef(void 0);
   async function execute(delay2 = 0, ...args) {
-    if (resetOnExecute)
+    if (resetOnExecute) {
       state.value = initialState;
+    }
     error.value = void 0;
     isReady.value = false;
     isLoading.value = true;
-    if (delay2 > 0)
+    if (delay2 > 0) {
       await promiseTimeout(delay2);
+    }
     const _promise = typeof promise === "function" ? promise(...args) : promise;
     try {
       const data = await _promise;
@@ -2592,8 +3050,9 @@ function useAsyncState(promise, initialState, options) {
     } catch (e) {
       error.value = e;
       onError(e);
-      if (throwError)
+      if (throwError) {
         throw e;
+      }
     } finally {
       isLoading.value = false;
     }
@@ -2607,7 +3066,7 @@ function useAsyncState(promise, initialState, options) {
     isReady,
     isLoading,
     error,
-    execute
+    execute,
   };
   function waitUntilIsLoaded() {
     return new Promise((resolve, reject) => {
@@ -2618,7 +3077,7 @@ function useAsyncState(promise, initialState, options) {
     ...shell,
     then(onFulfilled, onRejected) {
       return waitUntilIsLoaded().then(onFulfilled, onRejected);
-    }
+    },
   };
 }
 var defaults = {
@@ -2626,26 +3085,29 @@ var defaults = {
   object: (v) => JSON.stringify(v),
   set: (v) => JSON.stringify(Array.from(v)),
   map: (v) => JSON.stringify(Object.fromEntries(v)),
-  null: () => ""
+  null: () => "",
 };
 function getDefaultSerialization(target) {
-  if (!target)
+  if (!target) {
     return defaults.null;
-  if (target instanceof Map)
+  }
+  if (target instanceof Map) {
     return defaults.map;
-  else if (target instanceof Set)
+  } else if (target instanceof Set) {
     return defaults.set;
-  else if (Array.isArray(target))
+  } else if (Array.isArray(target)) {
     return defaults.array;
-  else
+  } else {
     return defaults.object;
+  }
 }
 function useBase64(target, options) {
   const base64 = shallowRef("");
   const promise = shallowRef();
   function execute() {
-    if (!isClient)
+    if (!isClient) {
       return;
+    }
     promise.value = new Promise((resolve, reject) => {
       try {
         const _target = toValue(target);
@@ -2658,7 +3120,12 @@ function useBase64(target, options) {
         } else if (_target instanceof ArrayBuffer) {
           resolve(window.btoa(String.fromCharCode(...new Uint8Array(_target))));
         } else if (_target instanceof HTMLCanvasElement) {
-          resolve(_target.toDataURL(options == null ? void 0 : options.type, options == null ? void 0 : options.quality));
+          resolve(
+            _target.toDataURL(
+              options == null ? void 0 : options.type,
+              options == null ? void 0 : options.quality,
+            ),
+          );
         } else if (_target instanceof HTMLImageElement) {
           const img = _target.cloneNode(false);
           img.crossOrigin = "Anonymous";
@@ -2668,12 +3135,21 @@ function useBase64(target, options) {
             canvas.width = img.width;
             canvas.height = img.height;
             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-            resolve(canvas.toDataURL(options == null ? void 0 : options.type, options == null ? void 0 : options.quality));
+            resolve(
+              canvas.toDataURL(
+                options == null ? void 0 : options.type,
+                options == null ? void 0 : options.quality,
+              ),
+            );
           }).catch(reject);
         } else if (typeof _target === "object") {
-          const _serializeFn = (options == null ? void 0 : options.serializer) || getDefaultSerialization(_target);
+          const _serializeFn =
+            (options == null ? void 0 : options.serializer) ||
+            getDefaultSerialization(_target);
           const serialized = _serializeFn(_target);
-          return resolve(blobToBase64(new Blob([serialized], { type: "application/json" })));
+          return resolve(
+            blobToBase64(new Blob([serialized], { type: "application/json" })),
+          );
         } else {
           reject(new Error("target is unsupported types"));
         }
@@ -2682,18 +3158,21 @@ function useBase64(target, options) {
       }
     });
     promise.value.then((res) => {
-      base64.value = (options == null ? void 0 : options.dataUrl) === false ? res.replace(/^data:.*?;base64,/, "") : res;
+      base64.value = (options == null ? void 0 : options.dataUrl) === false
+        ? res.replace(/^data:.*?;base64,/, "")
+        : res;
     });
     return promise.value;
   }
-  if (isRef(target) || typeof target === "function")
+  if (isRef(target) || typeof target === "function") {
     watch(target, execute, { immediate: true });
-  else
+  } else {
     execute();
+  }
   return {
     base64,
     promise,
-    execute
+    execute,
   };
 }
 function imgLoaded(img) {
@@ -2720,8 +3199,16 @@ function blobToBase64(blob) {
 }
 function useBattery(options = {}) {
   const { navigator: navigator2 = defaultNavigator } = options;
-  const events2 = ["chargingchange", "chargingtimechange", "dischargingtimechange", "levelchange"];
-  const isSupported = useSupported(() => navigator2 && "getBattery" in navigator2 && typeof navigator2.getBattery === "function");
+  const events2 = [
+    "chargingchange",
+    "chargingtimechange",
+    "dischargingtimechange",
+    "levelchange",
+  ];
+  const isSupported = useSupported(() =>
+    navigator2 && "getBattery" in navigator2 &&
+    typeof navigator2.getBattery === "function"
+  );
   const charging = shallowRef(false);
   const chargingTime = shallowRef(0);
   const dischargingTime = shallowRef(0);
@@ -2745,36 +3232,42 @@ function useBattery(options = {}) {
     charging,
     chargingTime,
     dischargingTime,
-    level
+    level,
   };
 }
 function useBluetooth(options) {
   let {
-    acceptAllDevices = false
+    acceptAllDevices = false,
   } = options || {};
   const {
     filters = void 0,
     optionalServices = void 0,
-    navigator: navigator2 = defaultNavigator
+    navigator: navigator2 = defaultNavigator,
   } = options || {};
-  const isSupported = useSupported(() => navigator2 && "bluetooth" in navigator2);
+  const isSupported = useSupported(() =>
+    navigator2 && "bluetooth" in navigator2
+  );
   const device = shallowRef();
   const error = shallowRef(null);
   watch(device, () => {
     connectToBluetoothGATTServer();
   });
   async function requestDevice() {
-    if (!isSupported.value)
+    if (!isSupported.value) {
       return;
+    }
     error.value = null;
-    if (filters && filters.length > 0)
+    if (filters && filters.length > 0) {
       acceptAllDevices = false;
+    }
     try {
-      device.value = await (navigator2 == null ? void 0 : navigator2.bluetooth.requestDevice({
-        acceptAllDevices,
-        filters,
-        optionalServices
-      }));
+      device.value = await (navigator2 == null
+        ? void 0
+        : navigator2.bluetooth.requestDevice({
+          acceptAllDevices,
+          filters,
+          optionalServices,
+        }));
     } catch (err) {
       error.value = err;
     }
@@ -2789,7 +3282,9 @@ function useBluetooth(options) {
   async function connectToBluetoothGATTServer() {
     error.value = null;
     if (device.value && device.value.gatt) {
-      useEventListener(device, "gattserverdisconnected", reset, { passive: true });
+      useEventListener(device, "gattserverdisconnected", reset, {
+        passive: true,
+      });
       try {
         server.value = await device.value.gatt.connect();
         isConnected.value = server.value.connected;
@@ -2800,13 +3295,15 @@ function useBluetooth(options) {
   }
   tryOnMounted(() => {
     var _a;
-    if (device.value)
+    if (device.value) {
       (_a = device.value.gatt) == null ? void 0 : _a.connect();
+    }
   });
   tryOnScopeDispose(() => {
     var _a;
-    if (device.value)
+    if (device.value) {
       (_a = device.value.gatt) == null ? void 0 : _a.disconnect();
+    }
   });
   return {
     isSupported,
@@ -2817,12 +3314,14 @@ function useBluetooth(options) {
     // Server:
     server,
     // Errors:
-    error
+    error,
   };
 }
 var ssrWidthSymbol = Symbol("vueuse-ssr-width");
 function useSSRWidth() {
-  const ssrWidth = hasInjectionContext() ? injectLocal(ssrWidthSymbol, null) : null;
+  const ssrWidth = hasInjectionContext()
+    ? injectLocal(ssrWidthSymbol, null)
+    : null;
   return typeof ssrWidth === "number" ? ssrWidth : void 0;
 }
 function provideSSRWidth(width, app) {
@@ -2834,7 +3333,10 @@ function provideSSRWidth(width, app) {
 }
 function useMediaQuery(query, options = {}) {
   const { window: window2 = defaultWindow, ssrWidth = useSSRWidth() } = options;
-  const isSupported = useSupported(() => window2 && "matchMedia" in window2 && typeof window2.matchMedia === "function");
+  const isSupported = useSupported(() =>
+    window2 && "matchMedia" in window2 &&
+    typeof window2.matchMedia === "function"
+  );
   const ssrSupport = shallowRef(typeof ssrWidth === "number");
   const mediaQuery = shallowRef();
   const matches = shallowRef(false);
@@ -2847,8 +3349,12 @@ function useMediaQuery(query, options = {}) {
       const queryStrings = toValue(query).split(",");
       matches.value = queryStrings.some((queryString) => {
         const not = queryString.includes("not all");
-        const minWidth = queryString.match(/\(\s*min-width:\s*(-?\d+(?:\.\d*)?[a-z]+\s*)\)/);
-        const maxWidth = queryString.match(/\(\s*max-width:\s*(-?\d+(?:\.\d*)?[a-z]+\s*)\)/);
+        const minWidth = queryString.match(
+          /\(\s*min-width:\s*(-?\d+(?:\.\d*)?[a-z]+\s*)\)/,
+        );
+        const maxWidth = queryString.match(
+          /\(\s*max-width:\s*(-?\d+(?:\.\d*)?[a-z]+\s*)\)/,
+        );
         let res = Boolean(minWidth || maxWidth);
         if (minWidth && res) {
           res = ssrWidth >= pxValue(minWidth[1]);
@@ -2860,8 +3366,9 @@ function useMediaQuery(query, options = {}) {
       });
       return;
     }
-    if (!isSupported.value)
+    if (!isSupported.value) {
       return;
+    }
     mediaQuery.value = window2.matchMedia(toValue(query));
     matches.value = mediaQuery.value.matches;
   });
@@ -2873,7 +3380,7 @@ var breakpointsTailwind = {
   "md": 768,
   "lg": 1024,
   "xl": 1280,
-  "2xl": 1536
+  "2xl": 1536,
 };
 var breakpointsBootstrapV5 = {
   xs: 0,
@@ -2881,14 +3388,14 @@ var breakpointsBootstrapV5 = {
   md: 768,
   lg: 992,
   xl: 1200,
-  xxl: 1400
+  xxl: 1400,
 };
 var breakpointsVuetifyV2 = {
   xs: 0,
   sm: 600,
   md: 960,
   lg: 1264,
-  xl: 1904
+  xl: 1904,
 };
 var breakpointsVuetifyV3 = {
   xs: 0,
@@ -2896,7 +3403,7 @@ var breakpointsVuetifyV3 = {
   md: 960,
   lg: 1280,
   xl: 1920,
-  xxl: 2560
+  xxl: 2560,
 };
 var breakpointsVuetify = breakpointsVuetifyV2;
 var breakpointsAntDesign = {
@@ -2905,14 +3412,14 @@ var breakpointsAntDesign = {
   md: 768,
   lg: 992,
   xl: 1200,
-  xxl: 1600
+  xxl: 1600,
 };
 var breakpointsQuasar = {
   xs: 0,
   sm: 600,
   md: 1024,
   lg: 1440,
-  xl: 1920
+  xl: 1920,
 };
 var breakpointsSematic = {
   mobileS: 320,
@@ -2921,7 +3428,7 @@ var breakpointsSematic = {
   tablet: 768,
   laptop: 1024,
   laptopL: 1440,
-  desktop4K: 2560
+  desktop4K: 2560,
 };
 var breakpointsMasterCss = {
   "3xs": 360,
@@ -2933,31 +3440,37 @@ var breakpointsMasterCss = {
   "xl": 1440,
   "2xl": 1600,
   "3xl": 1920,
-  "4xl": 2560
+  "4xl": 2560,
 };
 var breakpointsPrimeFlex = {
   sm: 576,
   md: 768,
   lg: 992,
-  xl: 1200
+  xl: 1200,
 };
 var breakpointsElement = {
   xs: 0,
   sm: 768,
   md: 992,
   lg: 1200,
-  xl: 1920
+  xl: 1920,
 };
 function useBreakpoints(breakpoints, options = {}) {
   function getValue2(k, delta) {
     let v = toValue(breakpoints[toValue(k)]);
-    if (delta != null)
+    if (delta != null) {
       v = increaseWithUnit(v, delta);
-    if (typeof v === "number")
+    }
+    if (typeof v === "number") {
       v = `${v}px`;
+    }
     return v;
   }
-  const { window: window2 = defaultWindow, strategy = "min-width", ssrWidth = useSSRWidth() } = options;
+  const {
+    window: window2 = defaultWindow,
+    strategy = "min-width",
+    ssrWidth = useSSRWidth(),
+  } = options;
   const ssrSupport = typeof ssrWidth === "number";
   const mounted = ssrSupport ? shallowRef(false) : { value: true };
   if (ssrSupport) {
@@ -2965,10 +3478,13 @@ function useBreakpoints(breakpoints, options = {}) {
   }
   function match(query, size) {
     if (!mounted.value && ssrSupport) {
-      return query === "min" ? ssrWidth >= pxValue(size) : ssrWidth <= pxValue(size);
+      return query === "min"
+        ? ssrWidth >= pxValue(size)
+        : ssrWidth <= pxValue(size);
     }
-    if (!window2)
+    if (!window2) {
       return false;
+    }
     return window2.matchMedia(`(${query}-width: ${size})`).matches;
   }
   const greaterOrEqual = (k) => {
@@ -2979,14 +3495,19 @@ function useBreakpoints(breakpoints, options = {}) {
   };
   const shortcutMethods = Object.keys(breakpoints).reduce((shortcuts, k) => {
     Object.defineProperty(shortcuts, k, {
-      get: () => strategy === "min-width" ? greaterOrEqual(k) : smallerOrEqual(k),
+      get: () =>
+        strategy === "min-width" ? greaterOrEqual(k) : smallerOrEqual(k),
       enumerable: true,
-      configurable: true
+      configurable: true,
     });
     return shortcuts;
   }, {});
   function current() {
-    const points = Object.keys(breakpoints).map((k) => [k, shortcutMethods[k], pxValue(getValue2(k))]).sort((a, b) => a[2] - b[2]);
+    const points = Object.keys(breakpoints).map((
+      k,
+    ) => [k, shortcutMethods[k], pxValue(getValue2(k))]).sort((a, b) =>
+      a[2] - b[2]
+    );
     return computed(() => points.filter(([, v]) => v.value).map(([k]) => k));
   }
   return Object.assign(shortcutMethods, {
@@ -2999,7 +3520,11 @@ function useBreakpoints(breakpoints, options = {}) {
       return useMediaQuery(() => `(max-width: ${getValue2(k, -0.1)})`, options);
     },
     between(a, b) {
-      return useMediaQuery(() => `(min-width: ${getValue2(a)}) and (max-width: ${getValue2(b, -0.1)})`, options);
+      return useMediaQuery(
+        () =>
+          `(min-width: ${getValue2(a)}) and (max-width: ${getValue2(b, -0.1)})`,
+        options,
+      );
     },
     isGreater(k) {
       return match("min", getValue2(k, 0.1));
@@ -3019,27 +3544,35 @@ function useBreakpoints(breakpoints, options = {}) {
     current,
     active() {
       const bps = current();
-      return computed(() => bps.value.length === 0 ? "" : bps.value.at(strategy === "min-width" ? -1 : 0));
-    }
+      return computed(() =>
+        bps.value.length === 0
+          ? ""
+          : bps.value.at(strategy === "min-width" ? -1 : 0)
+      );
+    },
   });
 }
 function useBroadcastChannel(options) {
   const {
     name,
-    window: window2 = defaultWindow
+    window: window2 = defaultWindow,
   } = options;
-  const isSupported = useSupported(() => window2 && "BroadcastChannel" in window2);
+  const isSupported = useSupported(() =>
+    window2 && "BroadcastChannel" in window2
+  );
   const isClosed = shallowRef(false);
   const channel = ref();
   const data = ref();
   const error = shallowRef(null);
   const post = (data2) => {
-    if (channel.value)
+    if (channel.value) {
       channel.value.postMessage(data2);
+    }
   };
   const close = () => {
-    if (channel.value)
+    if (channel.value) {
       channel.value.close();
+    }
     isClosed.value = true;
   };
   if (isSupported.value) {
@@ -3047,7 +3580,7 @@ function useBroadcastChannel(options) {
       error.value = null;
       channel.value = new BroadcastChannel(name);
       const listenerOptions = {
-        passive: true
+        passive: true,
       };
       useEventListener(channel, "message", (e) => {
         data.value = e.data;
@@ -3070,7 +3603,7 @@ function useBroadcastChannel(options) {
     post,
     close,
     error,
-    isClosed
+    isClosed,
   };
 }
 var WRITABLE_PROPERTIES = [
@@ -3081,39 +3614,58 @@ var WRITABLE_PROPERTIES = [
   "pathname",
   "port",
   "protocol",
-  "search"
+  "search",
 ];
 function useBrowserLocation(options = {}) {
   const { window: window2 = defaultWindow } = options;
   const refs = Object.fromEntries(
-    WRITABLE_PROPERTIES.map((key) => [key, ref()])
+    WRITABLE_PROPERTIES.map((key) => [key, ref()]),
   );
   for (const [key, ref2] of objectEntries(refs)) {
     watch(ref2, (value) => {
-      if (!(window2 == null ? void 0 : window2.location) || window2.location[key] === value)
+      if (
+        !(window2 == null ? void 0 : window2.location) ||
+        window2.location[key] === value
+      ) {
         return;
+      }
       window2.location[key] = value;
     });
   }
   const buildState = (trigger) => {
     var _a;
-    const { state: state2, length } = (window2 == null ? void 0 : window2.history) || {};
+    const { state: state2, length } =
+      (window2 == null ? void 0 : window2.history) || {};
     const { origin } = (window2 == null ? void 0 : window2.location) || {};
-    for (const key of WRITABLE_PROPERTIES)
-      refs[key].value = (_a = window2 == null ? void 0 : window2.location) == null ? void 0 : _a[key];
+    for (const key of WRITABLE_PROPERTIES) {
+      refs[key].value =
+        (_a = window2 == null ? void 0 : window2.location) == null
+          ? void 0
+          : _a[key];
+    }
     return reactive({
       trigger,
       state: state2,
       length,
       origin,
-      ...refs
+      ...refs,
     });
   };
   const state = ref(buildState("load"));
   if (window2) {
     const listenerOptions = { passive: true };
-    useEventListener(window2, "popstate", () => state.value = buildState("popstate"), listenerOptions);
-    useEventListener(window2, "hashchange", () => state.value = buildState("hashchange"), listenerOptions);
+    useEventListener(
+      window2,
+      "popstate",
+      () => state.value = buildState("popstate"),
+      listenerOptions,
+    );
+    useEventListener(
+      window2,
+      "hashchange",
+      () => state.value = buildState("hashchange"),
+      listenerOptions,
+    );
   }
   return state;
 }
@@ -3121,28 +3673,37 @@ function useCached(refValue, comparator = (a, b) => a === b, options) {
   const { deepRefs = true, ...watchOptions } = options || {};
   const cachedValue = createRef(refValue.value, deepRefs);
   watch(() => refValue.value, (value) => {
-    if (!comparator(value, cachedValue.value))
+    if (!comparator(value, cachedValue.value)) {
       cachedValue.value = value;
+    }
   }, watchOptions);
   return cachedValue;
 }
 function usePermission(permissionDesc, options = {}) {
   const {
     controls = false,
-    navigator: navigator2 = defaultNavigator
+    navigator: navigator2 = defaultNavigator,
   } = options;
-  const isSupported = useSupported(() => navigator2 && "permissions" in navigator2);
+  const isSupported = useSupported(() =>
+    navigator2 && "permissions" in navigator2
+  );
   const permissionStatus = shallowRef();
-  const desc = typeof permissionDesc === "string" ? { name: permissionDesc } : permissionDesc;
+  const desc = typeof permissionDesc === "string"
+    ? { name: permissionDesc }
+    : permissionDesc;
   const state = shallowRef();
   const update = () => {
     var _a, _b;
-    state.value = (_b = (_a = permissionStatus.value) == null ? void 0 : _a.state) != null ? _b : "prompt";
+    state.value =
+      (_b = (_a = permissionStatus.value) == null ? void 0 : _a.state) != null
+        ? _b
+        : "prompt";
   };
   useEventListener(permissionStatus, "change", update, { passive: true });
   const query = createSingletonPromise(async () => {
-    if (!isSupported.value)
+    if (!isSupported.value) {
       return;
+    }
     if (!permissionStatus.value) {
       try {
         permissionStatus.value = await navigator2.permissions.query(desc);
@@ -3152,15 +3713,16 @@ function usePermission(permissionDesc, options = {}) {
         update();
       }
     }
-    if (controls)
+    if (controls) {
       return toRaw(permissionStatus.value);
+    }
   });
   query();
   if (controls) {
     return {
       state,
       isSupported,
-      query
+      query,
     };
   } else {
     return state;
@@ -3172,17 +3734,22 @@ function useClipboard(options = {}) {
     read = false,
     source,
     copiedDuring = 1500,
-    legacy = false
+    legacy = false,
   } = options;
-  const isClipboardApiSupported = useSupported(() => navigator2 && "clipboard" in navigator2);
+  const isClipboardApiSupported = useSupported(() =>
+    navigator2 && "clipboard" in navigator2
+  );
   const permissionRead = usePermission("clipboard-read");
   const permissionWrite = usePermission("clipboard-write");
   const isSupported = computed(() => isClipboardApiSupported.value || legacy);
   const text = shallowRef("");
   const copied = shallowRef(false);
-  const timeout = useTimeoutFn(() => copied.value = false, copiedDuring, { immediate: false });
+  const timeout = useTimeoutFn(() => copied.value = false, copiedDuring, {
+    immediate: false,
+  });
   async function updateText() {
-    let useLegacy = !(isClipboardApiSupported.value && isAllowed(permissionRead.value));
+    let useLegacy =
+      !(isClipboardApiSupported.value && isAllowed(permissionRead.value));
     if (!useLegacy) {
       try {
         text.value = await navigator2.clipboard.readText();
@@ -3194,11 +3761,13 @@ function useClipboard(options = {}) {
       text.value = legacyRead();
     }
   }
-  if (isSupported.value && read)
+  if (isSupported.value && read) {
     useEventListener(["copy", "cut"], updateText, { passive: true });
+  }
   async function copy(value = toValue(source)) {
     if (isSupported.value && value != null) {
-      let useLegacy = !(isClipboardApiSupported.value && isAllowed(permissionWrite.value));
+      let useLegacy =
+        !(isClipboardApiSupported.value && isAllowed(permissionWrite.value));
       if (!useLegacy) {
         try {
           await navigator2.clipboard.writeText(value);
@@ -3206,8 +3775,9 @@ function useClipboard(options = {}) {
           useLegacy = true;
         }
       }
-      if (useLegacy)
+      if (useLegacy) {
         legacyCopy(value);
+      }
       text.value = value;
       copied.value = true;
       timeout.start();
@@ -3225,7 +3795,14 @@ function useClipboard(options = {}) {
   }
   function legacyRead() {
     var _a, _b, _c;
-    return (_c = (_b = (_a = document == null ? void 0 : document.getSelection) == null ? void 0 : _a.call(document)) == null ? void 0 : _b.toString()) != null ? _c : "";
+    return (_c =
+        (_b = (_a = document == null ? void 0 : document.getSelection) == null
+            ? void 0
+            : _a.call(document)) == null
+          ? void 0
+          : _b.toString()) != null
+      ? _c
+      : "";
   }
   function isAllowed(status) {
     return status === "granted" || status === "prompt";
@@ -3234,7 +3811,7 @@ function useClipboard(options = {}) {
     isSupported,
     text,
     copied,
-    copy
+    copy,
   };
 }
 function useClipboardItems(options = {}) {
@@ -3242,12 +3819,16 @@ function useClipboardItems(options = {}) {
     navigator: navigator2 = defaultNavigator,
     read = false,
     source,
-    copiedDuring = 1500
+    copiedDuring = 1500,
   } = options;
-  const isSupported = useSupported(() => navigator2 && "clipboard" in navigator2);
+  const isSupported = useSupported(() =>
+    navigator2 && "clipboard" in navigator2
+  );
   const content = ref([]);
   const copied = shallowRef(false);
-  const timeout = useTimeoutFn(() => copied.value = false, copiedDuring, { immediate: false });
+  const timeout = useTimeoutFn(() => copied.value = false, copiedDuring, {
+    immediate: false,
+  });
   function updateContent() {
     if (isSupported.value) {
       navigator2.clipboard.read().then((items) => {
@@ -3255,8 +3836,9 @@ function useClipboardItems(options = {}) {
       });
     }
   }
-  if (isSupported.value && read)
+  if (isSupported.value && read) {
     useEventListener(["copy", "cut"], updateContent, { passive: true });
+  }
   async function copy(value = toValue(source)) {
     if (isSupported.value && value != null) {
       await navigator2.clipboard.write(value);
@@ -3269,7 +3851,7 @@ function useClipboardItems(options = {}) {
     isSupported,
     content,
     copied,
-    copy
+    copy,
   };
 }
 function cloneFnJSON(source) {
@@ -3284,7 +3866,7 @@ function useCloned(source, options = {}) {
     clone = cloneFnJSON,
     // watch options
     deep = true,
-    immediate = true
+    immediate = true,
   } = options;
   watch(cloned, () => {
     if (_lastSync) {
@@ -3294,7 +3876,7 @@ function useCloned(source, options = {}) {
     isModified.value = true;
   }, {
     deep: true,
-    flush: "sync"
+    flush: "sync",
   });
   function sync() {
     _lastSync = true;
@@ -3305,19 +3887,28 @@ function useCloned(source, options = {}) {
     watch(source, sync, {
       ...options,
       deep,
-      immediate
+      immediate,
     });
   } else {
     sync();
   }
   return { cloned, isModified, sync };
 }
-var _global = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
+var _global = typeof globalThis !== "undefined"
+  ? globalThis
+  : typeof window !== "undefined"
+  ? window
+  : typeof global !== "undefined"
+  ? global
+  : typeof self !== "undefined"
+  ? self
+  : {};
 var globalKey = "__vueuse_ssr_handlers__";
 var handlers = getHandlers();
 function getHandlers() {
-  if (!(globalKey in _global))
+  if (!(globalKey in _global)) {
     _global[globalKey] = _global[globalKey] || {};
+  }
   return _global[globalKey];
 }
 function getSSRHandler(key, fallback) {
@@ -3330,41 +3921,57 @@ function usePreferredDark(options) {
   return useMediaQuery("(prefers-color-scheme: dark)", options);
 }
 function guessSerializerType(rawInit) {
-  return rawInit == null ? "any" : rawInit instanceof Set ? "set" : rawInit instanceof Map ? "map" : rawInit instanceof Date ? "date" : typeof rawInit === "boolean" ? "boolean" : typeof rawInit === "string" ? "string" : typeof rawInit === "object" ? "object" : !Number.isNaN(rawInit) ? "number" : "any";
+  return rawInit == null
+    ? "any"
+    : rawInit instanceof Set
+    ? "set"
+    : rawInit instanceof Map
+    ? "map"
+    : rawInit instanceof Date
+    ? "date"
+    : typeof rawInit === "boolean"
+    ? "boolean"
+    : typeof rawInit === "string"
+    ? "string"
+    : typeof rawInit === "object"
+    ? "object"
+    : !Number.isNaN(rawInit)
+    ? "number"
+    : "any";
 }
 var StorageSerializers = {
   boolean: {
     read: (v) => v === "true",
-    write: (v) => String(v)
+    write: (v) => String(v),
   },
   object: {
     read: (v) => JSON.parse(v),
-    write: (v) => JSON.stringify(v)
+    write: (v) => JSON.stringify(v),
   },
   number: {
     read: (v) => Number.parseFloat(v),
-    write: (v) => String(v)
+    write: (v) => String(v),
   },
   any: {
     read: (v) => v,
-    write: (v) => String(v)
+    write: (v) => String(v),
   },
   string: {
     read: (v) => v,
-    write: (v) => String(v)
+    write: (v) => String(v),
   },
   map: {
     read: (v) => new Map(JSON.parse(v)),
-    write: (v) => JSON.stringify(Array.from(v.entries()))
+    write: (v) => JSON.stringify(Array.from(v.entries())),
   },
   set: {
     read: (v) => new Set(JSON.parse(v)),
-    write: (v) => JSON.stringify(Array.from(v))
+    write: (v) => JSON.stringify(Array.from(v)),
   },
   date: {
     read: (v) => new Date(v),
-    write: (v) => v.toISOString()
-  }
+    write: (v) => v.toISOString(),
+  },
 };
 var customStorageEventName = "vueuse-storage";
 function useStorage(key, defaults2, storage, options = {}) {
@@ -3381,9 +3988,11 @@ function useStorage(key, defaults2, storage, options = {}) {
     onError = (e) => {
       console.error(e);
     },
-    initOnMounted
+    initOnMounted,
   } = options;
-  const data = (shallow ? shallowRef : ref)(typeof defaults2 === "function" ? defaults2() : defaults2);
+  const data = (shallow ? shallowRef : ref)(
+    typeof defaults2 === "function" ? defaults2() : defaults2,
+  );
   const keyComputed = computed(() => toValue(key));
   if (!storage) {
     try {
@@ -3395,40 +4004,54 @@ function useStorage(key, defaults2, storage, options = {}) {
       onError(e);
     }
   }
-  if (!storage)
+  if (!storage) {
     return data;
+  }
   const rawInit = toValue(defaults2);
   const type = guessSerializerType(rawInit);
-  const serializer = (_a = options.serializer) != null ? _a : StorageSerializers[type];
+  const serializer = (_a = options.serializer) != null
+    ? _a
+    : StorageSerializers[type];
   const { pause: pauseWatch, resume: resumeWatch } = watchPausable(
     data,
     () => write(data.value),
-    { flush, deep, eventFilter }
+    { flush, deep, eventFilter },
   );
   watch(keyComputed, () => update(), { flush });
   if (window2 && listenToStorageChanges) {
     tryOnMounted(() => {
-      if (storage instanceof Storage)
+      if (storage instanceof Storage) {
         useEventListener(window2, "storage", update, { passive: true });
-      else
-        useEventListener(window2, customStorageEventName, updateFromCustomEvent);
-      if (initOnMounted)
+      } else {
+        useEventListener(
+          window2,
+          customStorageEventName,
+          updateFromCustomEvent,
+        );
+      }
+      if (initOnMounted) {
         update();
+      }
     });
   }
-  if (!initOnMounted)
+  if (!initOnMounted) {
     update();
+  }
   function dispatchWriteEvent(oldValue, newValue) {
     if (window2) {
       const payload = {
         key: keyComputed.value,
         oldValue,
         newValue,
-        storageArea: storage
+        storageArea: storage,
       };
-      window2.dispatchEvent(storage instanceof Storage ? new StorageEvent("storage", payload) : new CustomEvent(customStorageEventName, {
-        detail: payload
-      }));
+      window2.dispatchEvent(
+        storage instanceof Storage
+          ? new StorageEvent("storage", payload)
+          : new CustomEvent(customStorageEventName, {
+            detail: payload,
+          }),
+      );
     }
   }
   function write(v) {
@@ -3449,17 +4072,21 @@ function useStorage(key, defaults2, storage, options = {}) {
     }
   }
   function read(event) {
-    const rawValue = event ? event.newValue : storage.getItem(keyComputed.value);
+    const rawValue = event
+      ? event.newValue
+      : storage.getItem(keyComputed.value);
     if (rawValue == null) {
-      if (writeDefaults && rawInit != null)
+      if (writeDefaults && rawInit != null) {
         storage.setItem(keyComputed.value, serializer.write(rawInit));
+      }
       return rawInit;
     } else if (!event && mergeDefaults) {
       const value = serializer.read(rawValue);
-      if (typeof mergeDefaults === "function")
+      if (typeof mergeDefaults === "function") {
         return mergeDefaults(value, rawInit);
-      else if (type === "object" && !Array.isArray(value))
+      } else if (type === "object" && !Array.isArray(value)) {
         return { ...rawInit, ...value };
+      }
       return value;
     } else if (typeof rawValue !== "string") {
       return rawValue;
@@ -3468,25 +4095,32 @@ function useStorage(key, defaults2, storage, options = {}) {
     }
   }
   function update(event) {
-    if (event && event.storageArea !== storage)
+    if (event && event.storageArea !== storage) {
       return;
+    }
     if (event && event.key == null) {
       data.value = rawInit;
       return;
     }
-    if (event && event.key !== keyComputed.value)
+    if (event && event.key !== keyComputed.value) {
       return;
+    }
     pauseWatch();
     try {
-      if ((event == null ? void 0 : event.newValue) !== serializer.write(data.value))
+      if (
+        (event == null ? void 0 : event.newValue) !==
+          serializer.write(data.value)
+      ) {
         data.value = read(event);
+      }
     } catch (e) {
       onError(e);
     } finally {
-      if (event)
+      if (event) {
         nextTick(resumeWatch);
-      else
+      } else {
         resumeWatch();
+      }
     }
   }
   function updateFromCustomEvent(event) {
@@ -3494,7 +4128,8 @@ function useStorage(key, defaults2, storage, options = {}) {
   }
   return data;
 }
-var CSS_DISABLE_TRANS = "*,*::before,*::after{-webkit-transition:none!important;-moz-transition:none!important;-o-transition:none!important;-ms-transition:none!important;transition:none!important}";
+var CSS_DISABLE_TRANS =
+  "*,*::before,*::after{-webkit-transition:none!important;-moz-transition:none!important;-o-transition:none!important;-ms-transition:none!important;transition:none!important}";
 function useColorMode(options = {}) {
   const {
     selector = "html",
@@ -3506,40 +4141,58 @@ function useColorMode(options = {}) {
     listenToStorageChanges = true,
     storageRef,
     emitAuto,
-    disableTransition = true
+    disableTransition = true,
   } = options;
   const modes = {
     auto: "",
     light: "light",
     dark: "dark",
-    ...options.modes || {}
+    ...options.modes || {},
   };
   const preferredDark = usePreferredDark({ window: window2 });
   const system = computed(() => preferredDark.value ? "dark" : "light");
-  const store = storageRef || (storageKey == null ? toRef2(initialValue) : useStorage(storageKey, initialValue, storage, { window: window2, listenToStorageChanges }));
-  const state = computed(() => store.value === "auto" ? system.value : store.value);
+  const store = storageRef ||
+    (storageKey == null
+      ? toRef2(initialValue)
+      : useStorage(storageKey, initialValue, storage, {
+        window: window2,
+        listenToStorageChanges,
+      }));
+  const state = computed(() =>
+    store.value === "auto" ? system.value : store.value
+  );
   const updateHTMLAttrs = getSSRHandler(
     "updateHTMLAttrs",
     (selector2, attribute2, value) => {
-      const el = typeof selector2 === "string" ? window2 == null ? void 0 : window2.document.querySelector(selector2) : unrefElement(selector2);
-      if (!el)
+      const el = typeof selector2 === "string"
+        ? window2 == null ? void 0 : window2.document.querySelector(selector2)
+        : unrefElement(selector2);
+      if (!el) {
         return;
+      }
       const classesToAdd = /* @__PURE__ */ new Set();
       const classesToRemove = /* @__PURE__ */ new Set();
       let attributeToChange = null;
       if (attribute2 === "class") {
         const current = value.split(/\s/g);
-        Object.values(modes).flatMap((i) => (i || "").split(/\s/g)).filter(Boolean).forEach((v) => {
-          if (current.includes(v))
+        Object.values(modes).flatMap((i) => (i || "").split(/\s/g)).filter(
+          Boolean,
+        ).forEach((v) => {
+          if (current.includes(v)) {
             classesToAdd.add(v);
-          else
+          } else {
             classesToRemove.add(v);
+          }
         });
       } else {
         attributeToChange = { key: attribute2, value };
       }
-      if (classesToAdd.size === 0 && classesToRemove.size === 0 && attributeToChange === null)
+      if (
+        classesToAdd.size === 0 && classesToRemove.size === 0 &&
+        attributeToChange === null
+      ) {
         return;
+      }
       let style;
       if (disableTransition) {
         style = window2.document.createElement("style");
@@ -3559,17 +4212,22 @@ function useColorMode(options = {}) {
         window2.getComputedStyle(style).opacity;
         document.head.removeChild(style);
       }
-    }
+    },
   );
   function defaultOnChanged(mode) {
     var _a;
-    updateHTMLAttrs(selector, attribute, (_a = modes[mode]) != null ? _a : mode);
+    updateHTMLAttrs(
+      selector,
+      attribute,
+      (_a = modes[mode]) != null ? _a : mode,
+    );
   }
   function onChanged(mode) {
-    if (options.onChanged)
+    if (options.onChanged) {
       options.onChanged(mode, defaultOnChanged);
-    else
+    } else {
       defaultOnChanged(mode);
+    }
   }
   watch(state, onChanged, { flush: "post", immediate: true });
   tryOnMounted(() => onChanged(state.value));
@@ -3579,7 +4237,7 @@ function useColorMode(options = {}) {
     },
     set(v) {
       store.value = v;
-    }
+    },
   });
   return Object.assign(auto, { store, system, state });
 }
@@ -3612,25 +4270,39 @@ function useConfirmDialog(revealed = shallowRef(false)) {
     cancel,
     onReveal: revealHook.on,
     onConfirm: confirmHook.on,
-    onCancel: cancelHook.on
+    onCancel: cancelHook.on,
   };
 }
 function useCountdown(initialCountdown, options) {
   var _a, _b;
   const remaining = shallowRef(toValue(initialCountdown));
-  const intervalController = useIntervalFn(() => {
-    var _a2, _b2;
-    const value = remaining.value - 1;
-    remaining.value = value < 0 ? 0 : value;
-    (_a2 = options == null ? void 0 : options.onTick) == null ? void 0 : _a2.call(options);
-    if (remaining.value <= 0) {
-      intervalController.pause();
-      (_b2 = options == null ? void 0 : options.onComplete) == null ? void 0 : _b2.call(options);
-    }
-  }, (_a = options == null ? void 0 : options.interval) != null ? _a : 1e3, { immediate: (_b = options == null ? void 0 : options.immediate) != null ? _b : false });
+  const intervalController = useIntervalFn(
+    () => {
+      var _a2, _b2;
+      const value = remaining.value - 1;
+      remaining.value = value < 0 ? 0 : value;
+      (_a2 = options == null ? void 0 : options.onTick) == null
+        ? void 0
+        : _a2.call(options);
+      if (remaining.value <= 0) {
+        intervalController.pause();
+        (_b2 = options == null ? void 0 : options.onComplete) == null
+          ? void 0
+          : _b2.call(options);
+      }
+    },
+    (_a = options == null ? void 0 : options.interval) != null ? _a : 1e3,
+    {
+      immediate: (_b = options == null ? void 0 : options.immediate) != null
+        ? _b
+        : false,
+    },
+  );
   const reset = (countdown) => {
     var _a2;
-    remaining.value = (_a2 = toValue(countdown)) != null ? _a2 : toValue(initialCountdown);
+    remaining.value = (_a2 = toValue(countdown)) != null
+      ? _a2
+      : toValue(initialCountdown);
   };
   const stop = () => {
     intervalController.pause();
@@ -3654,52 +4326,61 @@ function useCountdown(initialCountdown, options) {
     start,
     pause: intervalController.pause,
     resume,
-    isActive: intervalController.isActive
+    isActive: intervalController.isActive,
   };
 }
 function useCssVar(prop, target, options = {}) {
-  const { window: window2 = defaultWindow, initialValue, observe = false } = options;
+  const { window: window2 = defaultWindow, initialValue, observe = false } =
+    options;
   const variable = shallowRef(initialValue);
   const elRef = computed(() => {
     var _a;
-    return unrefElement(target) || ((_a = window2 == null ? void 0 : window2.document) == null ? void 0 : _a.documentElement);
+    return unrefElement(target) ||
+      ((_a = window2 == null ? void 0 : window2.document) == null
+        ? void 0
+        : _a.documentElement);
   });
   function updateCssVar() {
     var _a;
     const key = toValue(prop);
     const el = toValue(elRef);
     if (el && window2 && key) {
-      const value = (_a = window2.getComputedStyle(el).getPropertyValue(key)) == null ? void 0 : _a.trim();
+      const value =
+        (_a = window2.getComputedStyle(el).getPropertyValue(key)) == null
+          ? void 0
+          : _a.trim();
       variable.value = value || variable.value || initialValue;
     }
   }
   if (observe) {
     useMutationObserver(elRef, updateCssVar, {
       attributeFilter: ["style", "class"],
-      window: window2
+      window: window2,
     });
   }
   watch(
     [elRef, () => toValue(prop)],
     (_, old) => {
-      if (old[0] && old[1])
+      if (old[0] && old[1]) {
         old[0].style.removeProperty(old[1]);
+      }
       updateCssVar();
     },
-    { immediate: true }
+    { immediate: true },
   );
   watch(
     [variable, elRef],
     ([val, el]) => {
       const raw_prop = toValue(prop);
       if ((el == null ? void 0 : el.style) && raw_prop) {
-        if (val == null)
+        if (val == null) {
           el.style.removeProperty(raw_prop);
-        else
+        } else {
           el.style.setProperty(raw_prop, val);
+        }
       }
     },
-    { immediate: true }
+    { immediate: true },
   );
   return variable;
 }
@@ -3707,7 +4388,7 @@ function useCurrentElement(rootComponent) {
   const vm = getCurrentInstance();
   const currentElement = computedWithControl(
     () => null,
-    () => rootComponent ? unrefElement(rootComponent) : vm.proxy.$el
+    () => rootComponent ? unrefElement(rootComponent) : vm.proxy.$el,
   );
   onUpdated(currentElement.trigger);
   onMounted(currentElement.trigger);
@@ -3720,14 +4401,19 @@ function useCycleList(list, options) {
     get() {
       var _a;
       const targetList = listRef.value;
-      let index2 = (options == null ? void 0 : options.getIndexOf) ? options.getIndexOf(state.value, targetList) : targetList.indexOf(state.value);
-      if (index2 < 0)
-        index2 = (_a = options == null ? void 0 : options.fallbackIndex) != null ? _a : 0;
+      let index2 = (options == null ? void 0 : options.getIndexOf)
+        ? options.getIndexOf(state.value, targetList)
+        : targetList.indexOf(state.value);
+      if (index2 < 0) {
+        index2 = (_a = options == null ? void 0 : options.fallbackIndex) != null
+          ? _a
+          : 0;
+      }
       return index2;
     },
     set(v) {
       set2(v);
-    }
+    },
   });
   function set2(i) {
     const targetList = listRef.value;
@@ -3748,7 +4434,13 @@ function useCycleList(list, options) {
   }
   function getInitialValue() {
     var _a, _b;
-    return (_b = toValue((_a = options == null ? void 0 : options.initialValue) != null ? _a : toValue(list)[0])) != null ? _b : void 0;
+    return (_b = toValue(
+        (_a = options == null ? void 0 : options.initialValue) != null
+          ? _a
+          : toValue(list)[0],
+      )) != null
+      ? _b
+      : void 0;
   }
   watch(listRef, () => set2(index.value));
   return {
@@ -3756,27 +4448,30 @@ function useCycleList(list, options) {
     index,
     next,
     prev,
-    go: set2
+    go: set2,
   };
 }
 function useDark(options = {}) {
   const {
     valueDark = "dark",
-    valueLight = ""
+    valueLight = "",
   } = options;
   const mode = useColorMode({
     ...options,
     onChanged: (mode2, defaultHandler) => {
       var _a;
-      if (options.onChanged)
-        (_a = options.onChanged) == null ? void 0 : _a.call(options, mode2 === "dark", defaultHandler, mode2);
-      else
+      if (options.onChanged) {
+        (_a = options.onChanged) == null
+          ? void 0
+          : _a.call(options, mode2 === "dark", defaultHandler, mode2);
+      } else {
         defaultHandler(mode2);
+      }
     },
     modes: {
       dark: valueDark,
-      light: valueLight
-    }
+      light: valueLight,
+    },
   });
   const system = computed(() => mode.system.value);
   const isDark = computed({
@@ -3785,11 +4480,12 @@ function useDark(options = {}) {
     },
     set(v) {
       const modeVal = v ? "dark" : "light";
-      if (system.value === modeVal)
+      if (system.value === modeVal) {
         mode.value = "auto";
-      else
+      } else {
         mode.value = modeVal;
-    }
+      }
+    },
   });
   return isDark;
 }
@@ -3810,12 +4506,12 @@ function useManualRefHistory(source, options = {}) {
     clone = false,
     dump = defaultDump(clone),
     parse = defaultParse(clone),
-    setSource = fnSetSource
+    setSource = fnSetSource,
   } = options;
   function _createHistoryRecord() {
     return markRaw({
       snapshot: dump(source.value),
-      timestamp: timestamp()
+      timestamp: timestamp(),
     });
   }
   const last = ref(_createHistoryRecord());
@@ -3828,10 +4524,12 @@ function useManualRefHistory(source, options = {}) {
   const commit = () => {
     undoStack.value.unshift(last.value);
     last.value = _createHistoryRecord();
-    if (options.capacity && undoStack.value.length > options.capacity)
+    if (options.capacity && undoStack.value.length > options.capacity) {
       undoStack.value.splice(options.capacity, Number.POSITIVE_INFINITY);
-    if (redoStack.value.length)
+    }
+    if (redoStack.value.length) {
       redoStack.value.splice(0, redoStack.value.length);
+    }
   };
   const clear = () => {
     undoStack.value.splice(0, undoStack.value.length);
@@ -3869,29 +4567,29 @@ function useManualRefHistory(source, options = {}) {
     commit,
     reset,
     undo,
-    redo
+    redo,
   };
 }
 function useRefHistory(source, options = {}) {
   const {
     deep = false,
     flush = "pre",
-    eventFilter
+    eventFilter,
   } = options;
   const {
     eventFilter: composedFilter,
     pause,
     resume: resumeTracking,
-    isActive: isTracking
+    isActive: isTracking,
   } = pausableFilter(eventFilter);
   const {
     ignoreUpdates,
     ignorePrevAsyncUpdates,
-    stop
+    stop,
   } = watchIgnorable(
     source,
     commit,
-    { deep, flush, eventFilter: composedFilter }
+    { deep, flush, eventFilter: composedFilter },
   );
   function setSource(source2, value) {
     ignorePrevAsyncUpdates();
@@ -3899,7 +4597,11 @@ function useRefHistory(source, options = {}) {
       source2.value = value;
     });
   }
-  const manualHistory = useManualRefHistory(source, { ...options, clone: options.clone || deep, setSource });
+  const manualHistory = useManualRefHistory(source, {
+    ...options,
+    clone: options.clone || deep,
+    setSource,
+  });
   const { clear, commit: manualCommit } = manualHistory;
   function commit() {
     ignorePrevAsyncUpdates();
@@ -3907,8 +4609,9 @@ function useRefHistory(source, options = {}) {
   }
   function resume(commitNow) {
     resumeTracking();
-    if (commitNow)
+    if (commitNow) {
       commit();
+    }
   }
   function batch(fn) {
     let canceled = false;
@@ -3916,8 +4619,9 @@ function useRefHistory(source, options = {}) {
     ignoreUpdates(() => {
       fn(cancel);
     });
-    if (!canceled)
+    if (!canceled) {
       commit();
+    }
   }
   function dispose() {
     stop();
@@ -3930,24 +4634,29 @@ function useRefHistory(source, options = {}) {
     resume,
     commit,
     batch,
-    dispose
+    dispose,
   };
 }
 function useDebouncedRefHistory(source, options = {}) {
   const filter = options.debounce ? debounceFilter(options.debounce) : void 0;
   const history = useRefHistory(source, { ...options, eventFilter: filter });
   return {
-    ...history
+    ...history,
   };
 }
 function useDeviceMotion(options = {}) {
   const {
     window: window2 = defaultWindow,
     requestPermissions = false,
-    eventFilter = bypassFilter
+    eventFilter = bypassFilter,
   } = options;
-  const isSupported = useSupported(() => typeof DeviceMotionEvent !== "undefined");
-  const requirePermissions = useSupported(() => isSupported.value && "requestPermission" in DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === "function");
+  const isSupported = useSupported(() =>
+    typeof DeviceMotionEvent !== "undefined"
+  );
+  const requirePermissions = useSupported(() =>
+    isSupported.value && "requestPermission" in DeviceMotionEvent &&
+    typeof DeviceMotionEvent.requestPermission === "function"
+  );
   const permissionGranted = shallowRef(false);
   const acceleration = ref({ x: null, y: null, z: null });
   const rotationRate = ref({ alpha: null, beta: null, gamma: null });
@@ -3955,7 +4664,7 @@ function useDeviceMotion(options = {}) {
   const accelerationIncludingGravity = ref({
     x: null,
     y: null,
-    z: null
+    z: null,
   });
   function init() {
     if (window2) {
@@ -3966,29 +4675,42 @@ function useDeviceMotion(options = {}) {
           acceleration.value = {
             x: ((_a = event.acceleration) == null ? void 0 : _a.x) || null,
             y: ((_b = event.acceleration) == null ? void 0 : _b.y) || null,
-            z: ((_c = event.acceleration) == null ? void 0 : _c.z) || null
+            z: ((_c = event.acceleration) == null ? void 0 : _c.z) || null,
           };
           accelerationIncludingGravity.value = {
-            x: ((_d = event.accelerationIncludingGravity) == null ? void 0 : _d.x) || null,
-            y: ((_e = event.accelerationIncludingGravity) == null ? void 0 : _e.y) || null,
-            z: ((_f = event.accelerationIncludingGravity) == null ? void 0 : _f.z) || null
+            x: ((_d = event.accelerationIncludingGravity) == null
+              ? void 0
+              : _d.x) || null,
+            y: ((_e = event.accelerationIncludingGravity) == null
+              ? void 0
+              : _e.y) || null,
+            z: ((_f = event.accelerationIncludingGravity) == null
+              ? void 0
+              : _f.z) || null,
           };
           rotationRate.value = {
-            alpha: ((_g = event.rotationRate) == null ? void 0 : _g.alpha) || null,
-            beta: ((_h = event.rotationRate) == null ? void 0 : _h.beta) || null,
-            gamma: ((_i = event.rotationRate) == null ? void 0 : _i.gamma) || null
+            alpha: ((_g = event.rotationRate) == null ? void 0 : _g.alpha) ||
+              null,
+            beta: ((_h = event.rotationRate) == null ? void 0 : _h.beta) ||
+              null,
+            gamma: ((_i = event.rotationRate) == null ? void 0 : _i.gamma) ||
+              null,
           };
           interval.value = event.interval;
-        }
+        },
       );
-      useEventListener(window2, "devicemotion", onDeviceMotion, { passive: true });
+      useEventListener(window2, "devicemotion", onDeviceMotion, {
+        passive: true,
+      });
     }
   }
   const ensurePermissions = async () => {
-    if (!requirePermissions.value)
+    if (!requirePermissions.value) {
       permissionGranted.value = true;
-    if (permissionGranted.value)
+    }
+    if (permissionGranted.value) {
       return;
+    }
     if (requirePermissions.value) {
       const requestPermission = DeviceMotionEvent.requestPermission;
       try {
@@ -4017,12 +4739,14 @@ function useDeviceMotion(options = {}) {
     isSupported,
     requirePermissions,
     ensurePermissions,
-    permissionGranted
+    permissionGranted,
   };
 }
 function useDeviceOrientation(options = {}) {
   const { window: window2 = defaultWindow } = options;
-  const isSupported = useSupported(() => window2 && "DeviceOrientationEvent" in window2);
+  const isSupported = useSupported(() =>
+    window2 && "DeviceOrientationEvent" in window2
+  );
   const isAbsolute = shallowRef(false);
   const alpha = shallowRef(null);
   const beta = shallowRef(null);
@@ -4040,22 +4764,28 @@ function useDeviceOrientation(options = {}) {
     isAbsolute,
     alpha,
     beta,
-    gamma
+    gamma,
   };
 }
 function useDevicePixelRatio(options = {}) {
   const {
-    window: window2 = defaultWindow
+    window: window2 = defaultWindow,
   } = options;
   const pixelRatio = shallowRef(1);
-  const query = useMediaQuery(() => `(resolution: ${pixelRatio.value}dppx)`, options);
+  const query = useMediaQuery(
+    () => `(resolution: ${pixelRatio.value}dppx)`,
+    options,
+  );
   let stop = noop;
   if (window2) {
-    stop = watchImmediate(query, () => pixelRatio.value = window2.devicePixelRatio);
+    stop = watchImmediate(
+      query,
+      () => pixelRatio.value = window2.devicePixelRatio,
+    );
   }
   return {
     pixelRatio: readonly(pixelRatio),
-    stop
+    stop,
   };
 }
 function useDevicesList(options = {}) {
@@ -4063,18 +4793,28 @@ function useDevicesList(options = {}) {
     navigator: navigator2 = defaultNavigator,
     requestPermissions = false,
     constraints = { audio: true, video: true },
-    onUpdated: onUpdated2
+    onUpdated: onUpdated2,
   } = options;
   const devices = ref([]);
-  const videoInputs = computed(() => devices.value.filter((i) => i.kind === "videoinput"));
-  const audioInputs = computed(() => devices.value.filter((i) => i.kind === "audioinput"));
-  const audioOutputs = computed(() => devices.value.filter((i) => i.kind === "audiooutput"));
-  const isSupported = useSupported(() => navigator2 && navigator2.mediaDevices && navigator2.mediaDevices.enumerateDevices);
+  const videoInputs = computed(() =>
+    devices.value.filter((i) => i.kind === "videoinput")
+  );
+  const audioInputs = computed(() =>
+    devices.value.filter((i) => i.kind === "audioinput")
+  );
+  const audioOutputs = computed(() =>
+    devices.value.filter((i) => i.kind === "audiooutput")
+  );
+  const isSupported = useSupported(() =>
+    navigator2 && navigator2.mediaDevices &&
+    navigator2.mediaDevices.enumerateDevices
+  );
   const permissionGranted = shallowRef(false);
   let stream;
   async function update() {
-    if (!isSupported.value)
+    if (!isSupported.value) {
       return;
+    }
     devices.value = await navigator2.mediaDevices.enumerateDevices();
     onUpdated2 == null ? void 0 : onUpdated2(devices.value);
     if (stream) {
@@ -4084,10 +4824,12 @@ function useDevicesList(options = {}) {
   }
   async function ensurePermissions() {
     const deviceName = constraints.video ? "camera" : "microphone";
-    if (!isSupported.value)
+    if (!isSupported.value) {
       return false;
-    if (permissionGranted.value)
+    }
+    if (permissionGranted.value) {
       return true;
+    }
     const { state, query } = usePermission(deviceName, { controls: true });
     await query();
     if (state.value !== "granted") {
@@ -4106,9 +4848,12 @@ function useDevicesList(options = {}) {
     return permissionGranted.value;
   }
   if (isSupported.value) {
-    if (requestPermissions)
+    if (requestPermissions) {
       ensurePermissions();
-    useEventListener(navigator2.mediaDevices, "devicechange", update, { passive: true });
+    }
+    useEventListener(navigator2.mediaDevices, "devicechange", update, {
+      passive: true,
+    });
     update();
   }
   return {
@@ -4118,7 +4863,7 @@ function useDevicesList(options = {}) {
     videoInputs,
     audioInputs,
     audioOutputs,
-    isSupported
+    isSupported,
   };
 }
 function useDisplayMedia(options = {}) {
@@ -4129,21 +4874,30 @@ function useDisplayMedia(options = {}) {
   const { navigator: navigator2 = defaultNavigator } = options;
   const isSupported = useSupported(() => {
     var _a2;
-    return (_a2 = navigator2 == null ? void 0 : navigator2.mediaDevices) == null ? void 0 : _a2.getDisplayMedia;
+    return (_a2 = navigator2 == null ? void 0 : navigator2.mediaDevices) == null
+      ? void 0
+      : _a2.getDisplayMedia;
   });
   const constraint = { audio, video };
   const stream = shallowRef();
   async function _start() {
     var _a2;
-    if (!isSupported.value || stream.value)
+    if (!isSupported.value || stream.value) {
       return;
+    }
     stream.value = await navigator2.mediaDevices.getDisplayMedia(constraint);
-    (_a2 = stream.value) == null ? void 0 : _a2.getTracks().forEach((t) => useEventListener(t, "ended", stop, { passive: true }));
+    (_a2 = stream.value) == null
+      ? void 0
+      : _a2.getTracks().forEach((t) =>
+        useEventListener(t, "ended", stop, { passive: true })
+      );
     return stream.value;
   }
   async function _stop() {
     var _a2;
-    (_a2 = stream.value) == null ? void 0 : _a2.getTracks().forEach((t) => t.stop());
+    (_a2 = stream.value) == null
+      ? void 0
+      : _a2.getTracks().forEach((t) => t.stop());
     stream.value = void 0;
   }
   function stop() {
@@ -4152,32 +4906,35 @@ function useDisplayMedia(options = {}) {
   }
   async function start() {
     await _start();
-    if (stream.value)
+    if (stream.value) {
       enabled.value = true;
+    }
     return stream.value;
   }
   watch(
     enabled,
     (v) => {
-      if (v)
+      if (v) {
         _start();
-      else
+      } else {
         _stop();
+      }
     },
-    { immediate: true }
+    { immediate: true },
   );
   return {
     isSupported,
     stream,
     start,
     stop,
-    enabled
+    enabled,
   };
 }
 function useDocumentVisibility(options = {}) {
   const { document: document2 = defaultDocument } = options;
-  if (!document2)
+  if (!document2) {
     return shallowRef("visible");
+  }
   const visibility = shallowRef(document2.visibilityState);
   useEventListener(document2, "visibilitychange", () => {
     visibility.value = document2.visibilityState;
@@ -4199,73 +4956,99 @@ function useDraggable(target, options = {}) {
     draggingElement = defaultWindow,
     containerElement,
     handle: draggingHandle = target,
-    buttons = [0]
+    buttons = [0],
   } = options;
   const position = ref(
-    (_a = toValue(initialValue)) != null ? _a : { x: 0, y: 0 }
+    (_a = toValue(initialValue)) != null ? _a : { x: 0, y: 0 },
   );
   const pressedDelta = ref();
   const filterEvent = (e) => {
-    if (pointerTypes)
+    if (pointerTypes) {
       return pointerTypes.includes(e.pointerType);
+    }
     return true;
   };
   const handleEvent = (e) => {
-    if (toValue(preventDefault2))
+    if (toValue(preventDefault2)) {
       e.preventDefault();
-    if (toValue(stopPropagation))
+    }
+    if (toValue(stopPropagation)) {
       e.stopPropagation();
+    }
   };
   const start = (e) => {
     var _a2;
-    if (!toValue(buttons).includes(e.button))
+    if (!toValue(buttons).includes(e.button)) {
       return;
-    if (toValue(options.disabled) || !filterEvent(e))
+    }
+    if (toValue(options.disabled) || !filterEvent(e)) {
       return;
-    if (toValue(exact) && e.target !== toValue(target))
+    }
+    if (toValue(exact) && e.target !== toValue(target)) {
       return;
+    }
     const container = toValue(containerElement);
-    const containerRect = (_a2 = container == null ? void 0 : container.getBoundingClientRect) == null ? void 0 : _a2.call(container);
+    const containerRect =
+      (_a2 = container == null ? void 0 : container.getBoundingClientRect) ==
+          null
+        ? void 0
+        : _a2.call(container);
     const targetRect = toValue(target).getBoundingClientRect();
     const pos = {
-      x: e.clientX - (container ? targetRect.left - containerRect.left + container.scrollLeft : targetRect.left),
-      y: e.clientY - (container ? targetRect.top - containerRect.top + container.scrollTop : targetRect.top)
+      x: e.clientX -
+        (container
+          ? targetRect.left - containerRect.left + container.scrollLeft
+          : targetRect.left),
+      y: e.clientY -
+        (container
+          ? targetRect.top - containerRect.top + container.scrollTop
+          : targetRect.top),
     };
-    if ((onStart == null ? void 0 : onStart(pos, e)) === false)
+    if ((onStart == null ? void 0 : onStart(pos, e)) === false) {
       return;
+    }
     pressedDelta.value = pos;
     handleEvent(e);
   };
   const move = (e) => {
-    if (toValue(options.disabled) || !filterEvent(e))
+    if (toValue(options.disabled) || !filterEvent(e)) {
       return;
-    if (!pressedDelta.value)
+    }
+    if (!pressedDelta.value) {
       return;
+    }
     const container = toValue(containerElement);
     const targetRect = toValue(target).getBoundingClientRect();
     let { x, y } = position.value;
     if (axis === "x" || axis === "both") {
       x = e.clientX - pressedDelta.value.x;
-      if (container)
+      if (container) {
         x = Math.min(Math.max(0, x), container.scrollWidth - targetRect.width);
+      }
     }
     if (axis === "y" || axis === "both") {
       y = e.clientY - pressedDelta.value.y;
-      if (container)
-        y = Math.min(Math.max(0, y), container.scrollHeight - targetRect.height);
+      if (container) {
+        y = Math.min(
+          Math.max(0, y),
+          container.scrollHeight - targetRect.height,
+        );
+      }
     }
     position.value = {
       x,
-      y
+      y,
     };
     onMove == null ? void 0 : onMove(position.value, e);
     handleEvent(e);
   };
   const end = (e) => {
-    if (toValue(options.disabled) || !filterEvent(e))
+    if (toValue(options.disabled) || !filterEvent(e)) {
       return;
-    if (!pressedDelta.value)
+    }
+    if (!pressedDelta.value) {
       return;
+    }
     pressedDelta.value = void 0;
     onEnd == null ? void 0 : onEnd(position.value, e);
     handleEvent(e);
@@ -4275,7 +5058,7 @@ function useDraggable(target, options = {}) {
       var _a2;
       return {
         capture: (_a2 = options.capture) != null ? _a2 : true,
-        passive: !toValue(preventDefault2)
+        passive: !toValue(preventDefault2),
       };
     };
     useEventListener(draggingHandle, "pointerdown", start, config);
@@ -4287,8 +5070,8 @@ function useDraggable(target, options = {}) {
     position,
     isDragging: computed(() => !!pressedDelta.value),
     style: computed(
-      () => `left:${position.value.x}px;top:${position.value.y}px;`
-    )
+      () => `left:${position.value.x}px;top:${position.value.y}px;`,
+    ),
   };
 }
 function useDropZone(target, options = {}) {
@@ -4298,37 +5081,57 @@ function useDropZone(target, options = {}) {
   let counter = 0;
   let isValid = true;
   if (isClient) {
-    const _options = typeof options === "function" ? { onDrop: options } : options;
+    const _options = typeof options === "function"
+      ? { onDrop: options }
+      : options;
     const multiple = (_a = _options.multiple) != null ? _a : true;
-    const preventDefaultForUnhandled = (_b = _options.preventDefaultForUnhandled) != null ? _b : false;
+    const preventDefaultForUnhandled =
+      (_b = _options.preventDefaultForUnhandled) != null ? _b : false;
     const getFiles = (event) => {
       var _a2, _b2;
-      const list = Array.from((_b2 = (_a2 = event.dataTransfer) == null ? void 0 : _a2.files) != null ? _b2 : []);
+      const list = Array.from(
+        (_b2 = (_a2 = event.dataTransfer) == null ? void 0 : _a2.files) != null
+          ? _b2
+          : [],
+      );
       return list.length === 0 ? null : multiple ? list : [list[0]];
     };
     const checkDataTypes = (types) => {
       const dataTypes = unref(_options.dataTypes);
-      if (typeof dataTypes === "function")
+      if (typeof dataTypes === "function") {
         return dataTypes(types);
-      if (!(dataTypes == null ? void 0 : dataTypes.length))
+      }
+      if (!(dataTypes == null ? void 0 : dataTypes.length)) {
         return true;
-      if (types.length === 0)
+      }
+      if (types.length === 0) {
         return false;
+      }
       return types.every(
-        (type) => dataTypes.some((allowedType) => type.includes(allowedType))
+        (type) => dataTypes.some((allowedType) => type.includes(allowedType)),
       );
     };
     const checkValidity = (items) => {
-      const types = Array.from(items != null ? items : []).map((item) => item.type);
+      const types = Array.from(items != null ? items : []).map((item) =>
+        item.type
+      );
       const dataTypesValid = checkDataTypes(types);
       const multipleFilesValid = multiple || items.length <= 1;
       return dataTypesValid && multipleFilesValid;
     };
-    const isSafari = () => /^(?:(?!chrome|android).)*safari/i.test(navigator.userAgent) && !("chrome" in window);
+    const isSafari = () =>
+      /^(?:(?!chrome|android).)*safari/i.test(navigator.userAgent) &&
+      !("chrome" in window);
     const handleDragEvent = (event, eventType) => {
       var _a2, _b2, _c, _d, _e, _f;
-      const dataTransferItemList = (_a2 = event.dataTransfer) == null ? void 0 : _a2.items;
-      isValid = (_b2 = dataTransferItemList && checkValidity(dataTransferItemList)) != null ? _b2 : false;
+      const dataTransferItemList = (_a2 = event.dataTransfer) == null
+        ? void 0
+        : _a2.items;
+      isValid =
+        (_b2 = dataTransferItemList && checkValidity(dataTransferItemList)) !=
+            null
+          ? _b2
+          : false;
       if (preventDefaultForUnhandled) {
         event.preventDefault();
       }
@@ -4347,41 +5150,64 @@ function useDropZone(target, options = {}) {
         case "enter":
           counter += 1;
           isOverDropZone.value = true;
-          (_c = _options.onEnter) == null ? void 0 : _c.call(_options, null, event);
+          (_c = _options.onEnter) == null
+            ? void 0
+            : _c.call(_options, null, event);
           break;
         case "over":
-          (_d = _options.onOver) == null ? void 0 : _d.call(_options, null, event);
+          (_d = _options.onOver) == null
+            ? void 0
+            : _d.call(_options, null, event);
           break;
         case "leave":
           counter -= 1;
-          if (counter === 0)
+          if (counter === 0) {
             isOverDropZone.value = false;
-          (_e = _options.onLeave) == null ? void 0 : _e.call(_options, null, event);
+          }
+          (_e = _options.onLeave) == null
+            ? void 0
+            : _e.call(_options, null, event);
           break;
         case "drop":
           counter = 0;
           isOverDropZone.value = false;
           if (isValid) {
             files.value = currentFiles;
-            (_f = _options.onDrop) == null ? void 0 : _f.call(_options, currentFiles, event);
+            (_f = _options.onDrop) == null
+              ? void 0
+              : _f.call(_options, currentFiles, event);
           }
           break;
       }
     };
-    useEventListener(target, "dragenter", (event) => handleDragEvent(event, "enter"));
-    useEventListener(target, "dragover", (event) => handleDragEvent(event, "over"));
-    useEventListener(target, "dragleave", (event) => handleDragEvent(event, "leave"));
+    useEventListener(
+      target,
+      "dragenter",
+      (event) => handleDragEvent(event, "enter"),
+    );
+    useEventListener(
+      target,
+      "dragover",
+      (event) => handleDragEvent(event, "over"),
+    );
+    useEventListener(
+      target,
+      "dragleave",
+      (event) => handleDragEvent(event, "leave"),
+    );
     useEventListener(target, "drop", (event) => handleDragEvent(event, "drop"));
   }
   return {
     files,
-    isOverDropZone
+    isOverDropZone,
   };
 }
 function useResizeObserver(target, callback, options = {}) {
   const { window: window2 = defaultWindow, ...observerOptions } = options;
   let observer;
-  const isSupported = useSupported(() => window2 && "ResizeObserver" in window2);
+  const isSupported = useSupported(() =>
+    window2 && "ResizeObserver" in window2
+  );
   const cleanup = () => {
     if (observer) {
       observer.disconnect();
@@ -4390,7 +5216,9 @@ function useResizeObserver(target, callback, options = {}) {
   };
   const targets = computed(() => {
     const _targets = toValue(target);
-    return Array.isArray(_targets) ? _targets.map((el) => unrefElement(el)) : [unrefElement(_targets)];
+    return Array.isArray(_targets)
+      ? _targets.map((el) => unrefElement(el))
+      : [unrefElement(_targets)];
   });
   const stopWatch = watch(
     targets,
@@ -4399,12 +5227,13 @@ function useResizeObserver(target, callback, options = {}) {
       if (isSupported.value && window2) {
         observer = new ResizeObserver(callback);
         for (const _el of els) {
-          if (_el)
+          if (_el) {
             observer.observe(_el, observerOptions);
+          }
         }
       }
     },
-    { immediate: true, flush: "post" }
+    { immediate: true, flush: "post" },
   );
   const stop = () => {
     cleanup();
@@ -4413,7 +5242,7 @@ function useResizeObserver(target, callback, options = {}) {
   tryOnScopeDispose(stop);
   return {
     isSupported,
-    stop
+    stop,
   };
 }
 function useElementBounding(target, options = {}) {
@@ -4422,7 +5251,7 @@ function useElementBounding(target, options = {}) {
     windowResize = true,
     windowScroll = true,
     immediate = true,
-    updateTiming = "sync"
+    updateTiming = "sync",
   } = options;
   const height = shallowRef(0);
   const bottom = shallowRef(0);
@@ -4458,23 +5287,27 @@ function useElementBounding(target, options = {}) {
     y.value = rect.y;
   }
   function update() {
-    if (updateTiming === "sync")
+    if (updateTiming === "sync") {
       recalculate();
-    else if (updateTiming === "next-frame")
+    } else if (updateTiming === "next-frame") {
       requestAnimationFrame(() => recalculate());
+    }
   }
   useResizeObserver(target, update);
   watch(() => unrefElement(target), (ele) => !ele && update());
   useMutationObserver(target, update, {
-    attributeFilter: ["style", "class"]
+    attributeFilter: ["style", "class"],
   });
-  if (windowScroll)
+  if (windowScroll) {
     useEventListener("scroll", update, { capture: true, passive: true });
-  if (windowResize)
+  }
+  if (windowResize) {
     useEventListener("resize", update, { passive: true });
+  }
   tryOnMounted(() => {
-    if (immediate)
+    if (immediate) {
       update();
+    }
   });
   return {
     height,
@@ -4485,7 +5318,7 @@ function useElementBounding(target, options = {}) {
     width,
     x,
     y,
-    update
+    update,
   };
 }
 function useElementByPoint(options) {
@@ -4495,23 +5328,36 @@ function useElementByPoint(options) {
     document: document2 = defaultDocument,
     multiple,
     interval = "requestAnimationFrame",
-    immediate = true
+    immediate = true,
   } = options;
   const isSupported = useSupported(() => {
-    if (toValue(multiple))
+    if (toValue(multiple)) {
       return document2 && "elementsFromPoint" in document2;
+    }
     return document2 && "elementFromPoint" in document2;
   });
   const element = shallowRef(null);
   const cb = () => {
     var _a, _b;
-    element.value = toValue(multiple) ? (_a = document2 == null ? void 0 : document2.elementsFromPoint(toValue(x), toValue(y))) != null ? _a : [] : (_b = document2 == null ? void 0 : document2.elementFromPoint(toValue(x), toValue(y))) != null ? _b : null;
+    element.value = toValue(multiple)
+      ? (_a = document2 == null
+          ? void 0
+          : document2.elementsFromPoint(toValue(x), toValue(y))) != null
+        ? _a
+        : []
+      : (_b = document2 == null
+          ? void 0
+          : document2.elementFromPoint(toValue(x), toValue(y))) != null
+      ? _b
+      : null;
   };
-  const controls = interval === "requestAnimationFrame" ? useRafFn(cb, { immediate }) : useIntervalFn(cb, interval, { immediate });
+  const controls = interval === "requestAnimationFrame"
+    ? useRafFn(cb, { immediate })
+    : useIntervalFn(cb, interval, { immediate });
   return {
     isSupported,
     element,
-    ...controls
+    ...controls,
   };
 }
 function useElementHover(el, options = {}) {
@@ -4519,7 +5365,7 @@ function useElementHover(el, options = {}) {
     delayEnter = 0,
     delayLeave = 0,
     triggerOnRemoval = false,
-    window: window2 = defaultWindow
+    window: window2 = defaultWindow,
   } = options;
   const isHovered = shallowRef(false);
   let timer;
@@ -4529,35 +5375,49 @@ function useElementHover(el, options = {}) {
       clearTimeout(timer);
       timer = void 0;
     }
-    if (delay)
+    if (delay) {
       timer = setTimeout(() => isHovered.value = entering, delay);
-    else
+    } else {
       isHovered.value = entering;
+    }
   };
-  if (!window2)
+  if (!window2) {
     return isHovered;
+  }
   useEventListener(el, "mouseenter", () => toggle(true), { passive: true });
   useEventListener(el, "mouseleave", () => toggle(false), { passive: true });
   if (triggerOnRemoval) {
     onElementRemoval(
       computed(() => unrefElement(el)),
-      () => toggle(false)
+      () => toggle(false),
     );
   }
   return isHovered;
 }
-function useElementSize(target, initialSize = { width: 0, height: 0 }, options = {}) {
+function useElementSize(
+  target,
+  initialSize = { width: 0, height: 0 },
+  options = {},
+) {
   const { window: window2 = defaultWindow, box = "content-box" } = options;
   const isSVG = computed(() => {
     var _a, _b;
-    return (_b = (_a = unrefElement(target)) == null ? void 0 : _a.namespaceURI) == null ? void 0 : _b.includes("svg");
+    return (_b = (_a = unrefElement(target)) == null
+        ? void 0
+        : _a.namespaceURI) == null
+      ? void 0
+      : _b.includes("svg");
   });
   const width = shallowRef(initialSize.width);
   const height = shallowRef(initialSize.height);
   const { stop: stop1 } = useResizeObserver(
     target,
     ([entry]) => {
-      const boxSize = box === "border-box" ? entry.borderBoxSize : box === "content-box" ? entry.contentBoxSize : entry.devicePixelContentBoxSize;
+      const boxSize = box === "border-box"
+        ? entry.borderBoxSize
+        : box === "content-box"
+        ? entry.contentBoxSize
+        : entry.devicePixelContentBoxSize;
       if (window2 && isSVG.value) {
         const $elem = unrefElement(target);
         if ($elem) {
@@ -4568,21 +5428,29 @@ function useElementSize(target, initialSize = { width: 0, height: 0 }, options =
       } else {
         if (boxSize) {
           const formatBoxSize = toArray(boxSize);
-          width.value = formatBoxSize.reduce((acc, { inlineSize }) => acc + inlineSize, 0);
-          height.value = formatBoxSize.reduce((acc, { blockSize }) => acc + blockSize, 0);
+          width.value = formatBoxSize.reduce(
+            (acc, { inlineSize }) => acc + inlineSize,
+            0,
+          );
+          height.value = formatBoxSize.reduce(
+            (acc, { blockSize }) => acc + blockSize,
+            0,
+          );
         } else {
           width.value = entry.contentRect.width;
           height.value = entry.contentRect.height;
         }
       }
     },
-    options
+    options,
   );
   tryOnMounted(() => {
     const ele = unrefElement(target);
     if (ele) {
       width.value = "offsetWidth" in ele ? ele.offsetWidth : initialSize.width;
-      height.value = "offsetHeight" in ele ? ele.offsetHeight : initialSize.height;
+      height.value = "offsetHeight" in ele
+        ? ele.offsetHeight
+        : initialSize.height;
     }
   });
   const stop2 = watch(
@@ -4590,7 +5458,7 @@ function useElementSize(target, initialSize = { width: 0, height: 0 }, options =
     (ele) => {
       width.value = ele ? initialSize.width : 0;
       height.value = ele ? initialSize.height : 0;
-    }
+    },
   );
   function stop() {
     stop1();
@@ -4599,7 +5467,7 @@ function useElementSize(target, initialSize = { width: 0, height: 0 }, options =
   return {
     width,
     height,
-    stop
+    stop,
   };
 }
 function useIntersectionObserver(target, callback, options = {}) {
@@ -4608,39 +5476,45 @@ function useIntersectionObserver(target, callback, options = {}) {
     rootMargin = "0px",
     threshold = 0,
     window: window2 = defaultWindow,
-    immediate = true
+    immediate = true,
   } = options;
-  const isSupported = useSupported(() => window2 && "IntersectionObserver" in window2);
+  const isSupported = useSupported(() =>
+    window2 && "IntersectionObserver" in window2
+  );
   const targets = computed(() => {
     const _target = toValue(target);
     return toArray(_target).map(unrefElement).filter(notNullish);
   });
   let cleanup = noop;
   const isActive = shallowRef(immediate);
-  const stopWatch = isSupported.value ? watch(
-    () => [targets.value, unrefElement(root), isActive.value],
-    ([targets2, root2]) => {
-      cleanup();
-      if (!isActive.value)
-        return;
-      if (!targets2.length)
-        return;
-      const observer = new IntersectionObserver(
-        callback,
-        {
-          root: unrefElement(root2),
-          rootMargin,
-          threshold
+  const stopWatch = isSupported.value
+    ? watch(
+      () => [targets.value, unrefElement(root), isActive.value],
+      ([targets2, root2]) => {
+        cleanup();
+        if (!isActive.value) {
+          return;
         }
-      );
-      targets2.forEach((el) => el && observer.observe(el));
-      cleanup = () => {
-        observer.disconnect();
-        cleanup = noop;
-      };
-    },
-    { immediate, flush: "post" }
-  ) : noop;
+        if (!targets2.length) {
+          return;
+        }
+        const observer = new IntersectionObserver(
+          callback,
+          {
+            root: unrefElement(root2),
+            rootMargin,
+            threshold,
+          },
+        );
+        targets2.forEach((el) => el && observer.observe(el));
+        cleanup = () => {
+          observer.disconnect();
+          cleanup = noop;
+        };
+      },
+      { immediate, flush: "post" },
+    )
+    : noop;
   const stop = () => {
     cleanup();
     stopWatch();
@@ -4657,7 +5531,7 @@ function useIntersectionObserver(target, callback, options = {}) {
     resume() {
       isActive.value = true;
     },
-    stop
+    stop,
   };
 }
 function useElementVisibility(element, options = {}) {
@@ -4666,7 +5540,7 @@ function useElementVisibility(element, options = {}) {
     scrollTarget,
     threshold = 0,
     rootMargin,
-    once = false
+    once = false,
   } = options;
   const elementIsVisible = shallowRef(false);
   const { stop } = useIntersectionObserver(
@@ -4691,8 +5565,8 @@ function useElementVisibility(element, options = {}) {
       root: scrollTarget,
       window: window2,
       threshold,
-      rootMargin: toValue(rootMargin)
-    }
+      rootMargin: toValue(rootMargin),
+    },
   );
   return elementIsVisible;
 }
@@ -4705,7 +5579,9 @@ function useEventBus(key) {
     listeners.add(listener);
     events.set(key, listeners);
     const _off = () => off(listener);
-    (_a = scope == null ? void 0 : scope.cleanups) == null ? void 0 : _a.push(_off);
+    (_a = scope == null ? void 0 : scope.cleanups) == null
+      ? void 0
+      : _a.push(_off);
     return _off;
   }
   function once(listener) {
@@ -4717,24 +5593,29 @@ function useEventBus(key) {
   }
   function off(listener) {
     const listeners = events.get(key);
-    if (!listeners)
+    if (!listeners) {
       return;
+    }
     listeners.delete(listener);
-    if (!listeners.size)
+    if (!listeners.size) {
       reset();
+    }
   }
   function reset() {
     events.delete(key);
   }
   function emit(event, payload) {
     var _a;
-    (_a = events.get(key)) == null ? void 0 : _a.forEach((v) => v(event, payload));
+    (_a = events.get(key)) == null
+      ? void 0
+      : _a.forEach((v) => v(event, payload));
   }
   return { on, once, off, emit, reset };
 }
 function resolveNestedOptions$1(options) {
-  if (options === true)
+  if (options === true) {
     return {};
+  }
   return options;
 }
 function useEventSource(url, events2 = [], options = {}) {
@@ -4751,7 +5632,7 @@ function useEventSource(url, events2 = [], options = {}) {
     withCredentials = false,
     immediate = true,
     autoConnect = true,
-    autoReconnect
+    autoReconnect,
   } = options;
   const close = () => {
     if (isClient && eventSource.value) {
@@ -4762,8 +5643,9 @@ function useEventSource(url, events2 = [], options = {}) {
     }
   };
   const _init = () => {
-    if (explicitlyClosed || typeof urlRef.value === "undefined")
+    if (explicitlyClosed || typeof urlRef.value === "undefined") {
       return;
+    }
     const es = new EventSource(urlRef.value, { withCredentials });
     status.value = "CONNECTING";
     eventSource.value = es;
@@ -4779,15 +5661,16 @@ function useEventSource(url, events2 = [], options = {}) {
         const {
           retries = -1,
           delay = 1e3,
-          onFailed
+          onFailed,
         } = resolveNestedOptions$1(autoReconnect);
         retried += 1;
-        if (typeof retries === "number" && (retries < 0 || retried < retries))
+        if (typeof retries === "number" && (retries < 0 || retried < retries)) {
           setTimeout(_init, delay);
-        else if (typeof retries === "function" && retries())
+        } else if (typeof retries === "function" && retries()) {
           setTimeout(_init, delay);
-        else
+        } else {
           onFailed == null ? void 0 : onFailed();
+        }
       }
     };
     es.onmessage = (e) => {
@@ -4803,17 +5686,20 @@ function useEventSource(url, events2 = [], options = {}) {
     }
   };
   const open = () => {
-    if (!isClient)
+    if (!isClient) {
       return;
+    }
     close();
     explicitlyClosed = false;
     retried = 0;
     _init();
   };
-  if (immediate)
+  if (immediate) {
     open();
-  if (autoConnect)
+  }
+  if (autoConnect) {
     watch(urlRef, open);
+  }
   tryOnScopeDispose(close);
   return {
     eventSource,
@@ -4823,16 +5709,19 @@ function useEventSource(url, events2 = [], options = {}) {
     error,
     open,
     close,
-    lastEventId
+    lastEventId,
   };
 }
 function useEyeDropper(options = {}) {
   const { initialValue = "" } = options;
-  const isSupported = useSupported(() => typeof window !== "undefined" && "EyeDropper" in window);
+  const isSupported = useSupported(() =>
+    typeof window !== "undefined" && "EyeDropper" in window
+  );
   const sRGBHex = shallowRef(initialValue);
   async function open(openOptions) {
-    if (!isSupported.value)
+    if (!isSupported.value) {
       return;
+    }
     const eyeDropper = new window.EyeDropper();
     const result = await eyeDropper.open(openOptions);
     sRGBHex.value = result.sRGBHex;
@@ -4844,11 +5733,13 @@ function useFavicon(newIcon = null, options = {}) {
   const {
     baseUrl = "",
     rel = "icon",
-    document: document2 = defaultDocument
+    document: document2 = defaultDocument,
   } = options;
   const favicon = toRef2(newIcon);
   const applyIcon = (icon) => {
-    const elements = document2 == null ? void 0 : document2.head.querySelectorAll(`link[rel*="${rel}"]`);
+    const elements = document2 == null
+      ? void 0
+      : document2.head.querySelectorAll(`link[rel*="${rel}"]`);
     if (!elements || elements.length === 0) {
       const link = document2 == null ? void 0 : document2.createElement("link");
       if (link) {
@@ -4859,32 +5750,48 @@ function useFavicon(newIcon = null, options = {}) {
       }
       return;
     }
-    elements == null ? void 0 : elements.forEach((el) => el.href = `${baseUrl}${icon}`);
+    elements == null
+      ? void 0
+      : elements.forEach((el) => el.href = `${baseUrl}${icon}`);
   };
   watch(
     favicon,
     (i, o) => {
-      if (typeof i === "string" && i !== o)
+      if (typeof i === "string" && i !== o) {
         applyIcon(i);
+      }
     },
-    { immediate: true }
+    { immediate: true },
   );
   return favicon;
 }
 var payloadMapping = {
   json: "application/json",
-  text: "text/plain"
+  text: "text/plain",
 };
 function isFetchOptions(obj) {
-  return obj && containsProp(obj, "immediate", "refetch", "initialData", "timeout", "beforeFetch", "afterFetch", "onFetchError", "fetch", "updateDataOnError");
+  return obj &&
+    containsProp(
+      obj,
+      "immediate",
+      "refetch",
+      "initialData",
+      "timeout",
+      "beforeFetch",
+      "afterFetch",
+      "onFetchError",
+      "fetch",
+      "updateDataOnError",
+    );
 }
 var reAbsolute = /^(?:[a-z][a-z\d+\-.]*:)?\/\//i;
 function isAbsoluteURL(url) {
   return reAbsolute.test(url);
 }
 function headersToObject(headers) {
-  if (typeof Headers !== "undefined" && headers instanceof Headers)
+  if (typeof Headers !== "undefined" && headers instanceof Headers) {
     return Object.fromEntries(headers.entries());
+  }
   return headers;
 }
 function combineCallbacks(combination, ...callbacks) {
@@ -4897,15 +5804,17 @@ function combineCallbacks(combination, ...callbacks) {
           break;
         }
       }
-      if (callback)
+      if (callback) {
         return { ...ctx, ...await callback(ctx) };
+      }
       return ctx;
     };
   } else {
     return async (ctx) => {
       for (const callback of callbacks) {
-        if (callback)
+        if (callback) {
           ctx = { ...ctx, ...await callback(ctx) };
+        }
       }
       return ctx;
     };
@@ -4919,7 +5828,9 @@ function createFetch(config = {}) {
     const computedUrl = computed(() => {
       const baseUrl = toValue(config.baseUrl);
       const targetUrl = toValue(url);
-      return baseUrl && !isAbsoluteURL(targetUrl) ? joinPaths(baseUrl, targetUrl) : targetUrl;
+      return baseUrl && !isAbsoluteURL(targetUrl)
+        ? joinPaths(baseUrl, targetUrl)
+        : targetUrl;
     });
     let options = _options;
     let fetchOptions = _fetchOptions;
@@ -4928,9 +5839,21 @@ function createFetch(config = {}) {
         options = {
           ...options,
           ...args[0],
-          beforeFetch: combineCallbacks(_combination, _options.beforeFetch, args[0].beforeFetch),
-          afterFetch: combineCallbacks(_combination, _options.afterFetch, args[0].afterFetch),
-          onFetchError: combineCallbacks(_combination, _options.onFetchError, args[0].onFetchError)
+          beforeFetch: combineCallbacks(
+            _combination,
+            _options.beforeFetch,
+            args[0].beforeFetch,
+          ),
+          afterFetch: combineCallbacks(
+            _combination,
+            _options.afterFetch,
+            args[0].afterFetch,
+          ),
+          onFetchError: combineCallbacks(
+            _combination,
+            _options.onFetchError,
+            args[0].onFetchError,
+          ),
         };
       } else {
         fetchOptions = {
@@ -4938,8 +5861,8 @@ function createFetch(config = {}) {
           ...args[0],
           headers: {
             ...headersToObject(fetchOptions.headers) || {},
-            ...headersToObject(args[0].headers) || {}
-          }
+            ...headersToObject(args[0].headers) || {},
+          },
         };
       }
     }
@@ -4947,9 +5870,21 @@ function createFetch(config = {}) {
       options = {
         ...options,
         ...args[1],
-        beforeFetch: combineCallbacks(_combination, _options.beforeFetch, args[1].beforeFetch),
-        afterFetch: combineCallbacks(_combination, _options.afterFetch, args[1].afterFetch),
-        onFetchError: combineCallbacks(_combination, _options.onFetchError, args[1].onFetchError)
+        beforeFetch: combineCallbacks(
+          _combination,
+          _options.beforeFetch,
+          args[1].beforeFetch,
+        ),
+        afterFetch: combineCallbacks(
+          _combination,
+          _options.afterFetch,
+          args[1].afterFetch,
+        ),
+        onFetchError: combineCallbacks(
+          _combination,
+          _options.onFetchError,
+          args[1].onFetchError,
+        ),
       };
     }
     return useFetch(computedUrl, fetchOptions, options);
@@ -4964,27 +5899,29 @@ function useFetch(url, ...args) {
     immediate: true,
     refetch: false,
     timeout: 0,
-    updateDataOnError: false
+    updateDataOnError: false,
   };
   const config = {
     method: "GET",
     type: "text",
-    payload: void 0
+    payload: void 0,
   };
   if (args.length > 0) {
-    if (isFetchOptions(args[0]))
+    if (isFetchOptions(args[0])) {
       options = { ...options, ...args[0] };
-    else
+    } else {
       fetchOptions = args[0];
+    }
   }
   if (args.length > 1) {
-    if (isFetchOptions(args[1]))
+    if (isFetchOptions(args[1])) {
       options = { ...options, ...args[1] };
+    }
   }
   const {
     fetch = (_a = defaultWindow) == null ? void 0 : _a.fetch,
     initialData,
-    timeout
+    timeout,
   } = options;
   const responseEvent = createEventHook();
   const errorEvent = createEventHook();
@@ -5006,7 +5943,7 @@ function useFetch(url, ...args) {
       controller.signal.onabort = () => aborted.value = true;
       fetchOptions = {
         ...fetchOptions,
-        signal: controller.signal
+        signal: controller.signal,
       };
     }
   };
@@ -5014,8 +5951,9 @@ function useFetch(url, ...args) {
     isFetching.value = isLoading;
     isFinished.value = !isLoading;
   };
-  if (timeout)
+  if (timeout) {
     timer = useTimeoutFn(abort, timeout, { immediate: false });
+  }
   let executeCounter = 0;
   const execute = async (throwOnFailed = false) => {
     var _a2, _b;
@@ -5028,38 +5966,51 @@ function useFetch(url, ...args) {
     const currentExecuteCounter = executeCounter;
     const defaultFetchOptions = {
       method: config.method,
-      headers: {}
+      headers: {},
     };
     const payload = toValue(config.payload);
     if (payload) {
       const headers = headersToObject(defaultFetchOptions.headers);
       const proto = Object.getPrototypeOf(payload);
-      if (!config.payloadType && payload && (proto === Object.prototype || Array.isArray(proto)) && !(payload instanceof FormData))
+      if (
+        !config.payloadType && payload &&
+        (proto === Object.prototype || Array.isArray(proto)) &&
+        !(payload instanceof FormData)
+      ) {
         config.payloadType = "json";
-      if (config.payloadType)
-        headers["Content-Type"] = (_a2 = payloadMapping[config.payloadType]) != null ? _a2 : config.payloadType;
-      defaultFetchOptions.body = config.payloadType === "json" ? JSON.stringify(payload) : payload;
+      }
+      if (config.payloadType) {
+        headers["Content-Type"] =
+          (_a2 = payloadMapping[config.payloadType]) != null
+            ? _a2
+            : config.payloadType;
+      }
+      defaultFetchOptions.body = config.payloadType === "json"
+        ? JSON.stringify(payload)
+        : payload;
     }
     let isCanceled = false;
     const context = {
       url: toValue(url),
       options: {
         ...defaultFetchOptions,
-        ...fetchOptions
+        ...fetchOptions,
       },
       cancel: () => {
         isCanceled = true;
-      }
+      },
     };
-    if (options.beforeFetch)
+    if (options.beforeFetch) {
       Object.assign(context, await options.beforeFetch(context));
+    }
     if (isCanceled || !fetch) {
       loading(false);
       return Promise.resolve(null);
     }
     let responseData = null;
-    if (timer)
+    if (timer) {
       timer.start();
+    }
     return fetch(
       context.url,
       {
@@ -5067,9 +6018,11 @@ function useFetch(url, ...args) {
         ...context.options,
         headers: {
           ...headersToObject(defaultFetchOptions.headers),
-          ...headersToObject((_b = context.options) == null ? void 0 : _b.headers)
-        }
-      }
+          ...headersToObject(
+            (_b = context.options) == null ? void 0 : _b.headers,
+          ),
+        },
+      },
     ).then(async (fetchResponse) => {
       response.value = fetchResponse;
       statusCode.value = fetchResponse.status;
@@ -5083,7 +6036,7 @@ function useFetch(url, ...args) {
           data: responseData,
           response: fetchResponse,
           context,
-          execute
+          execute,
         }));
       }
       data.value = responseData;
@@ -5097,21 +6050,25 @@ function useFetch(url, ...args) {
           error: fetchError,
           response: response.value,
           context,
-          execute
+          execute,
         }));
       }
       error.value = errorData;
-      if (options.updateDataOnError)
+      if (options.updateDataOnError) {
         data.value = responseData;
+      }
       errorEvent.trigger(fetchError);
-      if (throwOnFailed)
+      if (throwOnFailed) {
         throw fetchError;
+      }
       return null;
     }).finally(() => {
-      if (currentExecuteCounter === executeCounter)
+      if (currentExecuteCounter === executeCounter) {
         loading(false);
-      if (timer)
+      }
+      if (timer) {
         timer.stop();
+      }
       finallyEvent.trigger(null);
     });
   };
@@ -5119,10 +6076,10 @@ function useFetch(url, ...args) {
   watch(
     [
       refetch,
-      toRef2(url)
+      toRef2(url),
     ],
     ([refetch2]) => refetch2 && execute(),
-    { deep: true }
+    { deep: true },
   );
   const shell = {
     isFinished: readonly(isFinished),
@@ -5151,7 +6108,7 @@ function useFetch(url, ...args) {
     text: setType("text"),
     blob: setType("blob"),
     arrayBuffer: setType("arrayBuffer"),
-    formData: setType("formData")
+    formData: setType("formData"),
   };
   function setMethod(method) {
     return (payload, payloadType) => {
@@ -5163,17 +6120,17 @@ function useFetch(url, ...args) {
           watch(
             [
               refetch,
-              toRef2(config.payload)
+              toRef2(config.payload),
             ],
             ([refetch2]) => refetch2 && execute(),
-            { deep: true }
+            { deep: true },
           );
         }
         return {
           ...shell,
           then(onFulfilled, onRejected) {
             return waitUntilFinished().then(onFulfilled, onRejected);
-          }
+          },
         };
       }
       return void 0;
@@ -5192,19 +6149,20 @@ function useFetch(url, ...args) {
           ...shell,
           then(onFulfilled, onRejected) {
             return waitUntilFinished().then(onFulfilled, onRejected);
-          }
+          },
         };
       }
       return void 0;
     };
   }
-  if (options.immediate)
+  if (options.immediate) {
     Promise.resolve().then(() => execute());
+  }
   return {
     ...shell,
     then(onFulfilled, onRejected) {
       return waitUntilFinished().then(onFulfilled, onRejected);
-    }
+    },
   };
 }
 function joinPaths(start, end) {
@@ -5220,13 +6178,15 @@ var DEFAULT_OPTIONS = {
   multiple: true,
   accept: "*",
   reset: false,
-  directory: false
+  directory: false,
 };
 function prepareInitialFiles(files) {
-  if (!files)
+  if (!files) {
     return null;
-  if (files instanceof FileList)
+  }
+  if (files instanceof FileList) {
     return files;
+  }
   const dt = new DataTransfer();
   for (const file of files) {
     dt.items.add(file);
@@ -5235,7 +6195,7 @@ function prepareInitialFiles(files) {
 }
 function useFileDialog(options = {}) {
   const {
-    document: document2 = defaultDocument
+    document: document2 = defaultDocument,
   } = options;
   const files = ref(prepareInitialFiles(options.initialFiles));
   const { on: onChange, trigger: changeTrigger } = createEventHook();
@@ -5261,20 +6221,23 @@ function useFileDialog(options = {}) {
     }
   };
   const open = (localOptions) => {
-    if (!input)
+    if (!input) {
       return;
+    }
     const _options = {
       ...DEFAULT_OPTIONS,
       ...options,
-      ...localOptions
+      ...localOptions,
     };
     input.multiple = _options.multiple;
     input.accept = _options.accept;
     input.webkitdirectory = _options.directory;
-    if (hasOwn(_options, "capture"))
+    if (hasOwn(_options, "capture")) {
       input.capture = _options.capture;
-    if (_options.reset)
+    }
+    if (_options.reset) {
       reset();
+    }
     input.click();
   };
   return {
@@ -5282,26 +6245,33 @@ function useFileDialog(options = {}) {
     open,
     reset,
     onCancel,
-    onChange
+    onChange,
   };
 }
 function useFileSystemAccess(options = {}) {
   const {
     window: _window = defaultWindow,
-    dataType = "Text"
+    dataType = "Text",
   } = options;
   const window2 = _window;
-  const isSupported = useSupported(() => window2 && "showSaveFilePicker" in window2 && "showOpenFilePicker" in window2);
+  const isSupported = useSupported(() =>
+    window2 && "showSaveFilePicker" in window2 &&
+    "showOpenFilePicker" in window2
+  );
   const fileHandle = shallowRef();
   const data = shallowRef();
   const file = shallowRef();
   const fileName = computed(() => {
     var _a, _b;
-    return (_b = (_a = file.value) == null ? void 0 : _a.name) != null ? _b : "";
+    return (_b = (_a = file.value) == null ? void 0 : _a.name) != null
+      ? _b
+      : "";
   });
   const fileMIME = computed(() => {
     var _a, _b;
-    return (_b = (_a = file.value) == null ? void 0 : _a.type) != null ? _b : "";
+    return (_b = (_a = file.value) == null ? void 0 : _a.type) != null
+      ? _b
+      : "";
   });
   const fileSize = computed(() => {
     var _a, _b;
@@ -5309,27 +6279,39 @@ function useFileSystemAccess(options = {}) {
   });
   const fileLastModified = computed(() => {
     var _a, _b;
-    return (_b = (_a = file.value) == null ? void 0 : _a.lastModified) != null ? _b : 0;
+    return (_b = (_a = file.value) == null ? void 0 : _a.lastModified) != null
+      ? _b
+      : 0;
   });
   async function open(_options = {}) {
-    if (!isSupported.value)
+    if (!isSupported.value) {
       return;
-    const [handle] = await window2.showOpenFilePicker({ ...toValue(options), ..._options });
+    }
+    const [handle] = await window2.showOpenFilePicker({
+      ...toValue(options),
+      ..._options,
+    });
     fileHandle.value = handle;
     await updateData();
   }
   async function create(_options = {}) {
-    if (!isSupported.value)
+    if (!isSupported.value) {
       return;
-    fileHandle.value = await window2.showSaveFilePicker({ ...options, ..._options });
+    }
+    fileHandle.value = await window2.showSaveFilePicker({
+      ...options,
+      ..._options,
+    });
     data.value = void 0;
     await updateData();
   }
   async function save(_options = {}) {
-    if (!isSupported.value)
+    if (!isSupported.value) {
       return;
-    if (!fileHandle.value)
+    }
+    if (!fileHandle.value) {
       return saveAs(_options);
+    }
     if (data.value) {
       const writableStream = await fileHandle.value.createWritable();
       await writableStream.write(data.value);
@@ -5338,9 +6320,13 @@ function useFileSystemAccess(options = {}) {
     await updateFile();
   }
   async function saveAs(_options = {}) {
-    if (!isSupported.value)
+    if (!isSupported.value) {
       return;
-    fileHandle.value = await window2.showSaveFilePicker({ ...options, ..._options });
+    }
+    fileHandle.value = await window2.showSaveFilePicker({
+      ...options,
+      ..._options,
+    });
     if (data.value) {
       const writableStream = await fileHandle.value.createWritable();
       await writableStream.write(data.value);
@@ -5350,18 +6336,21 @@ function useFileSystemAccess(options = {}) {
   }
   async function updateFile() {
     var _a;
-    file.value = await ((_a = fileHandle.value) == null ? void 0 : _a.getFile());
+    file.value =
+      await ((_a = fileHandle.value) == null ? void 0 : _a.getFile());
   }
   async function updateData() {
     var _a, _b;
     await updateFile();
     const type = toValue(dataType);
-    if (type === "Text")
+    if (type === "Text") {
       data.value = await ((_a = file.value) == null ? void 0 : _a.text());
-    else if (type === "ArrayBuffer")
-      data.value = await ((_b = file.value) == null ? void 0 : _b.arrayBuffer());
-    else if (type === "Blob")
+    } else if (type === "ArrayBuffer") {
+      data.value =
+        await ((_b = file.value) == null ? void 0 : _b.arrayBuffer());
+    } else if (type === "Blob") {
       data.value = file.value;
+    }
   }
   watch(() => toValue(dataType), updateData);
   return {
@@ -5376,36 +6365,51 @@ function useFileSystemAccess(options = {}) {
     create,
     save,
     saveAs,
-    updateData
+    updateData,
   };
 }
 function useFocus(target, options = {}) {
-  const { initialValue = false, focusVisible = false, preventScroll = false } = options;
+  const { initialValue = false, focusVisible = false, preventScroll = false } =
+    options;
   const innerFocused = shallowRef(false);
   const targetElement = computed(() => unrefElement(target));
   const listenerOptions = { passive: true };
   useEventListener(targetElement, "focus", (event) => {
     var _a, _b;
-    if (!focusVisible || ((_b = (_a = event.target).matches) == null ? void 0 : _b.call(_a, ":focus-visible")))
+    if (
+      !focusVisible ||
+      ((_b = (_a = event.target).matches) == null
+        ? void 0
+        : _b.call(_a, ":focus-visible"))
+    ) {
       innerFocused.value = true;
+    }
   }, listenerOptions);
-  useEventListener(targetElement, "blur", () => innerFocused.value = false, listenerOptions);
+  useEventListener(
+    targetElement,
+    "blur",
+    () => innerFocused.value = false,
+    listenerOptions,
+  );
   const focused = computed({
     get: () => innerFocused.value,
     set(value) {
       var _a, _b;
-      if (!value && innerFocused.value)
+      if (!value && innerFocused.value) {
         (_a = targetElement.value) == null ? void 0 : _a.blur();
-      else if (value && !innerFocused.value)
-        (_b = targetElement.value) == null ? void 0 : _b.focus({ preventScroll });
-    }
+      } else if (value && !innerFocused.value) {
+        (_b = targetElement.value) == null
+          ? void 0
+          : _b.focus({ preventScroll });
+      }
+    },
   });
   watch(
     targetElement,
     () => {
       focused.value = initialValue;
     },
-    { immediate: true, flush: "post" }
+    { immediate: true, flush: "post" },
   );
   return { focused };
 }
@@ -5422,19 +6426,33 @@ function useFocusWithin(target, options = {}) {
     return { focused };
   }
   const listenerOptions = { passive: true };
-  useEventListener(targetElement, EVENT_FOCUS_IN, () => _focused.value = true, listenerOptions);
+  useEventListener(
+    targetElement,
+    EVENT_FOCUS_IN,
+    () => _focused.value = true,
+    listenerOptions,
+  );
   useEventListener(targetElement, EVENT_FOCUS_OUT, () => {
     var _a, _b, _c;
-    return _focused.value = (_c = (_b = (_a = targetElement.value) == null ? void 0 : _a.matches) == null ? void 0 : _b.call(_a, PSEUDO_CLASS_FOCUS_WITHIN)) != null ? _c : false;
+    return _focused.value =
+      (_c = (_b = (_a = targetElement.value) == null ? void 0 : _a.matches) ==
+            null
+          ? void 0
+          : _b.call(_a, PSEUDO_CLASS_FOCUS_WITHIN)) != null
+        ? _c
+        : false;
   }, listenerOptions);
   return { focused };
 }
 function useFps(options) {
   var _a;
   const fps = shallowRef(0);
-  if (typeof performance === "undefined")
+  if (typeof performance === "undefined") {
     return fps;
-  const every = (_a = options == null ? void 0 : options.every) != null ? _a : 10;
+  }
+  const every = (_a = options == null ? void 0 : options.every) != null
+    ? _a
+    : 10;
   let last = performance.now();
   let ticks = 0;
   useRafFn(() => {
@@ -5454,16 +6472,20 @@ var eventHandlers = [
   "webkitfullscreenchange",
   "webkitendfullscreen",
   "mozfullscreenchange",
-  "MSFullscreenChange"
+  "MSFullscreenChange",
 ];
 function useFullscreen(target, options = {}) {
   const {
     document: document2 = defaultDocument,
-    autoExit = false
+    autoExit = false,
   } = options;
   const targetRef = computed(() => {
     var _a;
-    return (_a = unrefElement(target)) != null ? _a : document2 == null ? void 0 : document2.documentElement;
+    return (_a = unrefElement(target)) != null
+      ? _a
+      : document2 == null
+      ? void 0
+      : document2.documentElement;
   });
   const isFullscreen = shallowRef(false);
   const requestMethod = computed(() => {
@@ -5474,8 +6496,10 @@ function useFullscreen(target, options = {}) {
       "webkitEnterFullScreen",
       "webkitRequestFullScreen",
       "mozRequestFullScreen",
-      "msRequestFullscreen"
-    ].find((m) => document2 && m in document2 || targetRef.value && m in targetRef.value);
+      "msRequestFullscreen",
+    ].find((m) =>
+      document2 && m in document2 || targetRef.value && m in targetRef.value
+    );
   });
   const exitMethod = computed(() => {
     return [
@@ -5484,8 +6508,10 @@ function useFullscreen(target, options = {}) {
       "webkitExitFullScreen",
       "webkitCancelFullScreen",
       "mozCancelFullScreen",
-      "msExitFullscreen"
-    ].find((m) => document2 && m in document2 || targetRef.value && m in targetRef.value);
+      "msExitFullscreen",
+    ].find((m) =>
+      document2 && m in document2 || targetRef.value && m in targetRef.value
+    );
   });
   const fullscreenEnabled = computed(() => {
     return [
@@ -5493,19 +6519,27 @@ function useFullscreen(target, options = {}) {
       "webkitIsFullScreen",
       "webkitDisplayingFullscreen",
       "mozFullScreen",
-      "msFullscreenElement"
-    ].find((m) => document2 && m in document2 || targetRef.value && m in targetRef.value);
+      "msFullscreenElement",
+    ].find((m) =>
+      document2 && m in document2 || targetRef.value && m in targetRef.value
+    );
   });
   const fullscreenElementMethod = [
     "fullscreenElement",
     "webkitFullscreenElement",
     "mozFullScreenElement",
-    "msFullscreenElement"
+    "msFullscreenElement",
   ].find((m) => document2 && m in document2);
-  const isSupported = useSupported(() => targetRef.value && document2 && requestMethod.value !== void 0 && exitMethod.value !== void 0 && fullscreenEnabled.value !== void 0);
+  const isSupported = useSupported(() =>
+    targetRef.value && document2 && requestMethod.value !== void 0 &&
+    exitMethod.value !== void 0 && fullscreenEnabled.value !== void 0
+  );
   const isCurrentElementFullScreen = () => {
-    if (fullscreenElementMethod)
-      return (document2 == null ? void 0 : document2[fullscreenElementMethod]) === targetRef.value;
+    if (fullscreenElementMethod) {
+      return (document2 == null
+        ? void 0
+        : document2[fullscreenElementMethod]) === targetRef.value;
+    }
     return false;
   };
   const isElementFullScreen = () => {
@@ -5514,7 +6548,9 @@ function useFullscreen(target, options = {}) {
         return document2[fullscreenEnabled.value];
       } else {
         const target2 = targetRef.value;
-        if ((target2 == null ? void 0 : target2[fullscreenEnabled.value]) != null) {
+        if (
+          (target2 == null ? void 0 : target2[fullscreenEnabled.value]) != null
+        ) {
           return Boolean(target2[fullscreenEnabled.value]);
         }
       }
@@ -5522,26 +6558,33 @@ function useFullscreen(target, options = {}) {
     return false;
   };
   async function exit() {
-    if (!isSupported.value || !isFullscreen.value)
+    if (!isSupported.value || !isFullscreen.value) {
       return;
+    }
     if (exitMethod.value) {
       if ((document2 == null ? void 0 : document2[exitMethod.value]) != null) {
         await document2[exitMethod.value]();
       } else {
         const target2 = targetRef.value;
-        if ((target2 == null ? void 0 : target2[exitMethod.value]) != null)
+        if ((target2 == null ? void 0 : target2[exitMethod.value]) != null) {
           await target2[exitMethod.value]();
+        }
       }
     }
     isFullscreen.value = false;
   }
   async function enter() {
-    if (!isSupported.value || isFullscreen.value)
+    if (!isSupported.value || isFullscreen.value) {
       return;
-    if (isElementFullScreen())
+    }
+    if (isElementFullScreen()) {
       await exit();
+    }
     const target2 = targetRef.value;
-    if (requestMethod.value && (target2 == null ? void 0 : target2[requestMethod.value]) != null) {
+    if (
+      requestMethod.value &&
+      (target2 == null ? void 0 : target2[requestMethod.value]) != null
+    ) {
       await target2[requestMethod.value]();
       isFullscreen.value = true;
     }
@@ -5551,20 +6594,30 @@ function useFullscreen(target, options = {}) {
   }
   const handlerCallback = () => {
     const isElementFullScreenValue = isElementFullScreen();
-    if (!isElementFullScreenValue || isElementFullScreenValue && isCurrentElementFullScreen())
+    if (
+      !isElementFullScreenValue ||
+      isElementFullScreenValue && isCurrentElementFullScreen()
+    ) {
       isFullscreen.value = isElementFullScreenValue;
+    }
   };
   const listenerOptions = { capture: false, passive: true };
   useEventListener(document2, eventHandlers, handlerCallback, listenerOptions);
-  useEventListener(() => unrefElement(targetRef), eventHandlers, handlerCallback, listenerOptions);
-  if (autoExit)
+  useEventListener(
+    () => unrefElement(targetRef),
+    eventHandlers,
+    handlerCallback,
+    listenerOptions,
+  );
+  if (autoExit) {
     tryOnScopeDispose(exit);
+  }
   return {
     isSupported,
     isFullscreen,
     enter,
     exit,
-    toggle
+    toggle,
   };
 }
 function mapGamepadToXbox360Controller(gamepad) {
@@ -5575,36 +6628,36 @@ function mapGamepadToXbox360Controller(gamepad) {
           a: gamepad.value.buttons[0],
           b: gamepad.value.buttons[1],
           x: gamepad.value.buttons[2],
-          y: gamepad.value.buttons[3]
+          y: gamepad.value.buttons[3],
         },
         bumper: {
           left: gamepad.value.buttons[4],
-          right: gamepad.value.buttons[5]
+          right: gamepad.value.buttons[5],
         },
         triggers: {
           left: gamepad.value.buttons[6],
-          right: gamepad.value.buttons[7]
+          right: gamepad.value.buttons[7],
         },
         stick: {
           left: {
             horizontal: gamepad.value.axes[0],
             vertical: gamepad.value.axes[1],
-            button: gamepad.value.buttons[10]
+            button: gamepad.value.buttons[10],
           },
           right: {
             horizontal: gamepad.value.axes[2],
             vertical: gamepad.value.axes[3],
-            button: gamepad.value.buttons[11]
-          }
+            button: gamepad.value.buttons[11],
+          },
         },
         dpad: {
           up: gamepad.value.buttons[12],
           down: gamepad.value.buttons[13],
           left: gamepad.value.buttons[14],
-          right: gamepad.value.buttons[15]
+          right: gamepad.value.buttons[15],
         },
         back: gamepad.value.buttons[8],
-        start: gamepad.value.buttons[9]
+        start: gamepad.value.buttons[9],
       };
     }
     return null;
@@ -5612,19 +6665,25 @@ function mapGamepadToXbox360Controller(gamepad) {
 }
 function useGamepad(options = {}) {
   const {
-    navigator: navigator2 = defaultNavigator
+    navigator: navigator2 = defaultNavigator,
   } = options;
-  const isSupported = useSupported(() => navigator2 && "getGamepads" in navigator2);
+  const isSupported = useSupported(() =>
+    navigator2 && "getGamepads" in navigator2
+  );
   const gamepads = ref([]);
   const onConnectedHook = createEventHook();
   const onDisconnectedHook = createEventHook();
   const stateFromGamepad = (gamepad) => {
     const hapticActuators = [];
-    const vibrationActuator = "vibrationActuator" in gamepad ? gamepad.vibrationActuator : null;
-    if (vibrationActuator)
+    const vibrationActuator = "vibrationActuator" in gamepad
+      ? gamepad.vibrationActuator
+      : null;
+    if (vibrationActuator) {
       hapticActuators.push(vibrationActuator);
-    if (gamepad.hapticActuators)
+    }
+    if (gamepad.hapticActuators) {
       hapticActuators.push(...gamepad.hapticActuators);
+    }
     return {
       id: gamepad.id,
       index: gamepad.index,
@@ -5634,14 +6693,20 @@ function useGamepad(options = {}) {
       vibrationActuator: gamepad.vibrationActuator,
       hapticActuators,
       axes: gamepad.axes.map((axes) => axes),
-      buttons: gamepad.buttons.map((button) => ({ pressed: button.pressed, touched: button.touched, value: button.value }))
+      buttons: gamepad.buttons.map((button) => ({
+        pressed: button.pressed,
+        touched: button.touched,
+        value: button.value,
+      })),
     };
   };
   const updateGamepadState = () => {
-    const _gamepads = (navigator2 == null ? void 0 : navigator2.getGamepads()) || [];
+    const _gamepads =
+      (navigator2 == null ? void 0 : navigator2.getGamepads()) || [];
     for (const gamepad of _gamepads) {
-      if (gamepad && gamepads.value[gamepad.index])
+      if (gamepad && gamepads.value[gamepad.index]) {
         gamepads.value[gamepad.index] = stateFromGamepad(gamepad);
+      }
     }
   };
   const { isActive, pause, resume } = useRafFn(updateGamepadState);
@@ -5657,13 +6722,23 @@ function useGamepad(options = {}) {
     onDisconnectedHook.trigger(gamepad.index);
   };
   const listenerOptions = { passive: true };
-  useEventListener("gamepadconnected", (e) => onGamepadConnected(e.gamepad), listenerOptions);
-  useEventListener("gamepaddisconnected", (e) => onGamepadDisconnected(e.gamepad), listenerOptions);
+  useEventListener(
+    "gamepadconnected",
+    (e) => onGamepadConnected(e.gamepad),
+    listenerOptions,
+  );
+  useEventListener(
+    "gamepaddisconnected",
+    (e) => onGamepadDisconnected(e.gamepad),
+    listenerOptions,
+  );
   tryOnMounted(() => {
-    const _gamepads = (navigator2 == null ? void 0 : navigator2.getGamepads()) || [];
+    const _gamepads =
+      (navigator2 == null ? void 0 : navigator2.getGamepads()) || [];
     for (const gamepad of _gamepads) {
-      if (gamepad && gamepads.value[gamepad.index])
+      if (gamepad && gamepads.value[gamepad.index]) {
         onGamepadConnected(gamepad);
+      }
     }
   });
   pause();
@@ -5674,7 +6749,7 @@ function useGamepad(options = {}) {
     gamepads,
     pause,
     resume,
-    isActive
+    isActive,
   };
 }
 function useGeolocation(options = {}) {
@@ -5683,9 +6758,11 @@ function useGeolocation(options = {}) {
     maximumAge = 3e4,
     timeout = 27e3,
     navigator: navigator2 = defaultNavigator,
-    immediate = true
+    immediate = true,
   } = options;
-  const isSupported = useSupported(() => navigator2 && "geolocation" in navigator2);
+  const isSupported = useSupported(() =>
+    navigator2 && "geolocation" in navigator2
+  );
   const locatedAt = shallowRef(null);
   const error = shallowRef(null);
   const coords = ref({
@@ -5695,7 +6772,7 @@ function useGeolocation(options = {}) {
     altitude: null,
     altitudeAccuracy: null,
     heading: null,
-    speed: null
+    speed: null,
   });
   function updatePosition(position) {
     locatedAt.value = position.timestamp;
@@ -5711,16 +6788,18 @@ function useGeolocation(options = {}) {
         {
           enableHighAccuracy,
           maximumAge,
-          timeout
-        }
+          timeout,
+        },
       );
     }
   }
-  if (immediate)
+  if (immediate) {
     resume();
+  }
   function pause() {
-    if (watcher && navigator2)
+    if (watcher && navigator2) {
       navigator2.geolocation.clearWatch(watcher);
+    }
   }
   tryOnScopeDispose(() => {
     pause();
@@ -5731,10 +6810,17 @@ function useGeolocation(options = {}) {
     locatedAt,
     error,
     resume,
-    pause
+    pause,
   };
 }
-var defaultEvents$1 = ["mousemove", "mousedown", "resize", "keydown", "touchstart", "wheel"];
+var defaultEvents$1 = [
+  "mousemove",
+  "mousedown",
+  "resize",
+  "keydown",
+  "touchstart",
+  "wheel",
+];
 var oneMinute = 6e4;
 function useIdle(timeout = oneMinute, options = {}) {
   const {
@@ -5742,7 +6828,7 @@ function useIdle(timeout = oneMinute, options = {}) {
     listenForVisibilityChange = true,
     events: events2 = defaultEvents$1,
     window: window2 = defaultWindow,
-    eventFilter = throttleFilter(50)
+    eventFilter = throttleFilter(50),
   } = options;
   const idle = shallowRef(initialState);
   const lastActive = shallowRef(timestamp());
@@ -5757,17 +6843,19 @@ function useIdle(timeout = oneMinute, options = {}) {
     () => {
       lastActive.value = timestamp();
       reset();
-    }
+    },
   );
   if (window2) {
     const document2 = window2.document;
     const listenerOptions = { passive: true };
-    for (const event of events2)
+    for (const event of events2) {
       useEventListener(window2, event, onEvent, listenerOptions);
+    }
     if (listenForVisibilityChange) {
       useEventListener(document2, "visibilitychange", () => {
-        if (!document2.hidden)
+        if (!document2.hidden) {
           onEvent();
+        }
       }, listenerOptions);
     }
     reset();
@@ -5775,38 +6863,64 @@ function useIdle(timeout = oneMinute, options = {}) {
   return {
     idle,
     lastActive,
-    reset
+    reset,
   };
 }
 async function loadImage(options) {
   return new Promise((resolve, reject) => {
     const img = new Image();
-    const { src, srcset, sizes, class: clazz, loading, crossorigin, referrerPolicy, width, height, decoding, fetchPriority, ismap, usemap } = options;
+    const {
+      src,
+      srcset,
+      sizes,
+      class: clazz,
+      loading,
+      crossorigin,
+      referrerPolicy,
+      width,
+      height,
+      decoding,
+      fetchPriority,
+      ismap,
+      usemap,
+    } = options;
     img.src = src;
-    if (srcset != null)
+    if (srcset != null) {
       img.srcset = srcset;
-    if (sizes != null)
+    }
+    if (sizes != null) {
       img.sizes = sizes;
-    if (clazz != null)
+    }
+    if (clazz != null) {
       img.className = clazz;
-    if (loading != null)
+    }
+    if (loading != null) {
       img.loading = loading;
-    if (crossorigin != null)
+    }
+    if (crossorigin != null) {
       img.crossOrigin = crossorigin;
-    if (referrerPolicy != null)
+    }
+    if (referrerPolicy != null) {
       img.referrerPolicy = referrerPolicy;
-    if (width != null)
+    }
+    if (width != null) {
       img.width = width;
-    if (height != null)
+    }
+    if (height != null) {
       img.height = height;
-    if (decoding != null)
+    }
+    if (decoding != null) {
       img.decoding = decoding;
-    if (fetchPriority != null)
+    }
+    if (fetchPriority != null) {
       img.fetchPriority = fetchPriority;
-    if (ismap != null)
+    }
+    if (ismap != null) {
       img.isMap = ismap;
-    if (usemap != null)
+    }
+    if (usemap != null) {
       img.useMap = usemap;
+    }
     img.onload = () => resolve(img);
     img.onerror = reject;
   });
@@ -5817,21 +6931,23 @@ function useImage(options, asyncStateOptions = {}) {
     void 0,
     {
       resetOnExecute: true,
-      ...asyncStateOptions
-    }
+      ...asyncStateOptions,
+    },
   );
   watch(
     () => toValue(options),
     () => state.execute(asyncStateOptions.delay),
-    { deep: true }
+    { deep: true },
   );
   return state;
 }
 function resolveElement(el) {
-  if (typeof Window !== "undefined" && el instanceof Window)
+  if (typeof Window !== "undefined" && el instanceof Window) {
     return el.document.documentElement;
-  if (typeof Document !== "undefined" && el instanceof Document)
+  }
+  if (typeof Document !== "undefined" && el instanceof Document) {
     return el.documentElement;
+  }
   return el;
 }
 var ARRIVED_STATE_THRESHOLD_PIXELS = 1;
@@ -5845,17 +6961,17 @@ function useScroll(element, options = {}) {
       left: 0,
       right: 0,
       top: 0,
-      bottom: 0
+      bottom: 0,
     },
     eventListenerOptions = {
       capture: false,
-      passive: true
+      passive: true,
     },
     behavior = "auto",
     window: window2 = defaultWindow,
     onError = (e) => {
       console.error(e);
-    }
+    },
   } = options;
   const internalX = shallowRef(0);
   const internalY = shallowRef(0);
@@ -5865,7 +6981,7 @@ function useScroll(element, options = {}) {
     },
     set(x2) {
       scrollTo(x2, void 0);
-    }
+    },
   });
   const y = computed({
     get() {
@@ -5873,42 +6989,54 @@ function useScroll(element, options = {}) {
     },
     set(y2) {
       scrollTo(void 0, y2);
-    }
+    },
   });
   function scrollTo(_x, _y) {
     var _a, _b, _c, _d;
-    if (!window2)
+    if (!window2) {
       return;
+    }
     const _element = toValue(element);
-    if (!_element)
+    if (!_element) {
       return;
-    (_c = _element instanceof Document ? window2.document.body : _element) == null ? void 0 : _c.scrollTo({
-      top: (_a = toValue(_y)) != null ? _a : y.value,
-      left: (_b = toValue(_x)) != null ? _b : x.value,
-      behavior: toValue(behavior)
-    });
-    const scrollContainer = ((_d = _element == null ? void 0 : _element.document) == null ? void 0 : _d.documentElement) || (_element == null ? void 0 : _element.documentElement) || _element;
-    if (x != null)
+    }
+    (_c = _element instanceof Document ? window2.document.body : _element) ==
+        null
+      ? void 0
+      : _c.scrollTo({
+        top: (_a = toValue(_y)) != null ? _a : y.value,
+        left: (_b = toValue(_x)) != null ? _b : x.value,
+        behavior: toValue(behavior),
+      });
+    const scrollContainer =
+      ((_d = _element == null ? void 0 : _element.document) == null
+        ? void 0
+        : _d.documentElement) ||
+      (_element == null ? void 0 : _element.documentElement) || _element;
+    if (x != null) {
       internalX.value = scrollContainer.scrollLeft;
-    if (y != null)
+    }
+    if (y != null) {
       internalY.value = scrollContainer.scrollTop;
+    }
   }
   const isScrolling = shallowRef(false);
   const arrivedState = reactive({
     left: true,
     right: false,
     top: true,
-    bottom: false
+    bottom: false,
   });
   const directions = reactive({
     left: false,
     right: false,
     top: false,
-    bottom: false
+    bottom: false,
   });
   const onScrollEnd = (e) => {
-    if (!isScrolling.value)
+    if (!isScrolling.value) {
       return;
+    }
     isScrolling.value = false;
     directions.left = false;
     directions.right = false;
@@ -5919,16 +7047,24 @@ function useScroll(element, options = {}) {
   const onScrollEndDebounced = useDebounceFn(onScrollEnd, throttle + idle);
   const setArrivedState = (target) => {
     var _a;
-    if (!window2)
+    if (!window2) {
       return;
-    const el = ((_a = target == null ? void 0 : target.document) == null ? void 0 : _a.documentElement) || (target == null ? void 0 : target.documentElement) || unrefElement(target);
+    }
+    const el =
+      ((_a = target == null ? void 0 : target.document) == null
+        ? void 0
+        : _a.documentElement) ||
+      (target == null ? void 0 : target.documentElement) ||
+      unrefElement(target);
     const { display, flexDirection, direction } = getComputedStyle(el);
     const directionMultipler = direction === "rtl" ? -1 : 1;
     const scrollLeft = el.scrollLeft;
     directions.left = scrollLeft < internalX.value;
     directions.right = scrollLeft > internalX.value;
-    const left = Math.abs(scrollLeft * directionMultipler) <= (offset.left || 0);
-    const right = Math.abs(scrollLeft * directionMultipler) + el.clientWidth >= el.scrollWidth - (offset.right || 0) - ARRIVED_STATE_THRESHOLD_PIXELS;
+    const left =
+      Math.abs(scrollLeft * directionMultipler) <= (offset.left || 0);
+    const right = Math.abs(scrollLeft * directionMultipler) + el.clientWidth >=
+      el.scrollWidth - (offset.right || 0) - ARRIVED_STATE_THRESHOLD_PIXELS;
     if (display === "flex" && flexDirection === "row-reverse") {
       arrivedState.left = right;
       arrivedState.right = left;
@@ -5938,12 +7074,14 @@ function useScroll(element, options = {}) {
     }
     internalX.value = scrollLeft;
     let scrollTop = el.scrollTop;
-    if (target === window2.document && !scrollTop)
+    if (target === window2.document && !scrollTop) {
       scrollTop = window2.document.body.scrollTop;
+    }
     directions.top = scrollTop < internalY.value;
     directions.bottom = scrollTop > internalY.value;
     const top = Math.abs(scrollTop) <= (offset.top || 0);
-    const bottom = Math.abs(scrollTop) + el.clientHeight >= el.scrollHeight - (offset.bottom || 0) - ARRIVED_STATE_THRESHOLD_PIXELS;
+    const bottom = Math.abs(scrollTop) + el.clientHeight >=
+      el.scrollHeight - (offset.bottom || 0) - ARRIVED_STATE_THRESHOLD_PIXELS;
     if (display === "flex" && flexDirection === "column-reverse") {
       arrivedState.top = bottom;
       arrivedState.bottom = top;
@@ -5955,8 +7093,9 @@ function useScroll(element, options = {}) {
   };
   const onScrollHandler = (e) => {
     var _a;
-    if (!window2)
+    if (!window2) {
       return;
+    }
     const eventTarget = (_a = e.target.documentElement) != null ? _a : e.target;
     setArrivedState(eventTarget);
     isScrolling.value = true;
@@ -5966,14 +7105,17 @@ function useScroll(element, options = {}) {
   useEventListener(
     element,
     "scroll",
-    throttle ? useThrottleFn(onScrollHandler, throttle, true, false) : onScrollHandler,
-    eventListenerOptions
+    throttle
+      ? useThrottleFn(onScrollHandler, throttle, true, false)
+      : onScrollHandler,
+    eventListenerOptions,
   );
   tryOnMounted(() => {
     try {
       const _element = toValue(element);
-      if (!_element)
+      if (!_element) {
         return;
+      }
       setArrivedState(_element);
     } catch (e) {
       onError(e);
@@ -5983,7 +7125,7 @@ function useScroll(element, options = {}) {
     element,
     "scrollend",
     onScrollEnd,
-    eventListenerOptions
+    eventListenerOptions,
   );
   return {
     x,
@@ -5993,9 +7135,10 @@ function useScroll(element, options = {}) {
     directions,
     measure() {
       const _element = toValue(element);
-      if (window2 && _element)
+      if (window2 && _element) {
         setArrivedState(_element);
-    }
+      }
+    },
   };
 }
 function useInfiniteScroll(element, onLoadMore, options = {}) {
@@ -6003,7 +7146,7 @@ function useInfiniteScroll(element, onLoadMore, options = {}) {
   const {
     direction = "bottom",
     interval = 100,
-    canLoadMore = () => true
+    canLoadMore = () => true,
   } = options;
   const state = reactive(useScroll(
     element,
@@ -6011,9 +7154,9 @@ function useInfiniteScroll(element, onLoadMore, options = {}) {
       ...options,
       offset: {
         [direction]: (_a = options.distance) != null ? _a : 0,
-        ...options.offset
-      }
-    }
+        ...options.offset,
+      },
+    },
   ));
   const promise = ref();
   const isLoading = computed(() => !!promise.value);
@@ -6023,15 +7166,22 @@ function useInfiniteScroll(element, onLoadMore, options = {}) {
   const isElementVisible = useElementVisibility(observedElement);
   function checkAndLoad() {
     state.measure();
-    if (!observedElement.value || !isElementVisible.value || !canLoadMore(observedElement.value))
+    if (
+      !observedElement.value || !isElementVisible.value ||
+      !canLoadMore(observedElement.value)
+    ) {
       return;
-    const { scrollHeight, clientHeight, scrollWidth, clientWidth } = observedElement.value;
-    const isNarrower = direction === "bottom" || direction === "top" ? scrollHeight <= clientHeight : scrollWidth <= clientWidth;
+    }
+    const { scrollHeight, clientHeight, scrollWidth, clientWidth } =
+      observedElement.value;
+    const isNarrower = direction === "bottom" || direction === "top"
+      ? scrollHeight <= clientHeight
+      : scrollWidth <= clientWidth;
     if (state.arrivedState[direction] || isNarrower) {
       if (!promise.value) {
         promise.value = Promise.all([
           onLoadMore(state),
-          new Promise((resolve) => setTimeout(resolve, interval))
+          new Promise((resolve) => setTimeout(resolve, interval)),
         ]).finally(() => {
           promise.value = null;
           nextTick(() => checkAndLoad());
@@ -6042,14 +7192,14 @@ function useInfiniteScroll(element, onLoadMore, options = {}) {
   const stop = watch(
     () => [state.arrivedState[direction], isElementVisible.value],
     checkAndLoad,
-    { immediate: true }
+    { immediate: true },
   );
   tryOnUnmounted(stop);
   return {
     isLoading,
     reset() {
       nextTick(() => checkAndLoad());
-    }
+    },
   };
 }
 var defaultEvents = ["mousedown", "mouseup", "keydown", "keyup"];
@@ -6057,14 +7207,15 @@ function useKeyModifier(modifier, options = {}) {
   const {
     events: events2 = defaultEvents,
     document: document2 = defaultDocument,
-    initial = null
+    initial = null,
   } = options;
   const state = shallowRef(initial);
   if (document2) {
     events2.forEach((listenerEvent) => {
       useEventListener(document2, listenerEvent, (evt) => {
-        if (typeof evt.getModifierState === "function")
+        if (typeof evt.getModifierState === "function") {
           state.value = evt.getModifierState(modifier);
+        }
       }, { passive: true });
     });
   }
@@ -6072,7 +7223,12 @@ function useKeyModifier(modifier, options = {}) {
 }
 function useLocalStorage(key, initialValue, options = {}) {
   const { window: window2 = defaultWindow } = options;
-  return useStorage(key, initialValue, window2 == null ? void 0 : window2.localStorage, options);
+  return useStorage(
+    key,
+    initialValue,
+    window2 == null ? void 0 : window2.localStorage,
+    options,
+  );
 }
 var DefaultMagicKeysAliasMap = {
   ctrl: "control",
@@ -6082,7 +7238,7 @@ var DefaultMagicKeysAliasMap = {
   up: "arrowup",
   down: "arrowdown",
   left: "arrowleft",
-  right: "arrowright"
+  right: "arrowright",
 };
 function useMagicKeys(options = {}) {
   const {
@@ -6090,30 +7246,32 @@ function useMagicKeys(options = {}) {
     target = defaultWindow,
     aliasMap = DefaultMagicKeysAliasMap,
     passive = true,
-    onEventFired = noop
+    onEventFired = noop,
   } = options;
   const current = reactive(/* @__PURE__ */ new Set());
   const obj = {
     toJSON() {
       return {};
     },
-    current
+    current,
   };
   const refs = useReactive ? reactive(obj) : obj;
   const metaDeps = /* @__PURE__ */ new Set();
   const usedKeys = /* @__PURE__ */ new Set();
   function setRefs(key, value) {
     if (key in refs) {
-      if (useReactive)
+      if (useReactive) {
         refs[key] = value;
-      else
+      } else {
         refs[key].value = value;
+      }
     }
   }
   function reset() {
     current.clear();
-    for (const key of usedKeys)
+    for (const key of usedKeys) {
       setRefs(key, false);
+    }
   }
   function updateRefs(e, value) {
     var _a, _b;
@@ -6121,10 +7279,11 @@ function useMagicKeys(options = {}) {
     const code = (_b = e.code) == null ? void 0 : _b.toLowerCase();
     const values = [code, key].filter(Boolean);
     if (key) {
-      if (value)
+      if (value) {
         current.add(key);
-      else
+      } else {
         current.delete(key);
+      }
     }
     for (const key2 of values) {
       usedKeys.add(key2);
@@ -6136,7 +7295,10 @@ function useMagicKeys(options = {}) {
         setRefs(key2, false);
       });
       metaDeps.clear();
-    } else if (typeof e.getModifierState === "function" && e.getModifierState("Meta") && value) {
+    } else if (
+      typeof e.getModifierState === "function" && e.getModifierState("Meta") &&
+      value
+    ) {
       [...current, ...values].forEach((key2) => metaDeps.add(key2));
     }
   }
@@ -6154,51 +7316,77 @@ function useMagicKeys(options = {}) {
     refs,
     {
       get(target2, prop, rec) {
-        if (typeof prop !== "string")
+        if (typeof prop !== "string") {
           return Reflect.get(target2, prop, rec);
+        }
         prop = prop.toLowerCase();
-        if (prop in aliasMap)
+        if (prop in aliasMap) {
           prop = aliasMap[prop];
+        }
         if (!(prop in refs)) {
           if (/[+_-]/.test(prop)) {
             const keys2 = prop.split(/[+_-]/g).map((i) => i.trim());
-            refs[prop] = computed(() => keys2.map((key) => toValue(proxy[key])).every(Boolean));
+            refs[prop] = computed(() =>
+              keys2.map((key) => toValue(proxy[key])).every(Boolean)
+            );
           } else {
             refs[prop] = shallowRef(false);
           }
         }
         const r = Reflect.get(target2, prop, rec);
         return useReactive ? toValue(r) : r;
-      }
-    }
+      },
+    },
   );
   return proxy;
 }
 function usingElRef(source, cb) {
-  if (toValue(source))
+  if (toValue(source)) {
     cb(toValue(source));
+  }
 }
 function timeRangeToArray(timeRanges) {
   let ranges = [];
-  for (let i = 0; i < timeRanges.length; ++i)
+  for (let i = 0; i < timeRanges.length; ++i) {
     ranges = [...ranges, [timeRanges.start(i), timeRanges.end(i)]];
+  }
   return ranges;
 }
 function tracksToArray(tracks) {
-  return Array.from(tracks).map(({ label, kind, language, mode, activeCues, cues, inBandMetadataTrackDispatchType }, id) => ({ id, label, kind, language, mode, activeCues, cues, inBandMetadataTrackDispatchType }));
+  return Array.from(tracks).map((
+    {
+      label,
+      kind,
+      language,
+      mode,
+      activeCues,
+      cues,
+      inBandMetadataTrackDispatchType,
+    },
+    id,
+  ) => ({
+    id,
+    label,
+    kind,
+    language,
+    mode,
+    activeCues,
+    cues,
+    inBandMetadataTrackDispatchType,
+  }));
 }
 var defaultOptions = {
   src: "",
-  tracks: []
+  tracks: [],
 };
 function useMediaControls(target, options = {}) {
   target = toRef2(target);
   options = {
     ...defaultOptions,
-    ...options
+    ...options,
   };
   const {
-    document: document2 = defaultDocument
+    document: document2 = defaultDocument,
   } = options;
   const listenerOptions = { passive: true };
   const currentTime = shallowRef(0);
@@ -6215,7 +7403,8 @@ function useMediaControls(target, options = {}) {
   const selectedTrack = shallowRef(-1);
   const isPictureInPicture = shallowRef(false);
   const muted = shallowRef(false);
-  const supportsPictureInPicture = document2 && "pictureInPictureEnabled" in document2;
+  const supportsPictureInPicture = document2 &&
+    "pictureInPictureEnabled" in document2;
   const sourceErrorEvent = createEventHook();
   const playbackErrorEvent = createEventHook();
   const disableTrack = (track) => {
@@ -6224,8 +7413,9 @@ function useMediaControls(target, options = {}) {
         const id = typeof track === "number" ? track : track.id;
         el.textTracks[id].mode = "disabled";
       } else {
-        for (let i = 0; i < el.textTracks.length; ++i)
+        for (let i = 0; i < el.textTracks.length; ++i) {
           el.textTracks[i].mode = "disabled";
+        }
       }
       selectedTrack.value = -1;
     });
@@ -6233,8 +7423,9 @@ function useMediaControls(target, options = {}) {
   const enableTrack = (track, disableTracks = true) => {
     usingElRef(target, (el) => {
       const id = typeof track === "number" ? track : track.id;
-      if (disableTracks)
+      if (disableTracks) {
         disableTrack();
+      }
       el.textTracks[id].mode = "showing";
       selectedTrack.value = id;
     });
@@ -6253,21 +7444,25 @@ function useMediaControls(target, options = {}) {
     });
   };
   watchEffect(() => {
-    if (!document2)
+    if (!document2) {
       return;
+    }
     const el = toValue(target);
-    if (!el)
+    if (!el) {
       return;
+    }
     const src = toValue(options.src);
     let sources = [];
-    if (!src)
+    if (!src) {
       return;
-    if (typeof src === "string")
+    }
+    if (typeof src === "string") {
       sources = [{ src }];
-    else if (Array.isArray(src))
+    } else if (Array.isArray(src)) {
       sources = src;
-    else if (isObject(src))
+    } else if (isObject(src)) {
       sources = [src];
+    }
     el.querySelectorAll("source").forEach((e) => {
       e.remove();
     });
@@ -6276,97 +7471,121 @@ function useMediaControls(target, options = {}) {
       source.setAttribute("src", src2);
       source.setAttribute("type", type || "");
       source.setAttribute("media", media || "");
-      useEventListener(source, "error", sourceErrorEvent.trigger, listenerOptions);
+      useEventListener(
+        source,
+        "error",
+        sourceErrorEvent.trigger,
+        listenerOptions,
+      );
       el.appendChild(source);
     });
     el.load();
   });
   watch([target, volume], () => {
     const el = toValue(target);
-    if (!el)
+    if (!el) {
       return;
+    }
     el.volume = volume.value;
   });
   watch([target, muted], () => {
     const el = toValue(target);
-    if (!el)
+    if (!el) {
       return;
+    }
     el.muted = muted.value;
   });
   watch([target, rate], () => {
     const el = toValue(target);
-    if (!el)
+    if (!el) {
       return;
+    }
     el.playbackRate = rate.value;
   });
   watchEffect(() => {
-    if (!document2)
+    if (!document2) {
       return;
+    }
     const textTracks = toValue(options.tracks);
     const el = toValue(target);
-    if (!textTracks || !textTracks.length || !el)
+    if (!textTracks || !textTracks.length || !el) {
       return;
-    el.querySelectorAll("track").forEach((e) => e.remove());
-    textTracks.forEach(({ default: isDefault, kind, label, src, srcLang }, i) => {
-      const track = document2.createElement("track");
-      track.default = isDefault || false;
-      track.kind = kind;
-      track.label = label;
-      track.src = src;
-      track.srclang = srcLang;
-      if (track.default)
-        selectedTrack.value = i;
-      el.appendChild(track);
-    });
-  });
-  const { ignoreUpdates: ignoreCurrentTimeUpdates } = watchIgnorable(currentTime, (time) => {
-    const el = toValue(target);
-    if (!el)
-      return;
-    el.currentTime = time;
-  });
-  const { ignoreUpdates: ignorePlayingUpdates } = watchIgnorable(playing, (isPlaying) => {
-    const el = toValue(target);
-    if (!el)
-      return;
-    if (isPlaying) {
-      el.play().catch((e) => {
-        playbackErrorEvent.trigger(e);
-        throw e;
-      });
-    } else {
-      el.pause();
     }
+    el.querySelectorAll("track").forEach((e) => e.remove());
+    textTracks.forEach(
+      ({ default: isDefault, kind, label, src, srcLang }, i) => {
+        const track = document2.createElement("track");
+        track.default = isDefault || false;
+        track.kind = kind;
+        track.label = label;
+        track.src = src;
+        track.srclang = srcLang;
+        if (track.default) {
+          selectedTrack.value = i;
+        }
+        el.appendChild(track);
+      },
+    );
   });
+  const { ignoreUpdates: ignoreCurrentTimeUpdates } = watchIgnorable(
+    currentTime,
+    (time) => {
+      const el = toValue(target);
+      if (!el) {
+        return;
+      }
+      el.currentTime = time;
+    },
+  );
+  const { ignoreUpdates: ignorePlayingUpdates } = watchIgnorable(
+    playing,
+    (isPlaying) => {
+      const el = toValue(target);
+      if (!el) {
+        return;
+      }
+      if (isPlaying) {
+        el.play().catch((e) => {
+          playbackErrorEvent.trigger(e);
+          throw e;
+        });
+      } else {
+        el.pause();
+      }
+    },
+  );
   useEventListener(
     target,
     "timeupdate",
-    () => ignoreCurrentTimeUpdates(() => currentTime.value = toValue(target).currentTime),
-    listenerOptions
+    () =>
+      ignoreCurrentTimeUpdates(() =>
+        currentTime.value = toValue(target).currentTime
+      ),
+    listenerOptions,
   );
   useEventListener(
     target,
     "durationchange",
     () => duration.value = toValue(target).duration,
-    listenerOptions
+    listenerOptions,
   );
   useEventListener(
     target,
     "progress",
     () => buffered.value = timeRangeToArray(toValue(target).buffered),
-    listenerOptions
+    listenerOptions,
   );
   useEventListener(
     target,
     "seeking",
     () => seeking.value = true,
-    listenerOptions
+    listenerOptions,
   );
   useEventListener(
     target,
     "seeked",
     () => seeking.value = false,
-    listenerOptions
+    listenerOptions,
   );
   useEventListener(
     target,
@@ -6375,13 +7594,13 @@ function useMediaControls(target, options = {}) {
       waiting.value = true;
       ignorePlayingUpdates(() => playing.value = false);
     },
-    listenerOptions
+    listenerOptions,
   );
   useEventListener(
     target,
     "loadeddata",
     () => waiting.value = false,
-    listenerOptions
+    listenerOptions,
   );
   useEventListener(
     target,
@@ -6391,71 +7610,88 @@ function useMediaControls(target, options = {}) {
       ended.value = false;
       ignorePlayingUpdates(() => playing.value = true);
     },
-    listenerOptions
+    listenerOptions,
   );
   useEventListener(
     target,
     "ratechange",
     () => rate.value = toValue(target).playbackRate,
-    listenerOptions
+    listenerOptions,
   );
   useEventListener(
     target,
     "stalled",
     () => stalled.value = true,
-    listenerOptions
+    listenerOptions,
   );
   useEventListener(
     target,
     "ended",
     () => ended.value = true,
-    listenerOptions
+    listenerOptions,
   );
   useEventListener(
     target,
     "pause",
     () => ignorePlayingUpdates(() => playing.value = false),
-    listenerOptions
+    listenerOptions,
   );
   useEventListener(
     target,
     "play",
     () => ignorePlayingUpdates(() => playing.value = true),
-    listenerOptions
+    listenerOptions,
   );
   useEventListener(
     target,
     "enterpictureinpicture",
     () => isPictureInPicture.value = true,
-    listenerOptions
+    listenerOptions,
   );
   useEventListener(
     target,
     "leavepictureinpicture",
     () => isPictureInPicture.value = false,
-    listenerOptions
+    listenerOptions,
   );
   useEventListener(
     target,
     "volumechange",
     () => {
       const el = toValue(target);
-      if (!el)
+      if (!el) {
         return;
+      }
       volume.value = el.volume;
       muted.value = el.muted;
     },
-    listenerOptions
+    listenerOptions,
   );
   const listeners = [];
   const stop = watch([target], () => {
     const el = toValue(target);
-    if (!el)
+    if (!el) {
       return;
+    }
     stop();
-    listeners[0] = useEventListener(el.textTracks, "addtrack", () => tracks.value = tracksToArray(el.textTracks), listenerOptions);
-    listeners[1] = useEventListener(el.textTracks, "removetrack", () => tracks.value = tracksToArray(el.textTracks), listenerOptions);
-    listeners[2] = useEventListener(el.textTracks, "change", () => tracks.value = tracksToArray(el.textTracks), listenerOptions);
+    listeners[0] = useEventListener(
+      el.textTracks,
+      "addtrack",
+      () => tracks.value = tracksToArray(el.textTracks),
+      listenerOptions,
+    );
+    listeners[1] = useEventListener(
+      el.textTracks,
+      "removetrack",
+      () => tracks.value = tracksToArray(el.textTracks),
+      listenerOptions,
+    );
+    listeners[2] = useEventListener(
+      el.textTracks,
+      "change",
+      () => tracks.value = tracksToArray(el.textTracks),
+      listenerOptions,
+    );
   });
   tryOnScopeDispose(() => listeners.forEach((listener) => listener()));
   return {
@@ -6482,17 +7718,21 @@ function useMediaControls(target, options = {}) {
     isPictureInPicture,
     // Events
     onSourceError: sourceErrorEvent.on,
-    onPlaybackError: playbackErrorEvent.on
+    onPlaybackError: playbackErrorEvent.on,
   };
 }
 function useMemoize(resolver, options) {
   const initCache = () => {
-    if (options == null ? void 0 : options.cache)
+    if (options == null ? void 0 : options.cache) {
       return shallowReactive(options.cache);
+    }
     return shallowReactive(/* @__PURE__ */ new Map());
   };
   const cache = initCache();
-  const generateKey = (...args) => (options == null ? void 0 : options.getKey) ? options.getKey(...args) : JSON.stringify(args);
+  const generateKey = (...args) =>
+    (options == null ? void 0 : options.getKey)
+      ? options.getKey(...args)
+      : JSON.stringify(args);
   const _loadData = (key, ...args) => {
     cache.set(key, resolver(...args));
     return cache.get(key);
@@ -6506,8 +7746,9 @@ function useMemoize(resolver, options) {
   };
   const memoized = (...args) => {
     const key = generateKey(...args);
-    if (cache.has(key))
+    if (cache.has(key)) {
       return cache.get(key);
+    }
     return _loadData(key, ...args);
   };
   memoized.load = loadData;
@@ -6519,12 +7760,21 @@ function useMemoize(resolver, options) {
 }
 function useMemory(options = {}) {
   const memory = ref();
-  const isSupported = useSupported(() => typeof performance !== "undefined" && "memory" in performance);
+  const isSupported = useSupported(() =>
+    typeof performance !== "undefined" && "memory" in performance
+  );
   if (isSupported.value) {
     const { interval = 1e3 } = options;
-    useIntervalFn(() => {
-      memory.value = performance.memory;
-    }, interval, { immediate: options.immediate, immediateCallback: options.immediateCallback });
+    useIntervalFn(
+      () => {
+        memory.value = performance.memory;
+      },
+      interval,
+      {
+        immediate: options.immediate,
+        immediateCallback: options.immediateCallback,
+      },
+    );
   }
   return { isSupported, memory };
 }
@@ -6532,7 +7782,8 @@ var UseMouseBuiltinExtractors = {
   page: (event) => [event.pageX, event.pageY],
   client: (event) => [event.clientX, event.clientY],
   screen: (event) => [event.screenX, event.screenY],
-  movement: (event) => event instanceof MouseEvent ? [event.movementX, event.movementY] : null
+  movement: (event) =>
+    event instanceof MouseEvent ? [event.movementX, event.movementY] : null,
 };
 function useMouse(options = {}) {
   const {
@@ -6543,7 +7794,7 @@ function useMouse(options = {}) {
     window: window2 = defaultWindow,
     target = window2,
     scroll = true,
-    eventFilter
+    eventFilter,
   } = options;
   let _prevMouseEvent = null;
   let _prevScrollX = 0;
@@ -6551,7 +7802,9 @@ function useMouse(options = {}) {
   const x = shallowRef(initialValue.x);
   const y = shallowRef(initialValue.y);
   const sourceType = shallowRef(null);
-  const extractor = typeof type === "function" ? type : UseMouseBuiltinExtractors[type];
+  const extractor = typeof type === "function"
+    ? type
+    : UseMouseBuiltinExtractors[type];
   const mouseHandler = (event) => {
     const result = extractor(event);
     _prevMouseEvent = event;
@@ -6574,8 +7827,9 @@ function useMouse(options = {}) {
     }
   };
   const scrollHandler = () => {
-    if (!_prevMouseEvent || !window2)
+    if (!_prevMouseEvent || !window2) {
       return;
+    }
     const pos = extractor(_prevMouseEvent);
     if (_prevMouseEvent instanceof MouseEvent && pos) {
       x.value = pos[0] + window2.scrollX - _prevScrollX;
@@ -6586,34 +7840,59 @@ function useMouse(options = {}) {
     x.value = initialValue.x;
     y.value = initialValue.y;
   };
-  const mouseHandlerWrapper = eventFilter ? (event) => eventFilter(() => mouseHandler(event), {}) : (event) => mouseHandler(event);
-  const touchHandlerWrapper = eventFilter ? (event) => eventFilter(() => touchHandler(event), {}) : (event) => touchHandler(event);
-  const scrollHandlerWrapper = eventFilter ? () => eventFilter(() => scrollHandler(), {}) : () => scrollHandler();
+  const mouseHandlerWrapper = eventFilter
+    ? (event) => eventFilter(() => mouseHandler(event), {})
+    : (event) => mouseHandler(event);
+  const touchHandlerWrapper = eventFilter
+    ? (event) => eventFilter(() => touchHandler(event), {})
+    : (event) => touchHandler(event);
+  const scrollHandlerWrapper = eventFilter
+    ? () => eventFilter(() => scrollHandler(), {})
+    : () => scrollHandler();
   if (target) {
     const listenerOptions = { passive: true };
-    useEventListener(target, ["mousemove", "dragover"], mouseHandlerWrapper, listenerOptions);
+    useEventListener(
+      target,
+      ["mousemove", "dragover"],
+      mouseHandlerWrapper,
+      listenerOptions,
+    );
     if (touch && type !== "movement") {
-      useEventListener(target, ["touchstart", "touchmove"], touchHandlerWrapper, listenerOptions);
-      if (resetOnTouchEnds)
+      useEventListener(
+        target,
+        ["touchstart", "touchmove"],
+        touchHandlerWrapper,
+        listenerOptions,
+      );
+      if (resetOnTouchEnds) {
         useEventListener(target, "touchend", reset, listenerOptions);
+      }
     }
-    if (scroll && type === "page")
-      useEventListener(window2, "scroll", scrollHandlerWrapper, listenerOptions);
+    if (scroll && type === "page") {
+      useEventListener(
+        window2,
+        "scroll",
+        scrollHandlerWrapper,
+        listenerOptions,
+      );
+    }
   }
   return {
     x,
     y,
-    sourceType
+    sourceType,
   };
 }
 function useMouseInElement(target, options = {}) {
   const {
     handleOutside = true,
-    window: window2 = defaultWindow
+    window: window2 = defaultWindow,
   } = options;
   const type = options.type || "page";
   const { x, y, sourceType } = useMouse(options);
-  const targetRef = shallowRef(target != null ? target : window2 == null ? void 0 : window2.document.body);
+  const targetRef = shallowRef(
+    target != null ? target : window2 == null ? void 0 : window2.document.body,
+  );
   const elementX = shallowRef(0);
   const elementY = shallowRef(0);
   const elementPositionX = shallowRef(0);
@@ -6628,33 +7907,37 @@ function useMouseInElement(target, options = {}) {
       [targetRef, x, y],
       () => {
         const el = unrefElement(targetRef);
-        if (!el || !(el instanceof Element))
+        if (!el || !(el instanceof Element)) {
           return;
+        }
         const {
           left,
           top,
           width,
-          height
+          height,
         } = el.getBoundingClientRect();
-        elementPositionX.value = left + (type === "page" ? window2.pageXOffset : 0);
-        elementPositionY.value = top + (type === "page" ? window2.pageYOffset : 0);
+        elementPositionX.value = left +
+          (type === "page" ? window2.pageXOffset : 0);
+        elementPositionY.value = top +
+          (type === "page" ? window2.pageYOffset : 0);
         elementHeight.value = height;
         elementWidth.value = width;
         const elX = x.value - elementPositionX.value;
         const elY = y.value - elementPositionY.value;
-        isOutside.value = width === 0 || height === 0 || elX < 0 || elY < 0 || elX > width || elY > height;
+        isOutside.value = width === 0 || height === 0 || elX < 0 || elY < 0 ||
+          elX > width || elY > height;
         if (handleOutside || !isOutside.value) {
           elementX.value = elX;
           elementY.value = elY;
         }
       },
-      { immediate: true }
+      { immediate: true },
     );
     useEventListener(
       document,
       "mouseleave",
       () => isOutside.value = true,
-      { passive: true }
+      { passive: true },
     );
   }
   return {
@@ -6668,7 +7951,7 @@ function useMouseInElement(target, options = {}) {
     elementHeight,
     elementWidth,
     isOutside,
-    stop
+    stop,
   };
 }
 function useMousePressed(options = {}) {
@@ -6677,14 +7960,14 @@ function useMousePressed(options = {}) {
     drag = true,
     capture = false,
     initialValue = false,
-    window: window2 = defaultWindow
+    window: window2 = defaultWindow,
   } = options;
   const pressed = shallowRef(initialValue);
   const sourceType = shallowRef(null);
   if (!window2) {
     return {
       pressed,
-      sourceType
+      sourceType,
     };
   }
   const onPressed = (srcType) => (event) => {
@@ -6716,27 +7999,34 @@ function useMousePressed(options = {}) {
   }
   return {
     pressed,
-    sourceType
+    sourceType,
   };
 }
 function useNavigatorLanguage(options = {}) {
   const { window: window2 = defaultWindow } = options;
   const navigator2 = window2 == null ? void 0 : window2.navigator;
-  const isSupported = useSupported(() => navigator2 && "language" in navigator2);
-  const language = shallowRef(navigator2 == null ? void 0 : navigator2.language);
+  const isSupported = useSupported(() =>
+    navigator2 && "language" in navigator2
+  );
+  const language = shallowRef(
+    navigator2 == null ? void 0 : navigator2.language,
+  );
   useEventListener(window2, "languagechange", () => {
-    if (navigator2)
+    if (navigator2) {
       language.value = navigator2.language;
+    }
   }, { passive: true });
   return {
     isSupported,
-    language
+    language,
   };
 }
 function useNetwork(options = {}) {
   const { window: window2 = defaultWindow } = options;
   const navigator2 = window2 == null ? void 0 : window2.navigator;
-  const isSupported = useSupported(() => navigator2 && "connection" in navigator2);
+  const isSupported = useSupported(() =>
+    navigator2 && "connection" in navigator2
+  );
   const isOnline = shallowRef(true);
   const saveData = shallowRef(false);
   const offlineAt = shallowRef(void 0);
@@ -6748,8 +8038,9 @@ function useNetwork(options = {}) {
   const type = shallowRef("unknown");
   const connection = isSupported.value && navigator2.connection;
   function updateNetworkInformation() {
-    if (!navigator2)
+    if (!navigator2) {
       return;
+    }
     isOnline.value = navigator2.onLine;
     offlineAt.value = isOnline.value ? void 0 : Date.now();
     onlineAt.value = isOnline.value ? Date.now() : void 0;
@@ -6773,8 +8064,14 @@ function useNetwork(options = {}) {
       onlineAt.value = Date.now();
     }, listenerOptions);
   }
-  if (connection)
-    useEventListener(connection, "change", updateNetworkInformation, listenerOptions);
+  if (connection) {
+    useEventListener(
+      connection,
+      "change",
+      updateNetworkInformation,
+      listenerOptions,
+    );
+  }
   updateNetworkInformation();
   return {
     isSupported,
@@ -6786,21 +8083,23 @@ function useNetwork(options = {}) {
     downlinkMax: readonly(downlinkMax),
     effectiveType: readonly(effectiveType),
     rtt: readonly(rtt),
-    type: readonly(type)
+    type: readonly(type),
   };
 }
 function useNow(options = {}) {
   const {
     controls: exposeControls = false,
-    interval = "requestAnimationFrame"
+    interval = "requestAnimationFrame",
   } = options;
   const now2 = ref(/* @__PURE__ */ new Date());
   const update = () => now2.value = /* @__PURE__ */ new Date();
-  const controls = interval === "requestAnimationFrame" ? useRafFn(update, { immediate: true }) : useIntervalFn(update, interval, { immediate: true });
+  const controls = interval === "requestAnimationFrame"
+    ? useRafFn(update, { immediate: true })
+    : useIntervalFn(update, interval, { immediate: true });
   if (exposeControls) {
     return {
       now: now2,
-      ...controls
+      ...controls,
     };
   } else {
     return now2;
@@ -6809,25 +8108,28 @@ function useNow(options = {}) {
 function useObjectUrl(object) {
   const url = shallowRef();
   const release = () => {
-    if (url.value)
+    if (url.value) {
       URL.revokeObjectURL(url.value);
+    }
     url.value = void 0;
   };
   watch(
     () => toValue(object),
     (newObject) => {
       release();
-      if (newObject)
+      if (newObject) {
         url.value = URL.createObjectURL(newObject);
+      }
     },
-    { immediate: true }
+    { immediate: true },
   );
   tryOnScopeDispose(release);
   return readonly(url);
 }
 function useClamp(value, min, max) {
-  if (typeof value === "function" || isReadonly(value))
+  if (typeof value === "function" || isReadonly(value)) {
     return computed(() => clamp(toValue(value), toValue(min), toValue(max)));
+  }
   const _value = ref(value);
   return computed({
     get() {
@@ -6835,7 +8137,7 @@ function useClamp(value, min, max) {
     },
     set(value2) {
       _value.value = clamp(value2, toValue(min), toValue(max));
-    }
+    },
   });
 }
 function useOffsetPagination(options) {
@@ -6845,24 +8147,26 @@ function useOffsetPagination(options) {
     page = 1,
     onPageChange = noop,
     onPageSizeChange = noop,
-    onPageCountChange = noop
+    onPageCountChange = noop,
   } = options;
   const currentPageSize = useClamp(pageSize, 1, Number.POSITIVE_INFINITY);
-  const pageCount = computed(() => Math.max(
-    1,
-    Math.ceil(toValue(total) / toValue(currentPageSize))
-  ));
+  const pageCount = computed(() =>
+    Math.max(
+      1,
+      Math.ceil(toValue(total) / toValue(currentPageSize)),
+    )
+  );
   const currentPage = useClamp(page, 1, pageCount);
   const isFirstPage = computed(() => currentPage.value === 1);
   const isLastPage = computed(() => currentPage.value === pageCount.value);
   if (isRef(page)) {
     syncRef(page, currentPage, {
-      direction: isReadonly(page) ? "ltr" : "both"
+      direction: isReadonly(page) ? "ltr" : "both",
     });
   }
   if (isRef(pageSize)) {
     syncRef(pageSize, currentPageSize, {
-      direction: isReadonly(pageSize) ? "ltr" : "both"
+      direction: isReadonly(pageSize) ? "ltr" : "both",
     });
   }
   function prev() {
@@ -6878,7 +8182,7 @@ function useOffsetPagination(options) {
     isFirstPage,
     isLastPage,
     prev,
-    next
+    next,
   };
   watch(currentPage, () => {
     onPageChange(reactive(returnValue));
@@ -6899,8 +8203,9 @@ function usePageLeave(options = {}) {
   const { window: window2 = defaultWindow } = options;
   const isLeft = shallowRef(false);
   const handler = (event) => {
-    if (!window2)
+    if (!window2) {
       return;
+    }
     event = event || window2.event;
     const from = event.relatedTarget || event.toElement;
     isLeft.value = !from;
@@ -6915,9 +8220,11 @@ function usePageLeave(options = {}) {
 }
 function useScreenOrientation(options = {}) {
   const {
-    window: window2 = defaultWindow
+    window: window2 = defaultWindow,
   } = options;
-  const isSupported = useSupported(() => window2 && "screen" in window2 && "orientation" in window2.screen);
+  const isSupported = useSupported(() =>
+    window2 && "screen" in window2 && "orientation" in window2.screen
+  );
   const screenOrientation = isSupported.value ? window2.screen.orientation : {};
   const orientation = ref(screenOrientation.type);
   const angle = shallowRef(screenOrientation.angle || 0);
@@ -6928,20 +8235,22 @@ function useScreenOrientation(options = {}) {
     }, { passive: true });
   }
   const lockOrientation = (type) => {
-    if (isSupported.value && typeof screenOrientation.lock === "function")
+    if (isSupported.value && typeof screenOrientation.lock === "function") {
       return screenOrientation.lock(type);
+    }
     return Promise.reject(new Error("Not supported"));
   };
   const unlockOrientation = () => {
-    if (isSupported.value && typeof screenOrientation.unlock === "function")
+    if (isSupported.value && typeof screenOrientation.unlock === "function") {
       screenOrientation.unlock();
+    }
   };
   return {
     isSupported,
     orientation,
     angle,
     lockOrientation,
-    unlockOrientation
+    unlockOrientation,
   };
 }
 function useParallax(target, options = {}) {
@@ -6950,7 +8259,7 @@ function useParallax(target, options = {}) {
     deviceOrientationRollAdjust = (i) => i,
     mouseTiltAdjust = (i) => i,
     mouseRollAdjust = (i) => i,
-    window: window2 = defaultWindow
+    window: window2 = defaultWindow,
   } = options;
   const orientation = reactive(useDeviceOrientation({ window: window2 }));
   const screenOrientation = reactive(useScreenOrientation({ window: window2 }));
@@ -6958,10 +8267,14 @@ function useParallax(target, options = {}) {
     elementX: x,
     elementY: y,
     elementWidth: width,
-    elementHeight: height
+    elementHeight: height,
   } = useMouseInElement(target, { handleOutside: false, window: window2 });
   const source = computed(() => {
-    if (orientation.isSupported && (orientation.alpha != null && orientation.alpha !== 0 || orientation.gamma != null && orientation.gamma !== 0)) {
+    if (
+      orientation.isSupported &&
+      (orientation.alpha != null && orientation.alpha !== 0 ||
+        orientation.gamma != null && orientation.gamma !== 0)
+    ) {
       return "deviceOrientation";
     }
     return "mouse";
@@ -7022,8 +8335,9 @@ function useParentElement(element = useCurrentElement()) {
   const parentElement = shallowRef();
   const update = () => {
     const el = unrefElement(element);
-    if (el)
+    if (el) {
       parentElement.value = el.parentElement;
+    }
   };
   tryOnMounted(update);
   watch(() => toValue(element), update);
@@ -7035,7 +8349,9 @@ function usePerformanceObserver(options, callback) {
     immediate = true,
     ...performanceOptions
   } = options;
-  const isSupported = useSupported(() => window2 && "PerformanceObserver" in window2);
+  const isSupported = useSupported(() =>
+    window2 && "PerformanceObserver" in window2
+  );
   let observer;
   const stop = () => {
     observer == null ? void 0 : observer.disconnect();
@@ -7048,12 +8364,13 @@ function usePerformanceObserver(options, callback) {
     }
   };
   tryOnScopeDispose(stop);
-  if (immediate)
+  if (immediate) {
     start();
+  }
   return {
     isSupported,
     start,
-    stop
+    stop,
   };
 }
 var defaultState = {
@@ -7066,35 +8383,50 @@ var defaultState = {
   width: 0,
   height: 0,
   twist: 0,
-  pointerType: null
+  pointerType: null,
 };
 var keys = Object.keys(defaultState);
 function usePointer(options = {}) {
   const {
-    target = defaultWindow
+    target = defaultWindow,
   } = options;
   const isInside = shallowRef(false);
   const state = ref(options.initialValue || {});
   Object.assign(state.value, defaultState, state.value);
   const handler = (event) => {
     isInside.value = true;
-    if (options.pointerTypes && !options.pointerTypes.includes(event.pointerType))
+    if (
+      options.pointerTypes && !options.pointerTypes.includes(event.pointerType)
+    ) {
       return;
+    }
     state.value = objectPick(event, keys, false);
   };
   if (target) {
     const listenerOptions = { passive: true };
-    useEventListener(target, ["pointerdown", "pointermove", "pointerup"], handler, listenerOptions);
-    useEventListener(target, "pointerleave", () => isInside.value = false, listenerOptions);
+    useEventListener(
+      target,
+      ["pointerdown", "pointermove", "pointerup"],
+      handler,
+      listenerOptions,
+    );
+    useEventListener(
+      target,
+      "pointerleave",
+      () => isInside.value = false,
+      listenerOptions,
+    );
   }
   return {
     ...toRefs2(state),
-    isInside
+    isInside,
   };
 }
 function usePointerLock(target, options = {}) {
   const { document: document2 = defaultDocument } = options;
-  const isSupported = useSupported(() => document2 && "pointerLockElement" in document2);
+  const isSupported = useSupported(() =>
+    document2 && "pointerLockElement" in document2
+  );
   const element = shallowRef();
   const triggerElement = shallowRef();
   let targetElement;
@@ -7102,16 +8434,21 @@ function usePointerLock(target, options = {}) {
     const listenerOptions = { passive: true };
     useEventListener(document2, "pointerlockchange", () => {
       var _a;
-      const currentElement = (_a = document2.pointerLockElement) != null ? _a : element.value;
+      const currentElement = (_a = document2.pointerLockElement) != null
+        ? _a
+        : element.value;
       if (targetElement && currentElement === targetElement) {
         element.value = document2.pointerLockElement;
-        if (!element.value)
+        if (!element.value) {
           targetElement = triggerElement.value = null;
+        }
       }
     }, listenerOptions);
     useEventListener(document2, "pointerlockerror", () => {
       var _a;
-      const currentElement = (_a = document2.pointerLockElement) != null ? _a : element.value;
+      const currentElement = (_a = document2.pointerLockElement) != null
+        ? _a
+        : element.value;
       if (targetElement && currentElement === targetElement) {
         const action = document2.pointerLockElement ? "release" : "acquire";
         throw new Error(`Failed to ${action} pointer lock.`);
@@ -7120,18 +8457,23 @@ function usePointerLock(target, options = {}) {
   }
   async function lock(e) {
     var _a;
-    if (!isSupported.value)
+    if (!isSupported.value) {
       throw new Error("Pointer Lock API is not supported by your browser.");
+    }
     triggerElement.value = e instanceof Event ? e.currentTarget : null;
-    targetElement = e instanceof Event ? (_a = unrefElement(target)) != null ? _a : triggerElement.value : unrefElement(e);
-    if (!targetElement)
+    targetElement = e instanceof Event
+      ? (_a = unrefElement(target)) != null ? _a : triggerElement.value
+      : unrefElement(e);
+    if (!targetElement) {
       throw new Error("Target element undefined.");
+    }
     targetElement.requestPointerLock();
     return await until(element).toBe(targetElement);
   }
   async function unlock() {
-    if (!element.value)
+    if (!element.value) {
       return false;
+    }
     document2.exitPointerLock();
     await until(element).toBeNull();
     return true;
@@ -7141,7 +8483,7 @@ function usePointerLock(target, options = {}) {
     element,
     triggerElement,
     lock,
-    unlock
+    unlock,
   };
 }
 function usePointerSwipe(target, options = {}) {
@@ -7151,7 +8493,7 @@ function usePointerSwipe(target, options = {}) {
     onSwipe,
     onSwipeEnd,
     onSwipeStart,
-    disableTextSelect = false
+    disableTextSelect = false,
   } = options;
   const posStart = reactive({ x: 0, y: 0 });
   const updatePosStart = (x, y) => {
@@ -7166,12 +8508,15 @@ function usePointerSwipe(target, options = {}) {
   const distanceX = computed(() => posStart.x - posEnd.x);
   const distanceY = computed(() => posStart.y - posEnd.y);
   const { max, abs } = Math;
-  const isThresholdExceeded = computed(() => max(abs(distanceX.value), abs(distanceY.value)) >= threshold);
+  const isThresholdExceeded = computed(() =>
+    max(abs(distanceX.value), abs(distanceY.value)) >= threshold
+  );
   const isSwiping = shallowRef(false);
   const isPointerDown = shallowRef(false);
   const direction = computed(() => {
-    if (!isThresholdExceeded.value)
+    if (!isThresholdExceeded.value) {
       return "none";
+    }
     if (abs(distanceX.value) > abs(distanceY.value)) {
       return distanceX.value > 0 ? "left" : "right";
     } else {
@@ -7182,13 +8527,20 @@ function usePointerSwipe(target, options = {}) {
     var _a, _b, _c;
     const isReleasingButton = e.buttons === 0;
     const isPrimaryButton = e.buttons === 1;
-    return (_c = (_b = (_a = options.pointerTypes) == null ? void 0 : _a.includes(e.pointerType)) != null ? _b : isReleasingButton || isPrimaryButton) != null ? _c : true;
+    return (_c = (_b = (_a = options.pointerTypes) == null
+          ? void 0
+          : _a.includes(e.pointerType)) != null
+        ? _b
+        : isReleasingButton || isPrimaryButton) != null
+      ? _c
+      : true;
   };
   const listenerOptions = { passive: true };
   const stops = [
     useEventListener(target, "pointerdown", (e) => {
-      if (!eventIsAllowed(e))
+      if (!eventIsAllowed(e)) {
         return;
+      }
       isPointerDown.value = true;
       const eventTarget = e.target;
       eventTarget == null ? void 0 : eventTarget.setPointerCapture(e.pointerId);
@@ -7198,33 +8550,47 @@ function usePointerSwipe(target, options = {}) {
       onSwipeStart == null ? void 0 : onSwipeStart(e);
     }, listenerOptions),
     useEventListener(target, "pointermove", (e) => {
-      if (!eventIsAllowed(e))
+      if (!eventIsAllowed(e)) {
         return;
-      if (!isPointerDown.value)
+      }
+      if (!isPointerDown.value) {
         return;
+      }
       const { clientX: x, clientY: y } = e;
       updatePosEnd(x, y);
-      if (!isSwiping.value && isThresholdExceeded.value)
+      if (!isSwiping.value && isThresholdExceeded.value) {
         isSwiping.value = true;
-      if (isSwiping.value)
+      }
+      if (isSwiping.value) {
         onSwipe == null ? void 0 : onSwipe(e);
+      }
     }, listenerOptions),
     useEventListener(target, "pointerup", (e) => {
-      if (!eventIsAllowed(e))
+      if (!eventIsAllowed(e)) {
         return;
-      if (isSwiping.value)
+      }
+      if (isSwiping.value) {
         onSwipeEnd == null ? void 0 : onSwipeEnd(e, direction.value);
+      }
       isPointerDown.value = false;
       isSwiping.value = false;
-    }, listenerOptions)
+    }, listenerOptions),
   ];
   tryOnMounted(() => {
     var _a, _b, _c, _d, _e, _f, _g, _h;
-    (_b = (_a = targetRef.value) == null ? void 0 : _a.style) == null ? void 0 : _b.setProperty("touch-action", "none");
+    (_b = (_a = targetRef.value) == null ? void 0 : _a.style) == null
+      ? void 0
+      : _b.setProperty("touch-action", "none");
     if (disableTextSelect) {
-      (_d = (_c = targetRef.value) == null ? void 0 : _c.style) == null ? void 0 : _d.setProperty("-webkit-user-select", "none");
-      (_f = (_e = targetRef.value) == null ? void 0 : _e.style) == null ? void 0 : _f.setProperty("-ms-user-select", "none");
-      (_h = (_g = targetRef.value) == null ? void 0 : _g.style) == null ? void 0 : _h.setProperty("user-select", "none");
+      (_d = (_c = targetRef.value) == null ? void 0 : _c.style) == null
+        ? void 0
+        : _d.setProperty("-webkit-user-select", "none");
+      (_f = (_e = targetRef.value) == null ? void 0 : _e.style) == null
+        ? void 0
+        : _f.setProperty("-ms-user-select", "none");
+      (_h = (_g = targetRef.value) == null ? void 0 : _g.style) == null
+        ? void 0
+        : _h.setProperty("user-select", "none");
     }
   });
   const stop = () => stops.forEach((s) => s());
@@ -7235,17 +8601,19 @@ function usePointerSwipe(target, options = {}) {
     posEnd: readonly(posEnd),
     distanceX,
     distanceY,
-    stop
+    stop,
   };
 }
 function usePreferredColorScheme(options) {
   const isLight = useMediaQuery("(prefers-color-scheme: light)", options);
   const isDark = useMediaQuery("(prefers-color-scheme: dark)", options);
   return computed(() => {
-    if (isDark.value)
+    if (isDark.value) {
       return "dark";
-    if (isLight.value)
+    }
+    if (isLight.value) {
       return "light";
+    }
     return "no-preference";
   });
 }
@@ -7254,19 +8622,23 @@ function usePreferredContrast(options) {
   const isLess = useMediaQuery("(prefers-contrast: less)", options);
   const isCustom = useMediaQuery("(prefers-contrast: custom)", options);
   return computed(() => {
-    if (isMore.value)
+    if (isMore.value) {
       return "more";
-    if (isLess.value)
+    }
+    if (isLess.value) {
       return "less";
-    if (isCustom.value)
+    }
+    if (isCustom.value) {
       return "custom";
+    }
     return "no-preference";
   });
 }
 function usePreferredLanguages(options = {}) {
   const { window: window2 = defaultWindow } = options;
-  if (!window2)
+  if (!window2) {
     return ref(["en"]);
+  }
   const navigator2 = window2.navigator;
   const value = ref(navigator2.languages);
   useEventListener(window2, "languagechange", () => {
@@ -7277,16 +8649,21 @@ function usePreferredLanguages(options = {}) {
 function usePreferredReducedMotion(options) {
   const isReduced = useMediaQuery("(prefers-reduced-motion: reduce)", options);
   return computed(() => {
-    if (isReduced.value)
+    if (isReduced.value) {
       return "reduce";
+    }
     return "no-preference";
   });
 }
 function usePreferredReducedTransparency(options) {
-  const isReduced = useMediaQuery("(prefers-reduced-transparency: reduce)", options);
+  const isReduced = useMediaQuery(
+    "(prefers-reduced-transparency: reduce)",
+    options,
+  );
   return computed(() => {
-    if (isReduced.value)
+    if (isReduced.value) {
       return "reduce";
+    }
     return "no-preference";
   });
 }
@@ -7297,7 +8674,7 @@ function usePrevious(value, initialValue) {
     (_, oldValue) => {
       previous.value = oldValue;
     },
-    { flush: "sync" }
+    { flush: "sync" },
   );
   return readonly(previous);
 }
@@ -7333,7 +8710,7 @@ function useScreenSafeArea() {
     right,
     bottom,
     left,
-    update
+    update,
   };
 }
 function getValue(position) {
@@ -7350,96 +8727,119 @@ function useScriptTag(src, onLoaded = noop, options = {}) {
     noModule,
     defer,
     document: document2 = defaultDocument,
-    attrs = {}
+    attrs = {},
   } = options;
   const scriptTag = shallowRef(null);
   let _promise = null;
-  const loadScript = (waitForScriptLoad) => new Promise((resolve, reject) => {
-    const resolveWithElement = (el2) => {
-      scriptTag.value = el2;
-      resolve(el2);
-      return el2;
-    };
-    if (!document2) {
-      resolve(false);
-      return;
-    }
-    let shouldAppend = false;
-    let el = document2.querySelector(`script[src="${toValue(src)}"]`);
-    if (!el) {
-      el = document2.createElement("script");
-      el.type = type;
-      el.async = async;
-      el.src = toValue(src);
-      if (defer)
-        el.defer = defer;
-      if (crossOrigin)
-        el.crossOrigin = crossOrigin;
-      if (noModule)
-        el.noModule = noModule;
-      if (referrerPolicy)
-        el.referrerPolicy = referrerPolicy;
-      Object.entries(attrs).forEach(([name, value]) => el == null ? void 0 : el.setAttribute(name, value));
-      shouldAppend = true;
-    } else if (el.hasAttribute("data-loaded")) {
-      resolveWithElement(el);
-    }
-    const listenerOptions = {
-      passive: true
-    };
-    useEventListener(el, "error", (event) => reject(event), listenerOptions);
-    useEventListener(el, "abort", (event) => reject(event), listenerOptions);
-    useEventListener(el, "load", () => {
-      el.setAttribute("data-loaded", "true");
-      onLoaded(el);
-      resolveWithElement(el);
-    }, listenerOptions);
-    if (shouldAppend)
-      el = document2.head.appendChild(el);
-    if (!waitForScriptLoad)
-      resolveWithElement(el);
-  });
+  const loadScript = (waitForScriptLoad) =>
+    new Promise((resolve, reject) => {
+      const resolveWithElement = (el2) => {
+        scriptTag.value = el2;
+        resolve(el2);
+        return el2;
+      };
+      if (!document2) {
+        resolve(false);
+        return;
+      }
+      let shouldAppend = false;
+      let el = document2.querySelector(`script[src="${toValue(src)}"]`);
+      if (!el) {
+        el = document2.createElement("script");
+        el.type = type;
+        el.async = async;
+        el.src = toValue(src);
+        if (defer) {
+          el.defer = defer;
+        }
+        if (crossOrigin) {
+          el.crossOrigin = crossOrigin;
+        }
+        if (noModule) {
+          el.noModule = noModule;
+        }
+        if (referrerPolicy) {
+          el.referrerPolicy = referrerPolicy;
+        }
+        Object.entries(attrs).forEach(([name, value]) =>
+          el == null ? void 0 : el.setAttribute(name, value)
+        );
+        shouldAppend = true;
+      } else if (el.hasAttribute("data-loaded")) {
+        resolveWithElement(el);
+      }
+      const listenerOptions = {
+        passive: true,
+      };
+      useEventListener(el, "error", (event) => reject(event), listenerOptions);
+      useEventListener(el, "abort", (event) => reject(event), listenerOptions);
+      useEventListener(el, "load", () => {
+        el.setAttribute("data-loaded", "true");
+        onLoaded(el);
+        resolveWithElement(el);
+      }, listenerOptions);
+      if (shouldAppend) {
+        el = document2.head.appendChild(el);
+      }
+      if (!waitForScriptLoad) {
+        resolveWithElement(el);
+      }
+    });
   const load = (waitForScriptLoad = true) => {
-    if (!_promise)
+    if (!_promise) {
       _promise = loadScript(waitForScriptLoad);
+    }
     return _promise;
   };
   const unload = () => {
-    if (!document2)
+    if (!document2) {
       return;
+    }
     _promise = null;
-    if (scriptTag.value)
+    if (scriptTag.value) {
       scriptTag.value = null;
+    }
     const el = document2.querySelector(`script[src="${toValue(src)}"]`);
-    if (el)
+    if (el) {
       document2.head.removeChild(el);
+    }
   };
-  if (immediate && !manual)
+  if (immediate && !manual) {
     tryOnMounted(load);
-  if (!manual)
+  }
+  if (!manual) {
     tryOnUnmounted(unload);
+  }
   return { scriptTag, load, unload };
 }
 function checkOverflowScroll(ele) {
   const style = window.getComputedStyle(ele);
-  if (style.overflowX === "scroll" || style.overflowY === "scroll" || style.overflowX === "auto" && ele.clientWidth < ele.scrollWidth || style.overflowY === "auto" && ele.clientHeight < ele.scrollHeight) {
+  if (
+    style.overflowX === "scroll" || style.overflowY === "scroll" ||
+    style.overflowX === "auto" && ele.clientWidth < ele.scrollWidth ||
+    style.overflowY === "auto" && ele.clientHeight < ele.scrollHeight
+  ) {
     return true;
   } else {
     const parent = ele.parentNode;
-    if (!parent || parent.tagName === "BODY")
+    if (!parent || parent.tagName === "BODY") {
       return false;
+    }
     return checkOverflowScroll(parent);
   }
 }
 function preventDefault(rawEvent) {
   const e = rawEvent || window.event;
   const _target = e.target;
-  if (checkOverflowScroll(_target))
+  if (checkOverflowScroll(_target)) {
     return false;
-  if (e.touches.length > 1)
+  }
+  if (e.touches.length > 1) {
     return true;
-  if (e.preventDefault)
+  }
+  if (e.preventDefault) {
     e.preventDefault();
+  }
   return false;
 }
 var elInitialOverflow = /* @__PURE__ */ new WeakMap();
@@ -7451,22 +8851,27 @@ function useScrollLock(element, initialState = false) {
     const target = resolveElement(toValue(el));
     if (target) {
       const ele = target;
-      if (!elInitialOverflow.get(ele))
+      if (!elInitialOverflow.get(ele)) {
         elInitialOverflow.set(ele, ele.style.overflow);
-      if (ele.style.overflow !== "hidden")
+      }
+      if (ele.style.overflow !== "hidden") {
         initialOverflow = ele.style.overflow;
-      if (ele.style.overflow === "hidden")
+      }
+      if (ele.style.overflow === "hidden") {
         return isLocked.value = true;
-      if (isLocked.value)
+      }
+      if (isLocked.value) {
         return ele.style.overflow = "hidden";
+      }
     }
   }, {
-    immediate: true
+    immediate: true,
   });
   const lock = () => {
     const el = resolveElement(toValue(element));
-    if (!el || isLocked.value)
+    if (!el || isLocked.value) {
       return;
+    }
     if (isIOS) {
       stopTouchMoveListener = useEventListener(
         el,
@@ -7474,7 +8879,7 @@ function useScrollLock(element, initialState = false) {
         (e) => {
           preventDefault(e);
         },
-        { passive: false }
+        { passive: false },
       );
     }
     el.style.overflow = "hidden";
@@ -7482,10 +8887,12 @@ function useScrollLock(element, initialState = false) {
   };
   const unlock = () => {
     const el = resolveElement(toValue(element));
-    if (!el || !isLocked.value)
+    if (!el || !isLocked.value) {
       return;
-    if (isIOS)
+    }
+    if (isIOS) {
       stopTouchMoveListener == null ? void 0 : stopTouchMoveListener();
+    }
     el.style.overflow = initialOverflow;
     elInitialOverflow.delete(el);
     isLocked.value = false;
@@ -7496,36 +8903,45 @@ function useScrollLock(element, initialState = false) {
       return isLocked.value;
     },
     set(v) {
-      if (v)
+      if (v) {
         lock();
-      else unlock();
-    }
+      } else unlock();
+    },
   });
 }
 function useSessionStorage(key, initialValue, options = {}) {
   const { window: window2 = defaultWindow } = options;
-  return useStorage(key, initialValue, window2 == null ? void 0 : window2.sessionStorage, options);
+  return useStorage(
+    key,
+    initialValue,
+    window2 == null ? void 0 : window2.sessionStorage,
+    options,
+  );
 }
 function useShare(shareOptions = {}, options = {}) {
   const { navigator: navigator2 = defaultNavigator } = options;
   const _navigator = navigator2;
-  const isSupported = useSupported(() => _navigator && "canShare" in _navigator);
+  const isSupported = useSupported(() =>
+    _navigator && "canShare" in _navigator
+  );
   const share = async (overrideOptions = {}) => {
     if (isSupported.value) {
       const data = {
         ...toValue(shareOptions),
-        ...toValue(overrideOptions)
+        ...toValue(overrideOptions),
       };
       let granted = true;
-      if (data.files && _navigator.canShare)
+      if (data.files && _navigator.canShare) {
         granted = _navigator.canShare({ files: data.files });
-      if (granted)
+      }
+      if (granted) {
         return _navigator.share(data);
+      }
     }
   };
   return {
     isSupported,
-    share
+    share,
   };
 }
 var defaultSortFn = (source, compareFn) => source.sort(compareFn);
@@ -7548,16 +8964,18 @@ function useSorted(...args) {
   }
   const {
     dirty = false,
-    sortFn = defaultSortFn
+    sortFn = defaultSortFn,
   } = options;
-  if (!dirty)
+  if (!dirty) {
     return computed(() => sortFn([...toValue(source)], compareFn));
+  }
   watchEffect(() => {
     const result = sortFn(toValue(source), compareFn);
-    if (isRef(source))
+    if (isRef(source)) {
       source.value = result;
-    else
+    } else {
       source.splice(0, source.length, ...result);
+    }
   });
   return source;
 }
@@ -7566,7 +8984,7 @@ function useSpeechRecognition(options = {}) {
     interimResults = true,
     continuous = true,
     maxAlternatives = 1,
-    window: window2 = defaultWindow
+    window: window2 = defaultWindow,
   } = options;
   const lang = toRef2(options.lang || "en-US");
   const isListening = shallowRef(false);
@@ -7587,7 +9005,8 @@ function useSpeechRecognition(options = {}) {
       stop();
     }
   };
-  const SpeechRecognition = window2 && (window2.SpeechRecognition || window2.webkitSpeechRecognition);
+  const SpeechRecognition = window2 &&
+    (window2.SpeechRecognition || window2.webkitSpeechRecognition);
   const isSupported = useSupported(() => SpeechRecognition);
   if (isSupported.value) {
     recognition = new SpeechRecognition();
@@ -7600,8 +9019,9 @@ function useSpeechRecognition(options = {}) {
       isFinal.value = false;
     };
     watch(lang, (lang2) => {
-      if (recognition && !isListening.value)
+      if (recognition && !isListening.value) {
         recognition.lang = lang2;
+      }
     });
     recognition.onresult = (event) => {
       const currentResult = event.results[event.resultIndex];
@@ -7618,12 +9038,14 @@ function useSpeechRecognition(options = {}) {
       recognition.lang = toValue(lang);
     };
     watch(isListening, (newValue, oldValue) => {
-      if (newValue === oldValue)
+      if (newValue === oldValue) {
         return;
-      if (newValue)
+      }
+      if (newValue) {
         recognition.start();
-      else
+      } else {
         recognition.stop();
+      }
     });
   }
   tryOnScopeDispose(() => {
@@ -7638,7 +9060,7 @@ function useSpeechRecognition(options = {}) {
     error,
     toggle,
     start,
-    stop
+    stop,
   };
 }
 function useSpeechSynthesis(text, options = {}) {
@@ -7646,7 +9068,7 @@ function useSpeechSynthesis(text, options = {}) {
     pitch = 1,
     rate = 1,
     volume = 1,
-    window: window2 = defaultWindow
+    window: window2 = defaultWindow,
   } = options;
   const synth = window2 && window2.speechSynthesis;
   const isSupported = useSupported(() => synth);
@@ -7693,8 +9115,9 @@ function useSpeechSynthesis(text, options = {}) {
   });
   const speak = () => {
     synth.cancel();
-    if (utterance)
+    if (utterance) {
       synth.speak(utterance.value);
+    }
   };
   const stop = () => {
     synth.cancel();
@@ -7703,8 +9126,9 @@ function useSpeechSynthesis(text, options = {}) {
   if (isSupported.value) {
     bindEventsForUtterance(utterance.value);
     watch(lang, (lang2) => {
-      if (utterance.value && !isPlaying.value)
+      if (utterance.value && !isPlaying.value) {
         utterance.value.lang = lang2;
+      }
     });
     if (options.voice) {
       watch(options.voice, () => {
@@ -7712,10 +9136,11 @@ function useSpeechSynthesis(text, options = {}) {
       });
     }
     watch(isPlaying, () => {
-      if (isPlaying.value)
+      if (isPlaying.value) {
         synth.resume();
-      else
+      } else {
         synth.pause();
+      }
     });
   }
   tryOnScopeDispose(() => {
@@ -7729,45 +9154,57 @@ function useSpeechSynthesis(text, options = {}) {
     error,
     stop,
     toggle,
-    speak
+    speak,
   };
 }
 function useStepper(steps, initialStep) {
   const stepsRef = ref(steps);
-  const stepNames = computed(() => Array.isArray(stepsRef.value) ? stepsRef.value : Object.keys(stepsRef.value));
-  const index = ref(stepNames.value.indexOf(initialStep != null ? initialStep : stepNames.value[0]));
+  const stepNames = computed(() =>
+    Array.isArray(stepsRef.value) ? stepsRef.value : Object.keys(stepsRef.value)
+  );
+  const index = ref(
+    stepNames.value.indexOf(
+      initialStep != null ? initialStep : stepNames.value[0],
+    ),
+  );
   const current = computed(() => at(index.value));
   const isFirst = computed(() => index.value === 0);
   const isLast = computed(() => index.value === stepNames.value.length - 1);
   const next = computed(() => stepNames.value[index.value + 1]);
   const previous = computed(() => stepNames.value[index.value - 1]);
   function at(index2) {
-    if (Array.isArray(stepsRef.value))
+    if (Array.isArray(stepsRef.value)) {
       return stepsRef.value[index2];
+    }
     return stepsRef.value[stepNames.value[index2]];
   }
   function get2(step) {
-    if (!stepNames.value.includes(step))
+    if (!stepNames.value.includes(step)) {
       return;
+    }
     return at(stepNames.value.indexOf(step));
   }
   function goTo(step) {
-    if (stepNames.value.includes(step))
+    if (stepNames.value.includes(step)) {
       index.value = stepNames.value.indexOf(step);
+    }
   }
   function goToNext() {
-    if (isLast.value)
+    if (isLast.value) {
       return;
+    }
     index.value++;
   }
   function goToPrevious() {
-    if (isFirst.value)
+    if (isFirst.value) {
       return;
+    }
     index.value--;
   }
   function goBackTo(step) {
-    if (isAfter(step))
+    if (isAfter(step)) {
       goTo(step);
+    }
   }
   function isNext(step) {
     return stepNames.value.indexOf(step) === index.value + 1;
@@ -7803,7 +9240,7 @@ function useStepper(steps, initialStep) {
     isPrevious,
     isCurrent,
     isBefore,
-    isAfter
+    isAfter,
   };
 }
 function useStorageAsync(key, initialValue, storage, options = {}) {
@@ -7819,12 +9256,14 @@ function useStorageAsync(key, initialValue, storage, options = {}) {
     eventFilter,
     onError = (e) => {
       console.error(e);
-    }
+    },
   } = options;
   const rawInit = toValue(initialValue);
   const type = guessSerializerType(rawInit);
   const data = (shallow ? shallowRef : ref)(toValue(initialValue));
-  const serializer = (_a = options.serializer) != null ? _a : StorageSerializers[type];
+  const serializer = (_a = options.serializer) != null
+    ? _a
+    : StorageSerializers[type];
   if (!storage) {
     try {
       storage = getSSRHandler("getDefaultStorageAsync", () => {
@@ -7836,21 +9275,23 @@ function useStorageAsync(key, initialValue, storage, options = {}) {
     }
   }
   async function read(event) {
-    if (!storage || event && event.key !== key)
+    if (!storage || event && event.key !== key) {
       return;
+    }
     try {
       const rawValue = event ? event.newValue : await storage.getItem(key);
       if (rawValue == null) {
         data.value = rawInit;
-        if (writeDefaults && rawInit !== null)
+        if (writeDefaults && rawInit !== null) {
           await storage.setItem(key, await serializer.write(rawInit));
+        }
       } else if (mergeDefaults) {
         const value = await serializer.read(rawValue);
-        if (typeof mergeDefaults === "function")
+        if (typeof mergeDefaults === "function") {
           data.value = mergeDefaults(value, rawInit);
-        else if (type === "object" && !Array.isArray(value))
+        } else if (type === "object" && !Array.isArray(value)) {
           data.value = { ...rawInit, ...value };
-        else data.value = value;
+        } else data.value = value;
       } else {
         data.value = await serializer.read(rawValue);
       }
@@ -7859,17 +9300,24 @@ function useStorageAsync(key, initialValue, storage, options = {}) {
     }
   }
   read();
-  if (window2 && listenToStorageChanges)
-    useEventListener(window2, "storage", (e) => Promise.resolve().then(() => read(e)), { passive: true });
+  if (window2 && listenToStorageChanges) {
+    useEventListener(
+      window2,
+      "storage",
+      (e) => Promise.resolve().then(() => read(e)),
+      { passive: true },
+    );
+  }
   if (storage) {
     watchWithFilter(
       data,
       async () => {
         try {
-          if (data.value == null)
+          if (data.value == null) {
             await storage.removeItem(key);
-          else
+          } else {
             await storage.setItem(key, await serializer.write(data.value));
+          }
         } catch (e) {
           onError(e);
         }
@@ -7877,8 +9325,8 @@ function useStorageAsync(key, initialValue, storage, options = {}) {
       {
         flush,
         deep,
-        eventFilter
-      }
+        eventFilter,
+      },
     );
   }
   return data;
@@ -7890,49 +9338,55 @@ function useStyleTag(css, options = {}) {
     document: document2 = defaultDocument,
     immediate = true,
     manual = false,
-    id = `vueuse_styletag_${++_id}`
+    id = `vueuse_styletag_${++_id}`,
   } = options;
   const cssRef = shallowRef(css);
   let stop = () => {
   };
   const load = () => {
-    if (!document2)
+    if (!document2) {
       return;
+    }
     const el = document2.getElementById(id) || document2.createElement("style");
     if (!el.isConnected) {
       el.id = id;
-      if (options.media)
+      if (options.media) {
         el.media = options.media;
+      }
       document2.head.appendChild(el);
     }
-    if (isLoaded.value)
+    if (isLoaded.value) {
       return;
+    }
     stop = watch(
       cssRef,
       (value) => {
         el.textContent = value;
       },
-      { immediate: true }
+      { immediate: true },
     );
     isLoaded.value = true;
   };
   const unload = () => {
-    if (!document2 || !isLoaded.value)
+    if (!document2 || !isLoaded.value) {
       return;
+    }
     stop();
     document2.head.removeChild(document2.getElementById(id));
     isLoaded.value = false;
   };
-  if (immediate && !manual)
+  if (immediate && !manual) {
     tryOnMounted(load);
-  if (!manual)
+  }
+  if (!manual) {
     tryOnScopeDispose(unload);
+  }
   return {
     id,
     css: cssRef,
     unload,
     load,
-    isLoaded: readonly(isLoaded)
+    isLoaded: readonly(isLoaded),
   };
 }
 function useSwipe(target, options = {}) {
@@ -7941,25 +9395,30 @@ function useSwipe(target, options = {}) {
     onSwipe,
     onSwipeEnd,
     onSwipeStart,
-    passive = true
+    passive = true,
   } = options;
   const coordsStart = reactive({ x: 0, y: 0 });
   const coordsEnd = reactive({ x: 0, y: 0 });
   const diffX = computed(() => coordsStart.x - coordsEnd.x);
   const diffY = computed(() => coordsStart.y - coordsEnd.y);
   const { max, abs } = Math;
-  const isThresholdExceeded = computed(() => max(abs(diffX.value), abs(diffY.value)) >= threshold);
+  const isThresholdExceeded = computed(() =>
+    max(abs(diffX.value), abs(diffY.value)) >= threshold
+  );
   const isSwiping = shallowRef(false);
   const direction = computed(() => {
-    if (!isThresholdExceeded.value)
+    if (!isThresholdExceeded.value) {
       return "none";
+    }
     if (abs(diffX.value) > abs(diffY.value)) {
       return diffX.value > 0 ? "left" : "right";
     } else {
       return diffY.value > 0 ? "up" : "down";
     }
   });
-  const getTouchEventCoords = (e) => [e.touches[0].clientX, e.touches[0].clientY];
+  const getTouchEventCoords = (
+    e,
+  ) => [e.touches[0].clientX, e.touches[0].clientY];
   const updateCoordsStart = (x, y) => {
     coordsStart.x = x;
     coordsStart.y = y;
@@ -7970,32 +9429,46 @@ function useSwipe(target, options = {}) {
   };
   const listenerOptions = { passive, capture: !passive };
   const onTouchEnd = (e) => {
-    if (isSwiping.value)
+    if (isSwiping.value) {
       onSwipeEnd == null ? void 0 : onSwipeEnd(e, direction.value);
+    }
     isSwiping.value = false;
   };
   const stops = [
     useEventListener(target, "touchstart", (e) => {
-      if (e.touches.length !== 1)
+      if (e.touches.length !== 1) {
         return;
+      }
       const [x, y] = getTouchEventCoords(e);
       updateCoordsStart(x, y);
       updateCoordsEnd(x, y);
       onSwipeStart == null ? void 0 : onSwipeStart(e);
     }, listenerOptions),
     useEventListener(target, "touchmove", (e) => {
-      if (e.touches.length !== 1)
+      if (e.touches.length !== 1) {
         return;
+      }
       const [x, y] = getTouchEventCoords(e);
       updateCoordsEnd(x, y);
-      if (listenerOptions.capture && !listenerOptions.passive && Math.abs(diffX.value) > Math.abs(diffY.value))
+      if (
+        listenerOptions.capture && !listenerOptions.passive &&
+        Math.abs(diffX.value) > Math.abs(diffY.value)
+      ) {
         e.preventDefault();
-      if (!isSwiping.value && isThresholdExceeded.value)
+      }
+      if (!isSwiping.value && isThresholdExceeded.value) {
         isSwiping.value = true;
-      if (isSwiping.value)
+      }
+      if (isSwiping.value) {
         onSwipe == null ? void 0 : onSwipe(e);
+      }
     }, listenerOptions),
-    useEventListener(target, ["touchend", "touchcancel"], onTouchEnd, listenerOptions)
+    useEventListener(
+      target,
+      ["touchend", "touchcancel"],
+      onTouchEnd,
+      listenerOptions,
+    ),
   ];
   const stop = () => stops.forEach((s) => s());
   return {
@@ -8007,14 +9480,15 @@ function useSwipe(target, options = {}) {
     lengthY: diffY,
     stop,
     // TODO: Remove in the next major version
-    isPassiveEventSupported: true
+    isPassiveEventSupported: true,
   };
 }
 function useTemplateRefsList() {
   const refs = ref([]);
   refs.value.set = (el) => {
-    if (el)
+    if (el) {
       refs.value.push(el);
+    }
   };
   onBeforeUpdate(() => {
     refs.value.length = 0;
@@ -8026,11 +9500,17 @@ function useTextDirection(options = {}) {
     document: document2 = defaultDocument,
     selector = "html",
     observe = false,
-    initialValue = "ltr"
+    initialValue = "ltr",
   } = options;
   function getValue2() {
     var _a, _b;
-    return (_b = (_a = document2 == null ? void 0 : document2.querySelector(selector)) == null ? void 0 : _a.getAttribute("dir")) != null ? _b : initialValue;
+    return (_b =
+        (_a = document2 == null ? void 0 : document2.querySelector(selector)) ==
+            null
+          ? void 0
+          : _a.getAttribute("dir")) != null
+      ? _b
+      : initialValue;
   }
   const dir = ref(getValue2());
   tryOnMounted(() => dir.value = getValue2());
@@ -8038,7 +9518,7 @@ function useTextDirection(options = {}) {
     useMutationObserver(
       document2.querySelector(selector),
       () => dir.value = getValue2(),
-      { attributes: true }
+      { attributes: true },
     );
   }
   return computed({
@@ -8048,13 +9528,19 @@ function useTextDirection(options = {}) {
     set(v) {
       var _a, _b;
       dir.value = v;
-      if (!document2)
+      if (!document2) {
         return;
-      if (dir.value)
-        (_a = document2.querySelector(selector)) == null ? void 0 : _a.setAttribute("dir", dir.value);
-      else
-        (_b = document2.querySelector(selector)) == null ? void 0 : _b.removeAttribute("dir");
-    }
+      }
+      if (dir.value) {
+        (_a = document2.querySelector(selector)) == null
+          ? void 0
+          : _a.setAttribute("dir", dir.value);
+      } else {
+        (_b = document2.querySelector(selector)) == null
+          ? void 0
+          : _b.removeAttribute("dir");
+      }
+    },
   });
 }
 function getRangesFromSelection(selection) {
@@ -8064,27 +9550,38 @@ function getRangesFromSelection(selection) {
 }
 function useTextSelection(options = {}) {
   const {
-    window: window2 = defaultWindow
+    window: window2 = defaultWindow,
   } = options;
   const selection = ref(null);
   const text = computed(() => {
     var _a, _b;
-    return (_b = (_a = selection.value) == null ? void 0 : _a.toString()) != null ? _b : "";
+    return (_b = (_a = selection.value) == null ? void 0 : _a.toString()) !=
+        null
+      ? _b
+      : "";
   });
-  const ranges = computed(() => selection.value ? getRangesFromSelection(selection.value) : []);
-  const rects = computed(() => ranges.value.map((range) => range.getBoundingClientRect()));
+  const ranges = computed(() =>
+    selection.value ? getRangesFromSelection(selection.value) : []
+  );
+  const rects = computed(() =>
+    ranges.value.map((range) => range.getBoundingClientRect())
+  );
   function onSelectionChange() {
     selection.value = null;
-    if (window2)
+    if (window2) {
       selection.value = window2.getSelection();
+    }
   }
-  if (window2)
-    useEventListener(window2.document, "selectionchange", onSelectionChange, { passive: true });
+  if (window2) {
+    useEventListener(window2.document, "selectionchange", onSelectionChange, {
+      passive: true,
+    });
+  }
   return {
     text,
     rects,
     ranges,
-    selection
+    selection,
   };
 }
 function tryRequestAnimationFrame(window2 = defaultWindow, fn) {
@@ -8098,43 +9595,57 @@ function useTextareaAutosize(options = {}) {
   var _a, _b;
   const { window: window2 = defaultWindow } = options;
   const textarea = toRef2(options == null ? void 0 : options.element);
-  const input = toRef2((_a = options == null ? void 0 : options.input) != null ? _a : "");
-  const styleProp = (_b = options == null ? void 0 : options.styleProp) != null ? _b : "height";
+  const input = toRef2(
+    (_a = options == null ? void 0 : options.input) != null ? _a : "",
+  );
+  const styleProp = (_b = options == null ? void 0 : options.styleProp) != null
+    ? _b
+    : "height";
   const textareaScrollHeight = shallowRef(1);
   const textareaOldWidth = shallowRef(0);
   function triggerResize() {
     var _a2;
-    if (!textarea.value)
+    if (!textarea.value) {
       return;
+    }
     let height = "";
     textarea.value.style[styleProp] = "1px";
-    textareaScrollHeight.value = (_a2 = textarea.value) == null ? void 0 : _a2.scrollHeight;
-    const _styleTarget = toValue(options == null ? void 0 : options.styleTarget);
-    if (_styleTarget)
+    textareaScrollHeight.value = (_a2 = textarea.value) == null
+      ? void 0
+      : _a2.scrollHeight;
+    const _styleTarget = toValue(
+      options == null ? void 0 : options.styleTarget,
+    );
+    if (_styleTarget) {
       _styleTarget.style[styleProp] = `${textareaScrollHeight.value}px`;
-    else
+    } else {
       height = `${textareaScrollHeight.value}px`;
+    }
     textarea.value.style[styleProp] = height;
   }
   watch([input, textarea], () => nextTick(triggerResize), { immediate: true });
   watch(textareaScrollHeight, () => {
     var _a2;
-    return (_a2 = options == null ? void 0 : options.onResize) == null ? void 0 : _a2.call(options);
+    return (_a2 = options == null ? void 0 : options.onResize) == null
+      ? void 0
+      : _a2.call(options);
   });
   useResizeObserver(textarea, ([{ contentRect }]) => {
-    if (textareaOldWidth.value === contentRect.width)
+    if (textareaOldWidth.value === contentRect.width) {
       return;
+    }
     tryRequestAnimationFrame(window2, () => {
       textareaOldWidth.value = contentRect.width;
       triggerResize();
     });
   });
-  if (options == null ? void 0 : options.watch)
+  if (options == null ? void 0 : options.watch) {
     watch(options.watch, triggerResize, { immediate: true, deep: true });
+  }
   return {
     textarea,
     input,
-    triggerResize
+    triggerResize,
   };
 }
 function useThrottledRefHistory(source, options = {}) {
@@ -8142,7 +9653,7 @@ function useThrottledRefHistory(source, options = {}) {
   const filter = throttleFilter(throttle, trailing);
   const history = useRefHistory(source, { ...options, eventFilter: filter });
   return {
-    ...history
+    ...history,
   };
 }
 var DEFAULT_UNITS = [
@@ -8152,20 +9663,26 @@ var DEFAULT_UNITS = [
   { max: 5184e5, value: 864e5, name: "day" },
   { max: 24192e5, value: 6048e5, name: "week" },
   { max: 28512e6, value: 2592e6, name: "month" },
-  { max: Number.POSITIVE_INFINITY, value: 31536e6, name: "year" }
+  { max: Number.POSITIVE_INFINITY, value: 31536e6, name: "year" },
 ];
 var DEFAULT_MESSAGES = {
   justNow: "just now",
   past: (n) => n.match(/\d/) ? `${n} ago` : n,
   future: (n) => n.match(/\d/) ? `in ${n}` : n,
-  month: (n, past) => n === 1 ? past ? "last month" : "next month" : `${n} month${n > 1 ? "s" : ""}`,
-  year: (n, past) => n === 1 ? past ? "last year" : "next year" : `${n} year${n > 1 ? "s" : ""}`,
-  day: (n, past) => n === 1 ? past ? "yesterday" : "tomorrow" : `${n} day${n > 1 ? "s" : ""}`,
-  week: (n, past) => n === 1 ? past ? "last week" : "next week" : `${n} week${n > 1 ? "s" : ""}`,
+  month: (n, past) =>
+    n === 1
+      ? past ? "last month" : "next month"
+      : `${n} month${n > 1 ? "s" : ""}`,
+  year: (n, past) =>
+    n === 1 ? past ? "last year" : "next year" : `${n} year${n > 1 ? "s" : ""}`,
+  day: (n, past) =>
+    n === 1 ? past ? "yesterday" : "tomorrow" : `${n} day${n > 1 ? "s" : ""}`,
+  week: (n, past) =>
+    n === 1 ? past ? "last week" : "next week" : `${n} week${n > 1 ? "s" : ""}`,
   hour: (n) => `${n} hour${n > 1 ? "s" : ""}`,
   minute: (n) => `${n} minute${n > 1 ? "s" : ""}`,
   second: (n) => `${n} second${n > 1 ? "s" : ""}`,
-  invalid: ""
+  invalid: "",
 };
 function DEFAULT_FORMATTER(date) {
   return date.toISOString().slice(0, 10);
@@ -8173,14 +9690,19 @@ function DEFAULT_FORMATTER(date) {
 function useTimeAgo(time, options = {}) {
   const {
     controls: exposeControls = false,
-    updateInterval = 3e4
+    updateInterval = 3e4,
   } = options;
-  const { now: now2, ...controls } = useNow({ interval: updateInterval, controls: true });
-  const timeAgo = computed(() => formatTimeAgo(new Date(toValue(time)), options, toValue(now2)));
+  const { now: now2, ...controls } = useNow({
+    interval: updateInterval,
+    controls: true,
+  });
+  const timeAgo = computed(() =>
+    formatTimeAgo(new Date(toValue(time)), options, toValue(now2))
+  );
   if (exposeControls) {
     return {
       timeAgo,
-      ...controls
+      ...controls,
     };
   } else {
     return timeAgo;
@@ -8194,9 +9716,11 @@ function formatTimeAgo(from, options = {}, now2 = Date.now()) {
     fullDateFormatter = DEFAULT_FORMATTER,
     units = DEFAULT_UNITS,
     showSecond = false,
-    rounding = "round"
+    rounding = "round",
   } = options;
-  const roundFn = typeof rounding === "number" ? (n) => +n.toFixed(rounding) : Math[rounding];
+  const roundFn = typeof rounding === "number"
+    ? (n) => +n.toFixed(rounding)
+    : Math[rounding];
   const diff = +now2 - +from;
   const absDiff = Math.abs(diff);
   function getValue2(diff2, unit) {
@@ -8210,59 +9734,70 @@ function formatTimeAgo(from, options = {}, now2 = Date.now()) {
   }
   function applyFormat(name, val, isPast) {
     const formatter = messages[name];
-    if (typeof formatter === "function")
+    if (typeof formatter === "function") {
       return formatter(val, isPast);
+    }
     return formatter.replace("{0}", val.toString());
   }
-  if (absDiff < 6e4 && !showSecond)
+  if (absDiff < 6e4 && !showSecond) {
     return messages.justNow;
-  if (typeof max === "number" && absDiff > max)
+  }
+  if (typeof max === "number" && absDiff > max) {
     return fullDateFormatter(new Date(from));
+  }
   if (typeof max === "string") {
-    const unitMax = (_a = units.find((i) => i.name === max)) == null ? void 0 : _a.max;
-    if (unitMax && absDiff > unitMax)
+    const unitMax = (_a = units.find((i) => i.name === max)) == null
+      ? void 0
+      : _a.max;
+    if (unitMax && absDiff > unitMax) {
       return fullDateFormatter(new Date(from));
+    }
   }
   for (const [idx, unit] of units.entries()) {
     const val = getValue2(diff, unit);
-    if (val <= 0 && units[idx - 1])
+    if (val <= 0 && units[idx - 1]) {
       return format(diff, units[idx - 1]);
-    if (absDiff < unit.max)
+    }
+    if (absDiff < unit.max) {
       return format(diff, unit);
+    }
   }
   return messages.invalid;
 }
 function useTimeoutPoll(fn, interval, options = {}) {
   const {
     immediate = true,
-    immediateCallback = false
+    immediateCallback = false,
   } = options;
   const { start } = useTimeoutFn(loop, interval, { immediate });
   const isActive = shallowRef(false);
   async function loop() {
-    if (!isActive.value)
+    if (!isActive.value) {
       return;
+    }
     await fn();
     start();
   }
   function resume() {
     if (!isActive.value) {
       isActive.value = true;
-      if (immediateCallback)
+      if (immediateCallback) {
         fn();
+      }
       start();
     }
   }
   function pause() {
     isActive.value = false;
   }
-  if (immediate && isClient)
+  if (immediate && isClient) {
     resume();
+  }
   tryOnScopeDispose(pause);
   return {
     isActive,
     pause,
-    resume
+    resume,
   };
 }
 function useTimestamp(options = {}) {
@@ -8271,19 +9806,23 @@ function useTimestamp(options = {}) {
     offset = 0,
     immediate = true,
     interval = "requestAnimationFrame",
-    callback
+    callback,
   } = options;
   const ts = shallowRef(timestamp() + offset);
   const update = () => ts.value = timestamp() + offset;
-  const cb = callback ? () => {
-    update();
-    callback(ts.value);
-  } : update;
-  const controls = interval === "requestAnimationFrame" ? useRafFn(cb, { immediate }) : useIntervalFn(cb, interval, { immediate });
+  const cb = callback
+    ? () => {
+      update();
+      callback(ts.value);
+    }
+    : update;
+  const controls = interval === "requestAnimationFrame"
+    ? useRafFn(cb, { immediate })
+    : useIntervalFn(cb, interval, { immediate });
   if (exposeControls) {
     return {
       timestamp: ts,
-      ...controls
+      ...controls,
     };
   } else {
     return ts;
@@ -8293,40 +9832,55 @@ function useTitle(newTitle = null, options = {}) {
   var _a, _b, _c;
   const {
     document: document2 = defaultDocument,
-    restoreOnUnmount = (t) => t
+    restoreOnUnmount = (t) => t,
   } = options;
-  const originalTitle = (_a = document2 == null ? void 0 : document2.title) != null ? _a : "";
-  const title = toRef2((_b = newTitle != null ? newTitle : document2 == null ? void 0 : document2.title) != null ? _b : null);
+  const originalTitle =
+    (_a = document2 == null ? void 0 : document2.title) != null ? _a : "";
+  const title = toRef2(
+    (_b = newTitle != null
+        ? newTitle
+        : document2 == null
+        ? void 0
+        : document2.title) != null
+      ? _b
+      : null,
+  );
   const isReadonly2 = !!(newTitle && typeof newTitle === "function");
   function format(t) {
-    if (!("titleTemplate" in options))
+    if (!("titleTemplate" in options)) {
       return t;
+    }
     const template = options.titleTemplate || "%s";
-    return typeof template === "function" ? template(t) : toValue(template).replace(/%s/g, t);
+    return typeof template === "function"
+      ? template(t)
+      : toValue(template).replace(/%s/g, t);
   }
   watch(
     title,
     (newValue, oldValue) => {
-      if (newValue !== oldValue && document2)
+      if (newValue !== oldValue && document2) {
         document2.title = format(newValue != null ? newValue : "");
+      }
     },
-    { immediate: true }
+    { immediate: true },
   );
   if (options.observe && !options.titleTemplate && document2 && !isReadonly2) {
     useMutationObserver(
       (_c = document2.head) == null ? void 0 : _c.querySelector("title"),
       () => {
-        if (document2 && document2.title !== title.value)
+        if (document2 && document2.title !== title.value) {
           title.value = format(document2.title);
+        }
       },
-      { childList: true }
+      { childList: true },
     );
   }
   tryOnScopeDispose(() => {
     if (restoreOnUnmount) {
       const restoredTitle = restoreOnUnmount(originalTitle, title.value || "");
-      if (restoredTitle != null && document2)
+      if (restoredTitle != null && document2) {
         document2.title = restoredTitle;
+      }
     }
   });
   return title;
@@ -8355,21 +9909,28 @@ var _TransitionPresets = {
   easeInOutCirc: [0.85, 0, 0.15, 1],
   easeInBack: [0.36, 0, 0.66, -0.56],
   easeOutBack: [0.34, 1.56, 0.64, 1],
-  easeInOutBack: [0.68, -0.6, 0.32, 1.6]
+  easeInOutBack: [0.68, -0.6, 0.32, 1.6],
 };
-var TransitionPresets = Object.assign({}, { linear: identity }, _TransitionPresets);
+var TransitionPresets = Object.assign(
+  {},
+  { linear: identity },
+  _TransitionPresets,
+);
 function createEasingFunction([p0, p1, p2, p3]) {
   const a = (a1, a2) => 1 - 3 * a2 + 3 * a1;
   const b = (a1, a2) => 3 * a2 - 6 * a1;
   const c = (a1) => 3 * a1;
-  const calcBezier = (t, a1, a2) => ((a(a1, a2) * t + b(a1, a2)) * t + c(a1)) * t;
-  const getSlope = (t, a1, a2) => 3 * a(a1, a2) * t * t + 2 * b(a1, a2) * t + c(a1);
+  const calcBezier = (t, a1, a2) =>
+    ((a(a1, a2) * t + b(a1, a2)) * t + c(a1)) * t;
+  const getSlope = (t, a1, a2) =>
+    3 * a(a1, a2) * t * t + 2 * b(a1, a2) * t + c(a1);
   const getTforX = (x) => {
     let aGuessT = x;
     for (let i = 0; i < 4; ++i) {
       const currentSlope = getSlope(aGuessT, p0, p2);
-      if (currentSlope === 0)
+      if (currentSlope === 0) {
         return aGuessT;
+      }
       const currentX = calcBezier(aGuessT, p0, p2) - x;
       aGuessT -= currentX / currentSlope;
     }
@@ -8392,8 +9953,14 @@ function executeTransition(source, from, to, options = {}) {
   const duration = (_a = toValue(options.duration)) != null ? _a : 1e3;
   const startedAt = Date.now();
   const endAt = Date.now() + duration;
-  const trans = typeof options.transition === "function" ? options.transition : (_b = toValue(options.transition)) != null ? _b : identity;
-  const ease = typeof trans === "function" ? trans : createEasingFunction(trans);
+  const trans = typeof options.transition === "function"
+    ? options.transition
+    : (_b = toValue(options.transition)) != null
+    ? _b
+    : identity;
+  const ease = typeof trans === "function"
+    ? trans
+    : createEasingFunction(trans);
   return new Promise((resolve) => {
     source.value = fromVal;
     const tick = () => {
@@ -8405,13 +9972,18 @@ function executeTransition(source, from, to, options = {}) {
       const now2 = Date.now();
       const alpha = ease((now2 - startedAt) / duration);
       const arr = toVec(source.value).map((n, i) => lerp(v1[i], v2[i], alpha));
-      if (Array.isArray(source.value))
+      if (Array.isArray(source.value)) {
         source.value = arr.map((n, i) => {
           var _a3, _b2;
-          return lerp((_a3 = v1[i]) != null ? _a3 : 0, (_b2 = v2[i]) != null ? _b2 : 0, alpha);
+          return lerp(
+            (_a3 = v1[i]) != null ? _a3 : 0,
+            (_b2 = v2[i]) != null ? _b2 : 0,
+            alpha,
+          );
         });
-      else if (typeof source.value === "number")
+      } else if (typeof source.value === "number") {
         source.value = arr[0];
+      }
       if (now2 < endAt) {
         requestAnimationFrame(tick);
       } else {
@@ -8431,21 +10003,25 @@ function useTransition(source, options = {}) {
   const outputRef = ref(sourceVal());
   watch(sourceVal, async (to) => {
     var _a, _b;
-    if (toValue(options.disabled))
+    if (toValue(options.disabled)) {
       return;
+    }
     const id = ++currentId;
-    if (options.delay)
+    if (options.delay) {
       await promiseTimeout(toValue(options.delay));
-    if (id !== currentId)
+    }
+    if (id !== currentId) {
       return;
+    }
     const toVal = Array.isArray(to) ? to.map(toValue) : toValue(to);
     (_a = options.onStarted) == null ? void 0 : _a.call(options);
     await executeTransition(outputRef, outputRef.value, toVal, {
       ...options,
       abort: () => {
         var _a2;
-        return id !== currentId || ((_a2 = options.abort) == null ? void 0 : _a2.call(options));
-      }
+        return id !== currentId ||
+          ((_a2 = options.abort) == null ? void 0 : _a2.call(options));
+      },
     });
     (_b = options.onFinished) == null ? void 0 : _b.call(options);
   }, { deep: true });
@@ -8458,7 +10034,9 @@ function useTransition(source, options = {}) {
   tryOnScopeDispose(() => {
     currentId++;
   });
-  return computed(() => toValue(options.disabled) ? sourceVal() : outputRef.value);
+  return computed(() =>
+    toValue(options.disabled) ? sourceVal() : outputRef.value
+  );
 }
 function useUrlSearchParams(mode = "history", options = {}) {
   const {
@@ -8467,10 +10045,11 @@ function useUrlSearchParams(mode = "history", options = {}) {
     removeFalsyValues = false,
     write: enableWrite = true,
     writeMode = "replace",
-    window: window2 = defaultWindow
+    window: window2 = defaultWindow,
   } = options;
-  if (!window2)
+  if (!window2) {
     return reactive(initialValue);
+  }
   const state = reactive({});
   function getRawParams() {
     if (mode === "history") {
@@ -8485,15 +10064,26 @@ function useUrlSearchParams(mode = "history", options = {}) {
   }
   function constructQuery(params) {
     const stringified = params.toString();
-    if (mode === "history")
-      return `${stringified ? `?${stringified}` : ""}${window2.location.hash || ""}`;
-    if (mode === "hash-params")
-      return `${window2.location.search || ""}${stringified ? `#${stringified}` : ""}`;
+    if (mode === "history") {
+      return `${stringified ? `?${stringified}` : ""}${
+        window2.location.hash || ""
+      }`;
+    }
+    if (mode === "hash-params") {
+      return `${window2.location.search || ""}${
+        stringified ? `#${stringified}` : ""
+      }`;
+    }
     const hash = window2.location.hash || "#";
     const index = hash.indexOf("?");
-    if (index > 0)
-      return `${window2.location.search || ""}${hash.slice(0, index)}${stringified ? `?${stringified}` : ""}`;
-    return `${window2.location.search || ""}${hash}${stringified ? `?${stringified}` : ""}`;
+    if (index > 0) {
+      return `${window2.location.search || ""}${hash.slice(0, index)}${
+        stringified ? `?${stringified}` : ""
+      }`;
+    }
+    return `${window2.location.search || ""}${hash}${
+      stringified ? `?${stringified}` : ""
+    }`;
   }
   function read() {
     return new URLSearchParams(getRawParams());
@@ -8502,7 +10092,9 @@ function useUrlSearchParams(mode = "history", options = {}) {
     const unusedKeys = new Set(Object.keys(state));
     for (const key of params.keys()) {
       const paramsForKey = params.getAll(key);
-      state[key] = paramsForKey.length > 1 ? paramsForKey : params.get(key) || "";
+      state[key] = paramsForKey.length > 1
+        ? paramsForKey
+        : params.get(key) || "";
       unusedKeys.delete(key);
     }
     Array.from(unusedKeys).forEach((key) => delete state[key]);
@@ -8513,52 +10105,57 @@ function useUrlSearchParams(mode = "history", options = {}) {
       const params = new URLSearchParams("");
       Object.keys(state).forEach((key) => {
         const mapEntry = state[key];
-        if (Array.isArray(mapEntry))
+        if (Array.isArray(mapEntry)) {
           mapEntry.forEach((value) => params.append(key, value));
-        else if (removeNullishValues && mapEntry == null)
+        } else if (removeNullishValues && mapEntry == null) {
           params.delete(key);
-        else if (removeFalsyValues && !mapEntry)
+        } else if (removeFalsyValues && !mapEntry) {
           params.delete(key);
-        else
+        } else {
           params.set(key, mapEntry);
+        }
       });
       write(params, false);
     },
-    { deep: true }
+    { deep: true },
   );
   function write(params, shouldUpdate) {
     pause();
-    if (shouldUpdate)
+    if (shouldUpdate) {
       updateState(params);
+    }
     if (writeMode === "replace") {
       window2.history.replaceState(
         window2.history.state,
         window2.document.title,
-        window2.location.pathname + constructQuery(params)
+        window2.location.pathname + constructQuery(params),
       );
     } else {
       window2.history.pushState(
         window2.history.state,
         window2.document.title,
-        window2.location.pathname + constructQuery(params)
+        window2.location.pathname + constructQuery(params),
       );
     }
     resume();
   }
   function onChanged() {
-    if (!enableWrite)
+    if (!enableWrite) {
       return;
+    }
     write(read(), true);
   }
   const listenerOptions = { passive: true };
   useEventListener(window2, "popstate", onChanged, listenerOptions);
-  if (mode !== "history")
+  if (mode !== "history") {
     useEventListener(window2, "hashchange", onChanged, listenerOptions);
+  }
   const initial = read();
-  if (initial.keys().next().value)
+  if (initial.keys().next().value) {
     updateState(initial);
-  else
+  } else {
     Object.assign(state, initialValue);
+  }
   return state;
 }
 function useUserMedia(options = {}) {
@@ -8569,35 +10166,42 @@ function useUserMedia(options = {}) {
   const { navigator: navigator2 = defaultNavigator } = options;
   const isSupported = useSupported(() => {
     var _a2;
-    return (_a2 = navigator2 == null ? void 0 : navigator2.mediaDevices) == null ? void 0 : _a2.getUserMedia;
+    return (_a2 = navigator2 == null ? void 0 : navigator2.mediaDevices) == null
+      ? void 0
+      : _a2.getUserMedia;
   });
   const stream = shallowRef();
   function getDeviceOptions(type) {
     switch (type) {
       case "video": {
-        if (constraints.value)
+        if (constraints.value) {
           return constraints.value.video || false;
+        }
         break;
       }
       case "audio": {
-        if (constraints.value)
+        if (constraints.value) {
           return constraints.value.audio || false;
+        }
         break;
       }
     }
   }
   async function _start() {
-    if (!isSupported.value || stream.value)
+    if (!isSupported.value || stream.value) {
       return;
+    }
     stream.value = await navigator2.mediaDevices.getUserMedia({
       video: getDeviceOptions("video"),
-      audio: getDeviceOptions("audio")
+      audio: getDeviceOptions("audio"),
     });
     return stream.value;
   }
   function _stop() {
     var _a2;
-    (_a2 = stream.value) == null ? void 0 : _a2.getTracks().forEach((t) => t.stop());
+    (_a2 = stream.value) == null
+      ? void 0
+      : _a2.getTracks().forEach((t) => t.stop());
     stream.value = void 0;
   }
   function stop() {
@@ -8606,8 +10210,9 @@ function useUserMedia(options = {}) {
   }
   async function start() {
     await _start();
-    if (stream.value)
+    if (stream.value) {
       enabled.value = true;
+    }
     return stream.value;
   }
   async function restart() {
@@ -8617,19 +10222,20 @@ function useUserMedia(options = {}) {
   watch(
     enabled,
     (v) => {
-      if (v)
+      if (v) {
         _start();
-      else _stop();
+      } else _stop();
     },
-    { immediate: true }
+    { immediate: true },
   );
   watch(
     constraints,
     () => {
-      if (autoSwitch.value && stream.value)
+      if (autoSwitch.value && stream.value) {
         restart();
+      }
     },
-    { immediate: true }
+    { immediate: true },
   );
   tryOnScopeDispose(() => {
     stop();
@@ -8642,7 +10248,7 @@ function useUserMedia(options = {}) {
     restart,
     constraints,
     enabled,
-    autoSwitch
+    autoSwitch,
   };
 }
 function useVModel(props, key, emit, options = {}) {
@@ -8653,21 +10259,29 @@ function useVModel(props, key, emit, options = {}) {
     eventName,
     deep = false,
     defaultValue,
-    shouldEmit
+    shouldEmit,
   } = options;
   const vm = getCurrentInstance();
-  const _emit = emit || (vm == null ? void 0 : vm.emit) || ((_a = vm == null ? void 0 : vm.$emit) == null ? void 0 : _a.bind(vm)) || ((_c = (_b = vm == null ? void 0 : vm.proxy) == null ? void 0 : _b.$emit) == null ? void 0 : _c.bind(vm == null ? void 0 : vm.proxy));
+  const _emit = emit || (vm == null ? void 0 : vm.emit) ||
+    ((_a = vm == null ? void 0 : vm.$emit) == null ? void 0 : _a.bind(vm)) ||
+    ((_c = (_b = vm == null ? void 0 : vm.proxy) == null ? void 0 : _b.$emit) ==
+        null
+      ? void 0
+      : _c.bind(vm == null ? void 0 : vm.proxy));
   let event = eventName;
   if (!key) {
     key = "modelValue";
   }
   event = event || `update:${key.toString()}`;
-  const cloneFn = (val) => !clone ? val : typeof clone === "function" ? clone(val) : cloneFnJSON(val);
-  const getValue2 = () => isDef(props[key]) ? cloneFn(props[key]) : defaultValue;
+  const cloneFn = (val) =>
+    !clone ? val : typeof clone === "function" ? clone(val) : cloneFnJSON(val);
+  const getValue2 = () =>
+    isDef(props[key]) ? cloneFn(props[key]) : defaultValue;
   const triggerEmit = (value) => {
     if (shouldEmit) {
-      if (shouldEmit(value))
+      if (shouldEmit(value)) {
         _emit(event, value);
+      }
     } else {
       _emit(event, value);
     }
@@ -8684,15 +10298,16 @@ function useVModel(props, key, emit, options = {}) {
           proxy.value = cloneFn(v);
           nextTick(() => isUpdating = false);
         }
-      }
+      },
     );
     watch(
       proxy,
       (v) => {
-        if (!isUpdating && (v !== props[key] || deep))
+        if (!isUpdating && (v !== props[key] || deep)) {
           triggerEmit(v);
+        }
       },
-      { deep }
+      { deep },
     );
     return proxy;
   } else {
@@ -8702,7 +10317,7 @@ function useVModel(props, key, emit, options = {}) {
       },
       set(value) {
         triggerEmit(value);
-      }
+      },
     });
   }
 }
@@ -8713,7 +10328,7 @@ function useVModels(props, emit, options = {}) {
       props,
       key,
       emit,
-      options
+      options,
     );
   }
   return ret;
@@ -8722,18 +10337,22 @@ function useVibrate(options) {
   const {
     pattern = [],
     interval = 0,
-    navigator: navigator2 = defaultNavigator
+    navigator: navigator2 = defaultNavigator,
   } = options || {};
-  const isSupported = useSupported(() => typeof navigator2 !== "undefined" && "vibrate" in navigator2);
+  const isSupported = useSupported(() =>
+    typeof navigator2 !== "undefined" && "vibrate" in navigator2
+  );
   const patternRef = toRef2(pattern);
   let intervalControls;
   const vibrate = (pattern2 = patternRef.value) => {
-    if (isSupported.value)
+    if (isSupported.value) {
       navigator2.vibrate(pattern2);
+    }
   };
   const stop = () => {
-    if (isSupported.value)
+    if (isSupported.value) {
       navigator2.vibrate(0);
+    }
     intervalControls == null ? void 0 : intervalControls.pause();
   };
   if (interval > 0) {
@@ -8742,8 +10361,8 @@ function useVibrate(options) {
       interval,
       {
         immediate: false,
-        immediateCallback: false
-      }
+        immediateCallback: false,
+      },
     );
   }
   return {
@@ -8751,11 +10370,20 @@ function useVibrate(options) {
     pattern,
     intervalControls,
     vibrate,
-    stop
+    stop,
   };
 }
 function useVirtualList(list, options) {
-  const { containerStyle, wrapperProps, scrollTo, calculateRange, currentList, containerRef } = "itemHeight" in options ? useVerticalVirtualList(options, list) : useHorizontalVirtualList(options, list);
+  const {
+    containerStyle,
+    wrapperProps,
+    scrollTo,
+    calculateRange,
+    currentList,
+    containerRef,
+  } = "itemHeight" in options
+    ? useVerticalVirtualList(options, list)
+    : useHorizontalVirtualList(options, list);
   return {
     list: currentList,
     scrollTo,
@@ -8764,9 +10392,9 @@ function useVirtualList(list, options) {
       onScroll: () => {
         calculateRange();
       },
-      style: containerStyle
+      style: containerStyle,
     },
-    wrapperProps
+    wrapperProps,
   };
 }
 function useVirtualListResources(list) {
@@ -8779,8 +10407,9 @@ function useVirtualListResources(list) {
 }
 function createGetViewCapacity(state, source, itemSize) {
   return (containerSize) => {
-    if (typeof itemSize === "number")
+    if (typeof itemSize === "number") {
       return Math.ceil(containerSize / itemSize);
+    }
     const { start = 0 } = state.value;
     let sum = 0;
     let capacity = 0;
@@ -8788,16 +10417,18 @@ function createGetViewCapacity(state, source, itemSize) {
       const size = itemSize(i);
       sum += size;
       capacity = i;
-      if (sum > containerSize)
+      if (sum > containerSize) {
         break;
+      }
     }
     return capacity - start;
   };
 }
 function createGetOffset(source, itemSize) {
   return (scrollDirection) => {
-    if (typeof itemSize === "number")
+    if (typeof itemSize === "number") {
       return Math.floor(scrollDirection / itemSize) + 1;
+    }
     let sum = 0;
     let offset = 0;
     for (let i = 0; i < source.value.length; i++) {
@@ -8811,22 +10442,33 @@ function createGetOffset(source, itemSize) {
     return offset + 1;
   };
 }
-function createCalculateRange(type, overscan, getOffset, getViewCapacity, { containerRef, state, currentList, source }) {
+function createCalculateRange(
+  type,
+  overscan,
+  getOffset,
+  getViewCapacity,
+  { containerRef, state, currentList, source },
+) {
   return () => {
     const element = containerRef.value;
     if (element) {
-      const offset = getOffset(type === "vertical" ? element.scrollTop : element.scrollLeft);
-      const viewCapacity = getViewCapacity(type === "vertical" ? element.clientHeight : element.clientWidth);
+      const offset = getOffset(
+        type === "vertical" ? element.scrollTop : element.scrollLeft,
+      );
+      const viewCapacity = getViewCapacity(
+        type === "vertical" ? element.clientHeight : element.clientWidth,
+      );
       const from = offset - overscan;
       const to = offset + viewCapacity + overscan;
       state.value = {
         start: from < 0 ? 0 : from,
-        end: to > source.value.length ? source.value.length : to
+        end: to > source.value.length ? source.value.length : to,
       };
-      currentList.value = source.value.slice(state.value.start, state.value.end).map((ele, index) => ({
-        data: ele,
-        index: index + state.value.start
-      }));
+      currentList.value = source.value.slice(state.value.start, state.value.end)
+        .map((ele, index) => ({
+          data: ele,
+          index: index + state.value.start,
+        }));
     }
   };
 }
@@ -8836,7 +10478,10 @@ function createGetDistance(itemSize, source) {
       const size2 = index * itemSize;
       return size2;
     }
-    const size = source.value.slice(0, index).reduce((sum, _, i) => sum + itemSize(i), 0);
+    const size = source.value.slice(0, index).reduce(
+      (sum, _, i) => sum + itemSize(i),
+      0,
+    );
     return size;
   };
 }
@@ -8847,19 +10492,21 @@ function useWatchForSizes(size, list, containerRef, calculateRange) {
 }
 function createComputedTotalSize(itemSize, source) {
   return computed(() => {
-    if (typeof itemSize === "number")
+    if (typeof itemSize === "number") {
       return source.value.length * itemSize;
+    }
     return source.value.reduce((sum, _, index) => sum + itemSize(index), 0);
   });
 }
 var scrollToDictionaryForElementScrollKey = {
   horizontal: "scrollLeft",
-  vertical: "scrollTop"
+  vertical: "scrollTop",
 };
 function createScrollTo(type, calculateRange, getDistance, containerRef) {
   return (index) => {
     if (containerRef.value) {
-      containerRef.value[scrollToDictionaryForElementScrollKey[type]] = getDistance(index);
+      containerRef.value[scrollToDictionaryForElementScrollKey[type]] =
+        getDistance(index);
       calculateRange();
     }
   };
@@ -8871,20 +10518,31 @@ function useHorizontalVirtualList(options, list) {
   const { itemWidth, overscan = 5 } = options;
   const getViewCapacity = createGetViewCapacity(state, source, itemWidth);
   const getOffset = createGetOffset(source, itemWidth);
-  const calculateRange = createCalculateRange("horizontal", overscan, getOffset, getViewCapacity, resources);
+  const calculateRange = createCalculateRange(
+    "horizontal",
+    overscan,
+    getOffset,
+    getViewCapacity,
+    resources,
+  );
   const getDistanceLeft = createGetDistance(itemWidth, source);
   const offsetLeft = computed(() => getDistanceLeft(state.value.start));
   const totalWidth = createComputedTotalSize(itemWidth, source);
   useWatchForSizes(size, list, containerRef, calculateRange);
-  const scrollTo = createScrollTo("horizontal", calculateRange, getDistanceLeft, containerRef);
+  const scrollTo = createScrollTo(
+    "horizontal",
+    calculateRange,
+    getDistanceLeft,
+    containerRef,
+  );
   const wrapperProps = computed(() => {
     return {
       style: {
         height: "100%",
         width: `${totalWidth.value - offsetLeft.value}px`,
         marginLeft: `${offsetLeft.value}px`,
-        display: "flex"
-      }
+        display: "flex",
+      },
     };
   });
   return {
@@ -8893,7 +10551,7 @@ function useHorizontalVirtualList(options, list) {
     wrapperProps,
     containerStyle,
     currentList,
-    containerRef
+    containerRef,
   };
 }
 function useVerticalVirtualList(options, list) {
@@ -8903,19 +10561,30 @@ function useVerticalVirtualList(options, list) {
   const { itemHeight, overscan = 5 } = options;
   const getViewCapacity = createGetViewCapacity(state, source, itemHeight);
   const getOffset = createGetOffset(source, itemHeight);
-  const calculateRange = createCalculateRange("vertical", overscan, getOffset, getViewCapacity, resources);
+  const calculateRange = createCalculateRange(
+    "vertical",
+    overscan,
+    getOffset,
+    getViewCapacity,
+    resources,
+  );
   const getDistanceTop = createGetDistance(itemHeight, source);
   const offsetTop = computed(() => getDistanceTop(state.value.start));
   const totalHeight = createComputedTotalSize(itemHeight, source);
   useWatchForSizes(size, list, containerRef, calculateRange);
-  const scrollTo = createScrollTo("vertical", calculateRange, getDistanceTop, containerRef);
+  const scrollTo = createScrollTo(
+    "vertical",
+    calculateRange,
+    getDistanceTop,
+    containerRef,
+  );
   const wrapperProps = computed(() => {
     return {
       style: {
         width: "100%",
         height: `${totalHeight.value - offsetTop.value}px`,
-        marginTop: `${offsetTop.value}px`
-      }
+        marginTop: `${offsetTop.value}px`,
+      },
     };
   });
   return {
@@ -8924,42 +10593,56 @@ function useVerticalVirtualList(options, list) {
     containerStyle,
     wrapperProps,
     currentList,
-    containerRef
+    containerRef,
   };
 }
 function useWakeLock(options = {}) {
   const {
     navigator: navigator2 = defaultNavigator,
-    document: document2 = defaultDocument
+    document: document2 = defaultDocument,
   } = options;
   const requestedType = shallowRef(false);
   const sentinel = shallowRef(null);
   const documentVisibility = useDocumentVisibility({ document: document2 });
-  const isSupported = useSupported(() => navigator2 && "wakeLock" in navigator2);
-  const isActive = computed(() => !!sentinel.value && documentVisibility.value === "visible");
+  const isSupported = useSupported(() =>
+    navigator2 && "wakeLock" in navigator2
+  );
+  const isActive = computed(() =>
+    !!sentinel.value && documentVisibility.value === "visible"
+  );
   if (isSupported.value) {
     useEventListener(sentinel, "release", () => {
       var _a, _b;
-      requestedType.value = (_b = (_a = sentinel.value) == null ? void 0 : _a.type) != null ? _b : false;
+      requestedType.value =
+        (_b = (_a = sentinel.value) == null ? void 0 : _a.type) != null
+          ? _b
+          : false;
     }, { passive: true });
     whenever(
-      () => documentVisibility.value === "visible" && (document2 == null ? void 0 : document2.visibilityState) === "visible" && requestedType.value,
+      () =>
+        documentVisibility.value === "visible" &&
+        (document2 == null ? void 0 : document2.visibilityState) ===
+          "visible" &&
+        requestedType.value,
       (type) => {
         requestedType.value = false;
         forceRequest(type);
-      }
+      },
     );
   }
   async function forceRequest(type) {
     var _a;
     await ((_a = sentinel.value) == null ? void 0 : _a.release());
-    sentinel.value = isSupported.value ? await navigator2.wakeLock.request(type) : null;
+    sentinel.value = isSupported.value
+      ? await navigator2.wakeLock.request(type)
+      : null;
   }
   async function request(type) {
-    if (documentVisibility.value === "visible")
+    if (documentVisibility.value === "visible") {
       await forceRequest(type);
-    else
+    } else {
       requestedType.value = type;
+    }
   }
   async function release() {
     requestedType.value = false;
@@ -8973,40 +10656,48 @@ function useWakeLock(options = {}) {
     isActive,
     request,
     forceRequest,
-    release
+    release,
   };
 }
 function useWebNotification(options = {}) {
   const {
     window: window2 = defaultWindow,
-    requestPermissions: _requestForPermissions = true
+    requestPermissions: _requestForPermissions = true,
   } = options;
   const defaultWebNotificationOptions = options;
   const isSupported = useSupported(() => {
-    if (!window2 || !("Notification" in window2))
+    if (!window2 || !("Notification" in window2)) {
       return false;
-    if (Notification.permission === "granted")
+    }
+    if (Notification.permission === "granted") {
       return true;
+    }
     try {
       const notification2 = new Notification("");
       notification2.onshow = () => {
         notification2.close();
       };
     } catch (e) {
-      if (e.name === "TypeError")
+      if (e.name === "TypeError") {
         return false;
+      }
     }
     return true;
   });
-  const permissionGranted = shallowRef(isSupported.value && "permission" in Notification && Notification.permission === "granted");
+  const permissionGranted = shallowRef(
+    isSupported.value && "permission" in Notification &&
+      Notification.permission === "granted",
+  );
   const notification = ref(null);
   const ensurePermissions = async () => {
-    if (!isSupported.value)
+    if (!isSupported.value) {
       return;
+    }
     if (!permissionGranted.value && Notification.permission !== "denied") {
       const result = await Notification.requestPermission();
-      if (result === "granted")
+      if (result === "granted") {
         permissionGranted.value = true;
+      }
     }
     return permissionGranted.value;
   };
@@ -9015,9 +10706,14 @@ function useWebNotification(options = {}) {
   const { on: onError, trigger: errorTrigger } = createEventHook();
   const { on: onClose, trigger: closeTrigger } = createEventHook();
   const show = async (overrides) => {
-    if (!isSupported.value || !permissionGranted.value)
+    if (!isSupported.value || !permissionGranted.value) {
       return;
-    const options2 = Object.assign({}, defaultWebNotificationOptions, overrides);
+    }
+    const options2 = Object.assign(
+      {},
+      defaultWebNotificationOptions,
+      overrides,
+    );
     notification.value = new Notification(options2.title || "", options2);
     notification.value.onclick = clickTrigger;
     notification.value.onshow = showTrigger;
@@ -9026,12 +10722,14 @@ function useWebNotification(options = {}) {
     return notification.value;
   };
   const close = () => {
-    if (notification.value)
+    if (notification.value) {
       notification.value.close();
+    }
     notification.value = null;
   };
-  if (_requestForPermissions)
+  if (_requestForPermissions) {
     tryOnMounted(ensurePermissions);
+  }
   tryOnScopeDispose(close);
   if (isSupported.value && window2) {
     const document2 = window2.document;
@@ -9052,13 +10750,14 @@ function useWebNotification(options = {}) {
     onClick,
     onShow,
     onError,
-    onClose
+    onClose,
   };
 }
 var DEFAULT_PING_MESSAGE = "ping";
 function resolveNestedOptions(options) {
-  if (options === true)
+  if (options === true) {
     return {};
+  }
   return options;
 }
 function useWebSocket(url, options = {}) {
@@ -9070,7 +10769,7 @@ function useWebSocket(url, options = {}) {
     immediate = true,
     autoConnect = true,
     autoClose = true,
-    protocols = []
+    protocols = [],
   } = options;
   const data = ref(null);
   const status = shallowRef("CLOSED");
@@ -9085,8 +10784,9 @@ function useWebSocket(url, options = {}) {
   let pongTimeoutWait;
   const _sendBuffer = () => {
     if (bufferedData.length && wsRef.value && status.value === "OPEN") {
-      for (const buffer of bufferedData)
+      for (const buffer of bufferedData) {
         wsRef.value.send(buffer);
+      }
       bufferedData = [];
     }
   };
@@ -9102,8 +10802,9 @@ function useWebSocket(url, options = {}) {
   };
   const close = (code = 1e3, reason) => {
     resetRetry();
-    if (!isClient && !isWorker || !wsRef.value)
+    if (!isClient && !isWorker || !wsRef.value) {
       return;
+    }
     explicitlyClosed = true;
     resetHeartbeat();
     heartbeatPause == null ? void 0 : heartbeatPause();
@@ -9112,8 +10813,9 @@ function useWebSocket(url, options = {}) {
   };
   const send = (data2, useBuffer = true) => {
     if (!wsRef.value || status.value !== "OPEN") {
-      if (useBuffer)
+      if (useBuffer) {
         bufferedData.push(data2);
+      }
       return false;
     }
     _sendBuffer();
@@ -9121,8 +10823,9 @@ function useWebSocket(url, options = {}) {
     return true;
   };
   const _init = () => {
-    if (explicitlyClosed || typeof urlRef.value === "undefined")
+    if (explicitlyClosed || typeof urlRef.value === "undefined") {
       return;
+    }
     const ws = new WebSocket(urlRef.value, protocols);
     wsRef.value = ws;
     status.value = "CONNECTING";
@@ -9138,13 +10841,19 @@ function useWebSocket(url, options = {}) {
       resetHeartbeat();
       heartbeatPause == null ? void 0 : heartbeatPause();
       onDisconnected == null ? void 0 : onDisconnected(ws, ev);
-      if (!explicitlyClosed && options.autoReconnect && (wsRef.value == null || ws === wsRef.value)) {
+      if (
+        !explicitlyClosed && options.autoReconnect &&
+        (wsRef.value == null || ws === wsRef.value)
+      ) {
         const {
           retries = -1,
           delay = 1e3,
-          onFailed
+          onFailed,
         } = resolveNestedOptions(options.autoReconnect);
-        const checkRetires = typeof retries === "function" ? retries : () => typeof retries === "number" && (retries < 0 || retried < retries);
+        const checkRetires = typeof retries === "function"
+          ? retries
+          : () =>
+            typeof retries === "number" && (retries < 0 || retried < retries);
         if (checkRetires(retried)) {
           retried += 1;
           retryTimeout = setTimeout(_init, delay);
@@ -9161,10 +10870,11 @@ function useWebSocket(url, options = {}) {
         resetHeartbeat();
         const {
           message = DEFAULT_PING_MESSAGE,
-          responseMessage = message
+          responseMessage = message,
         } = resolveNestedOptions(options.heartbeat);
-        if (e.data === toValue(responseMessage))
+        if (e.data === toValue(responseMessage)) {
           return;
+        }
       }
       data.value = e.data;
       onMessage == null ? void 0 : onMessage(ws, e);
@@ -9174,93 +10884,105 @@ function useWebSocket(url, options = {}) {
     const {
       message = DEFAULT_PING_MESSAGE,
       interval = 1e3,
-      pongTimeout = 1e3
+      pongTimeout = 1e3,
     } = resolveNestedOptions(options.heartbeat);
     const { pause, resume } = useIntervalFn(
       () => {
         send(toValue(message), false);
-        if (pongTimeoutWait != null)
+        if (pongTimeoutWait != null) {
           return;
+        }
         pongTimeoutWait = setTimeout(() => {
           close();
           explicitlyClosed = false;
         }, pongTimeout);
       },
       interval,
-      { immediate: false }
+      { immediate: false },
     );
     heartbeatPause = pause;
     heartbeatResume = resume;
   }
   if (autoClose) {
-    if (isClient)
+    if (isClient) {
       useEventListener("beforeunload", () => close(), { passive: true });
+    }
     tryOnScopeDispose(close);
   }
   const open = () => {
-    if (!isClient && !isWorker)
+    if (!isClient && !isWorker) {
       return;
+    }
     close();
     explicitlyClosed = false;
     retried = 0;
     _init();
   };
-  if (immediate)
+  if (immediate) {
     open();
-  if (autoConnect)
+  }
+  if (autoConnect) {
     watch(urlRef, open);
+  }
   return {
     data,
     status,
     close,
     send,
     open,
-    ws: wsRef
+    ws: wsRef,
   };
 }
 function useWebWorker(arg0, workerOptions, options) {
   const {
-    window: window2 = defaultWindow
+    window: window2 = defaultWindow,
   } = options != null ? options : {};
   const data = ref(null);
   const worker = shallowRef();
   const post = (...args) => {
-    if (!worker.value)
+    if (!worker.value) {
       return;
+    }
     worker.value.postMessage(...args);
   };
   const terminate = function terminate2() {
-    if (!worker.value)
+    if (!worker.value) {
       return;
+    }
     worker.value.terminate();
   };
   if (window2) {
-    if (typeof arg0 === "string")
+    if (typeof arg0 === "string") {
       worker.value = new Worker(arg0, workerOptions);
-    else if (typeof arg0 === "function")
+    } else if (typeof arg0 === "function") {
       worker.value = arg0();
-    else
+    } else {
       worker.value = arg0;
+    }
     worker.value.onmessage = (e) => {
       data.value = e.data;
     };
     tryOnScopeDispose(() => {
-      if (worker.value)
+      if (worker.value) {
         worker.value.terminate();
+      }
     });
   }
   return {
     data,
     post,
     terminate,
-    worker
+    worker,
   };
 }
 function depsParser(deps, localDeps) {
-  if (deps.length === 0 && localDeps.length === 0)
+  if (deps.length === 0 && localDeps.length === 0) {
     return "";
+  }
   const depsString = deps.map((dep) => `'${dep}'`).toString();
-  const depsFunctionString = localDeps.filter((dep) => typeof dep === "function").map((fn) => {
+  const depsFunctionString = localDeps.filter((dep) =>
+    typeof dep === "function"
+  ).map((fn) => {
     const str = fn.toString();
     if (str.trim().startsWith("function")) {
       return str;
@@ -9270,20 +10992,26 @@ function depsParser(deps, localDeps) {
     }
   }).join(";");
   const importString = `importScripts(${depsString});`;
-  return `${depsString.trim() === "" ? "" : importString} ${depsFunctionString}`;
+  return `${
+    depsString.trim() === "" ? "" : importString
+  } ${depsFunctionString}`;
 }
 function jobRunner(userFunc) {
   return (e) => {
     const userFuncArgs = e.data[0];
-    return Promise.resolve(userFunc.apply(void 0, userFuncArgs)).then((result) => {
-      postMessage(["SUCCESS", result]);
-    }).catch((error) => {
+    return Promise.resolve(userFunc.apply(void 0, userFuncArgs)).then(
+      (result) => {
+        postMessage(["SUCCESS", result]);
+      },
+    ).catch((error) => {
       postMessage(["ERROR", error]);
     });
   };
 }
 function createWorkerBlobUrl(fn, deps, localDeps) {
-  const blobCode = `${depsParser(deps, localDeps)}; onmessage=(${jobRunner})(${fn})`;
+  const blobCode = `${
+    depsParser(deps, localDeps)
+  }; onmessage=(${jobRunner})(${fn})`;
   const blob = new Blob([blobCode], { type: "text/javascript" });
   const url = URL.createObjectURL(blob);
   return url;
@@ -9293,7 +11021,7 @@ function useWebWorkerFn(fn, options = {}) {
     dependencies = [],
     localDependencies = [],
     timeout,
-    window: window2 = defaultWindow
+    window: window2 = defaultWindow,
   } = options;
   const worker = ref();
   const workerStatus = shallowRef("PENDING");
@@ -9316,9 +11044,12 @@ function useWebWorkerFn(fn, options = {}) {
     const newWorker = new Worker(blobUrl);
     newWorker._url = blobUrl;
     newWorker.onmessage = (e) => {
-      const { resolve = () => {
-      }, reject = () => {
-      } } = promise.value;
+      const {
+        resolve = () => {
+        },
+        reject = () => {
+        },
+      } = promise.value;
       const [status, result] = e.data;
       switch (status) {
         case "SUCCESS":
@@ -9332,8 +11063,10 @@ function useWebWorkerFn(fn, options = {}) {
       }
     };
     newWorker.onerror = (e) => {
-      const { reject = () => {
-      } } = promise.value;
+      const {
+        reject = () => {
+        },
+      } = promise.value;
       e.preventDefault();
       reject(e);
       workerTerminate("ERROR");
@@ -9341,24 +11074,25 @@ function useWebWorkerFn(fn, options = {}) {
     if (timeout) {
       timeoutId.value = setTimeout(
         () => workerTerminate("TIMEOUT_EXPIRED"),
-        timeout
+        timeout,
       );
     }
     return newWorker;
   };
-  const callWorker = (...fnArgs) => new Promise((resolve, reject) => {
-    var _a;
-    promise.value = {
-      resolve,
-      reject
-    };
-    (_a = worker.value) == null ? void 0 : _a.postMessage([[...fnArgs]]);
-    workerStatus.value = "RUNNING";
-  });
+  const callWorker = (...fnArgs) =>
+    new Promise((resolve, reject) => {
+      var _a;
+      promise.value = {
+        resolve,
+        reject,
+      };
+      (_a = worker.value) == null ? void 0 : _a.postMessage([[...fnArgs]]);
+      workerStatus.value = "RUNNING";
+    });
   const workerFn = (...fnArgs) => {
     if (workerStatus.value === "RUNNING") {
       console.error(
-        "[useWebWorkerFn] You can only run one instance of the worker at a time."
+        "[useWebWorkerFn] You can only run one instance of the worker at a time.",
       );
       return Promise.reject();
     }
@@ -9368,13 +11102,14 @@ function useWebWorkerFn(fn, options = {}) {
   return {
     workerFn,
     workerStatus,
-    workerTerminate
+    workerTerminate,
   };
 }
 function useWindowFocus(options = {}) {
   const { window: window2 = defaultWindow } = options;
-  if (!window2)
+  if (!window2) {
     return shallowRef(false);
+  }
   const focused = shallowRef(window2.document.hasFocus());
   const listenerOptions = { passive: true };
   useEventListener(window2, "blur", () => {
@@ -9396,7 +11131,7 @@ function useWindowSize(options = {}) {
     initialHeight = Number.POSITIVE_INFINITY,
     listenOrientation = true,
     includeScrollbar = true,
-    type = "inner"
+    type = "inner",
   } = options;
   const width = shallowRef(initialWidth);
   const height = shallowRef(initialHeight);
@@ -9406,7 +11141,11 @@ function useWindowSize(options = {}) {
         width.value = window2.outerWidth;
         height.value = window2.outerHeight;
       } else if (type === "visual" && window2.visualViewport) {
-        const { width: visualViewportWidth, height: visualViewportHeight, scale } = window2.visualViewport;
+        const {
+          width: visualViewportWidth,
+          height: visualViewportHeight,
+          scale,
+        } = window2.visualViewport;
         width.value = Math.round(visualViewportWidth * scale);
         height.value = Math.round(visualViewportHeight * scale);
       } else if (includeScrollbar) {
@@ -9433,81 +11172,123 @@ function useWindowSize(options = {}) {
 }
 
 export {
+  assert,
+  breakpointsAntDesign,
+  breakpointsBootstrapV5,
+  breakpointsElement,
+  breakpointsMasterCss,
+  breakpointsPrimeFlex,
+  breakpointsQuasar,
+  breakpointsSematic,
+  breakpointsTailwind,
+  breakpointsVuetify,
+  breakpointsVuetifyV2,
+  breakpointsVuetifyV3,
+  bypassFilter,
+  camelize,
+  clamp,
+  cloneFnJSON,
+  computedAsync,
   computedEager,
+  computedInject,
   computedWithControl,
-  tryOnScopeDispose,
+  containsProp,
+  controlledRef,
   createEventHook,
+  createFetch,
+  createFilterWrapper,
   createGlobalState,
-  injectLocal,
-  provideLocal,
   createInjectionState,
   createRef,
+  createReusableTemplate,
   createSharedComposable,
+  createSingletonPromise,
+  createTemplatePromise,
+  createUnrefFn,
+  customStorageEventName,
+  debounceFilter,
+  defaultDocument,
+  defaultLocation,
+  DefaultMagicKeysAliasMap,
+  defaultNavigator,
+  defaultWindow,
+  executeTransition,
   extendRef,
+  formatDate,
+  formatTimeAgo,
   get,
+  getLifeCycleTarget,
+  getSSRHandler,
+  hasOwn,
+  hyphenate,
+  identity,
+  increaseWithUnit,
+  injectLocal,
+  invoke,
+  isClient,
+  isDef,
   isDefined,
+  isIOS,
+  isObject,
+  isWorker,
   makeDestructurable,
+  mapGamepadToXbox360Controller,
+  noop,
+  normalizeDate,
+  notNullish,
+  now,
+  objectEntries,
+  objectOmit,
+  objectPick,
+  onClickOutside,
+  onElementRemoval,
+  onKeyDown,
+  onKeyPressed,
+  onKeyStroke,
+  onKeyUp,
+  onLongPress,
+  onStartTyping,
+  pausableFilter,
+  promiseTimeout,
+  provideLocal,
+  provideSSRWidth,
+  pxValue,
+  rand,
   reactify,
   reactifyObject,
-  toReactive,
   reactiveComputed,
   reactiveOmit,
-  isClient,
-  isWorker,
-  isDef,
-  notNullish,
-  assert,
-  isObject,
-  now,
-  timestamp,
-  clamp,
-  noop,
-  rand,
-  hasOwn,
-  isIOS,
-  createFilterWrapper,
-  bypassFilter,
-  debounceFilter,
-  throttleFilter,
-  pausableFilter,
-  hyphenate,
-  camelize,
-  promiseTimeout,
-  identity,
-  createSingletonPromise,
-  invoke,
-  containsProp,
-  increaseWithUnit,
-  pxValue,
-  objectPick,
-  objectOmit,
-  objectEntries,
-  getLifeCycleTarget,
-  toArray,
-  toRef2 as toRef,
-  resolveRef,
   reactivePick,
   refAutoReset,
-  useDebounceFn,
   refDebounced,
   refDefault,
-  useThrottleFn,
   refThrottled,
   refWithControl,
-  controlledRef,
+  resolveRef,
+  resolveUnref,
   set,
-  watchWithFilter,
-  watchPausable,
+  setSSRHandler,
+  StorageSerializers,
   syncRef,
   syncRefs,
+  templateRef,
+  throttleFilter,
+  timestamp,
+  toArray,
+  toReactive,
+  toRef2 as toRef,
   toRefs2 as toRefs,
   toValue2 as toValue,
-  resolveUnref,
+  TransitionPresets,
   tryOnBeforeMount,
   tryOnBeforeUnmount,
   tryOnMounted,
+  tryOnScopeDispose,
   tryOnUnmounted,
+  unrefElement,
   until,
+  useActiveElement,
+  useAnimate,
   useArrayDifference,
   useArrayEvery,
   useArrayFilter,
@@ -9520,98 +11301,29 @@ export {
   useArrayReduce,
   useArraySome,
   useArrayUnique,
-  useCounter,
-  formatDate,
-  normalizeDate,
-  useDateFormat,
-  useIntervalFn,
-  useInterval,
-  useLastChanged,
-  useTimeoutFn,
-  useTimeout,
-  useToNumber,
-  useToString,
-  useToggle,
-  watchArray,
-  watchAtMost,
-  watchDebounced,
-  watchDeep,
-  watchIgnorable,
-  watchImmediate,
-  watchOnce,
-  watchThrottled,
-  watchTriggerable,
-  whenever,
-  computedAsync,
-  computedInject,
-  createReusableTemplate,
-  createTemplatePromise,
-  createUnrefFn,
-  defaultWindow,
-  defaultDocument,
-  defaultNavigator,
-  defaultLocation,
-  unrefElement,
-  useEventListener,
-  onClickOutside,
-  useMounted,
-  useSupported,
-  useMutationObserver,
-  onElementRemoval,
-  onKeyStroke,
-  onKeyDown,
-  onKeyPressed,
-  onKeyUp,
-  onLongPress,
-  onStartTyping,
-  templateRef,
-  useActiveElement,
-  useRafFn,
-  useAnimate,
   useAsyncQueue,
   useAsyncState,
   useBase64,
   useBattery,
   useBluetooth,
-  useSSRWidth,
-  provideSSRWidth,
-  useMediaQuery,
-  breakpointsTailwind,
-  breakpointsBootstrapV5,
-  breakpointsVuetifyV2,
-  breakpointsVuetifyV3,
-  breakpointsVuetify,
-  breakpointsAntDesign,
-  breakpointsQuasar,
-  breakpointsSematic,
-  breakpointsMasterCss,
-  breakpointsPrimeFlex,
-  breakpointsElement,
   useBreakpoints,
   useBroadcastChannel,
   useBrowserLocation,
   useCached,
-  usePermission,
   useClipboard,
   useClipboardItems,
-  cloneFnJSON,
   useCloned,
-  getSSRHandler,
-  setSSRHandler,
-  usePreferredDark,
-  StorageSerializers,
-  customStorageEventName,
-  useStorage,
   useColorMode,
   useConfirmDialog,
   useCountdown,
+  useCounter,
   useCssVar,
   useCurrentElement,
   useCycleList,
   useDark,
-  useManualRefHistory,
-  useRefHistory,
+  useDateFormat,
   useDebouncedRefHistory,
+  useDebounceFn,
   useDeviceMotion,
   useDeviceOrientation,
   useDevicePixelRatio,
@@ -9620,18 +11332,16 @@ export {
   useDocumentVisibility,
   useDraggable,
   useDropZone,
-  useResizeObserver,
   useElementBounding,
   useElementByPoint,
   useElementHover,
   useElementSize,
-  useIntersectionObserver,
   useElementVisibility,
   useEventBus,
+  useEventListener,
   useEventSource,
   useEyeDropper,
   useFavicon,
-  createFetch,
   useFetch,
   useFileDialog,
   useFileSystemAccess,
@@ -9639,23 +11349,28 @@ export {
   useFocusWithin,
   useFps,
   useFullscreen,
-  mapGamepadToXbox360Controller,
   useGamepad,
   useGeolocation,
   useIdle,
   useImage,
-  useScroll,
   useInfiniteScroll,
+  useIntersectionObserver,
+  useInterval,
+  useIntervalFn,
   useKeyModifier,
+  useLastChanged,
   useLocalStorage,
-  DefaultMagicKeysAliasMap,
   useMagicKeys,
+  useManualRefHistory,
   useMediaControls,
+  useMediaQuery,
   useMemoize,
   useMemory,
+  useMounted,
   useMouse,
   useMouseInElement,
   useMousePressed,
+  useMutationObserver,
   useNavigatorLanguage,
   useNetwork,
   useNow,
@@ -9663,50 +11378,62 @@ export {
   useOffsetPagination,
   useOnline,
   usePageLeave,
-  useScreenOrientation,
   useParallax,
   useParentElement,
   usePerformanceObserver,
+  usePermission,
   usePointer,
   usePointerLock,
   usePointerSwipe,
   usePreferredColorScheme,
   usePreferredContrast,
+  usePreferredDark,
   usePreferredLanguages,
   usePreferredReducedMotion,
   usePreferredReducedTransparency,
   usePrevious,
+  useRafFn,
+  useRefHistory,
+  useResizeObserver,
+  useScreenOrientation,
   useScreenSafeArea,
   useScriptTag,
+  useScroll,
   useScrollLock,
   useSessionStorage,
   useShare,
   useSorted,
   useSpeechRecognition,
   useSpeechSynthesis,
+  useSSRWidth,
   useStepper,
+  useStorage,
   useStorageAsync,
   useStyleTag,
+  useSupported,
   useSwipe,
   useTemplateRefsList,
+  useTextareaAutosize,
   useTextDirection,
   useTextSelection,
-  useTextareaAutosize,
   useThrottledRefHistory,
+  useThrottleFn,
   useTimeAgo,
-  formatTimeAgo,
+  useTimeout,
+  useTimeoutFn,
   useTimeoutPoll,
   useTimestamp,
   useTitle,
-  TransitionPresets,
-  executeTransition,
+  useToggle,
+  useToNumber,
+  useToString,
   useTransition,
   useUrlSearchParams,
   useUserMedia,
-  useVModel,
-  useVModels,
   useVibrate,
   useVirtualList,
+  useVModel,
+  useVModels,
   useWakeLock,
   useWebNotification,
   useWebSocket,
@@ -9714,6 +11441,18 @@ export {
   useWebWorkerFn,
   useWindowFocus,
   useWindowScroll,
-  useWindowSize
+  useWindowSize,
+  watchArray,
+  watchAtMost,
+  watchDebounced,
+  watchDeep,
+  watchIgnorable,
+  watchImmediate,
+  watchOnce,
+  watchPausable,
+  watchThrottled,
+  watchTriggerable,
+  watchWithFilter,
+  whenever,
 };
-//# sourceMappingURL=chunk-7REMGHIV.js.map
+//# sourceMappingURL=chunk-3YI3QFOP.js.map

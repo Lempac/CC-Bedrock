@@ -14,8 +14,7 @@
         {
           "name": "body",
           "pivot": [0, 0, 0],
-          "cubes": [
-          ]
+          "cubes": []
         }
       ]
     }

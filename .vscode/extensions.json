@@ -1,6 +1,6 @@
 {
-    "recommendations": [
-        "denoland.vscode-deno",
-        "BlockceptionLtd.blockceptionvscodeminecraftbedrockdevelopmentextension"
-    ]
+  "recommendations": [
+    "denoland.vscode-deno",
+    "BlockceptionLtd.blockceptionvscodeminecraftbedrockdevelopmentextension"
+  ]
 }
